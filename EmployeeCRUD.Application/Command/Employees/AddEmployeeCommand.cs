@@ -1,9 +1,10 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Application.Interfaces;
 using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,12 @@ namespace EmployeeCRUD.Application.Command.Employees
     public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommand, EmployeeResponseDto>
     {
         private readonly IValidator<EmployeeDto> validator;
-        private readonly IEmployeeRepository employeeRepository;
+        private readonly AppDbContext dbContext;
 
-        public AddEmployeeHandler(IValidator<EmployeeDto> _validator, IEmployeeRepository _employeeRepository)
+        public AddEmployeeHandler(IValidator<EmployeeDto> _validator, AppDbContext _dbContext)
         {
             validator = _validator;
-            employeeRepository = _employeeRepository;
+            dbContext = _dbContext;
         }
 
         public async Task<EmployeeResponseDto> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
@@ -40,7 +41,7 @@ namespace EmployeeCRUD.Application.Command.Employees
                 throw new CustomValidationException(errors);
             }
 
-            var existingEmployee = await employeeRepository.GetEmployeeByEmail(request.employee.Email);
+            var existingEmployee = await dbContext.Employees.FirstOrDefaultAsync(e => e.Email == request.employee.Email);
 
             if (existingEmployee != null)
             {
@@ -53,14 +54,16 @@ namespace EmployeeCRUD.Application.Command.Employees
                 Phone = request.employee.Phone,
             };
 
-            var savedEmployee = await employeeRepository.AddEmployeeAsync(entity);
+           dbContext.Employees.Add(entity);
+          await dbContext.SaveChangesAsync(cancellationToken);
+
             return new EmployeeResponseDto
             {
-                Id = savedEmployee.Id,
-                Name = savedEmployee.EmpName,
-                Email = savedEmployee.Email,
-                Phone = savedEmployee.Phone,
-                CreatedAt = savedEmployee.CreatedAt,
+                Id = entity.Id,
+                Name = entity.EmpName,
+                Email = entity.Email,
+                Phone = entity.Phone,
+                CreatedAt = entity.CreatedAt
             };
 
 

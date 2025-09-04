@@ -1,5 +1,6 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Interfaces;
+using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,25 +14,25 @@ namespace EmployeeCRUD.Application.Queries.Employees
 
     public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponseDto>
     {
-        private readonly IEmployeeRepository employeeRepository;
-        public GetEmployeeByIdHandler(IEmployeeRepository _employeeRepository)
+        private readonly AppDbContext dbContext;
+        public GetEmployeeByIdHandler(AppDbContext _dbContext)
         {
-            employeeRepository = _employeeRepository;
+            dbContext = _dbContext;
         }
         public async Task<EmployeeResponseDto> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
         {
-            var e = await employeeRepository.GetEmployeeByIdAsync(request.Id);
-            if (e == null)
+            var employee = await dbContext.Employees.FindAsync(request.Id);
+            if (employee == null)
             {
                 throw new KeyNotFoundException($"Employee with Id '{request.Id}' not found.");
             }
             return new EmployeeResponseDto
             {
-                Id = e.Id,
-                Name = e.EmpName,
-                Email = e.Email,
-                Phone = e.Phone,
-                CreatedAt = e.CreatedAt
+                Id = employee.Id,
+                Name = employee.EmpName,
+                Email = employee.Email,
+                Phone = employee.Phone,
+                CreatedAt = employee.CreatedAt
             };
         }
     }

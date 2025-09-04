@@ -1,7 +1,9 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Interfaces;
+using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,14 +18,14 @@ namespace EmployeeCRUD.Application.Queries.Employees
 
     public class GetAllEmployeesHandler : IRequestHandler<GetAllEmployeesQuery, IEnumerable<EmployeeResponseDto>>
     {
-        private readonly IEmployeeRepository employeeRepository;
-        public GetAllEmployeesHandler(IEmployeeRepository _employeeRepository)
+        private readonly AppDbContext dbContext;
+        public GetAllEmployeesHandler(AppDbContext _dbContext)
         {
-            employeeRepository = _employeeRepository;
+            dbContext = _dbContext;
         }
         public async Task<IEnumerable<EmployeeResponseDto>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var employees = await employeeRepository.GetAllEmployeesAsync();
+            var employees = await dbContext.Employees.ToListAsync(cancellationToken);
             return employees.Select(e => new EmployeeResponseDto
             {
                 Id = e.Id,

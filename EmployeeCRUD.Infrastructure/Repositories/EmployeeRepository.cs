@@ -1,4 +1,4 @@
-﻿using EmployeeCRUD.Application.Interfaces;
+﻿//using EmployeeCRUD.Application.Interfaces;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Infrastructure.Repositories
 {
-    public class EmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository   //IEmployeeRepository
     {
         private readonly AppDbContext _dbContext;
         public EmployeeRepository(AppDbContext dbContext)

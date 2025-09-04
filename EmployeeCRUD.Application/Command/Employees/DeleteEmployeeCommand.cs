@@ -1,6 +1,10 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Interfaces;
+using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Infrastructure.Data;
+using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +16,24 @@ namespace EmployeeCRUD.Application.Command.Employees
   public record DeleteEmployeeCommand(Guid Id):IRequest<DeleteEmployeeResponse>;
     public class DeleteEmployeeHandler : IRequestHandler<DeleteEmployeeCommand, DeleteEmployeeResponse>
     {
-        private readonly IEmployeeRepository employeeRepository;
-        public DeleteEmployeeHandler(IEmployeeRepository _employeeRepository)
+       
+        private readonly AppDbContext dbContext;
+
+        public DeleteEmployeeHandler( AppDbContext _dbContext)
         {
-            employeeRepository = _employeeRepository;
+           
+            dbContext = _dbContext;
         }
+       
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
         {
-            var existingEmployee = await employeeRepository.GetEmployeeByIdAsync(request.Id);
+            var existingEmployee = await dbContext.Employees.FindAsync(request.Id);
             if (existingEmployee == null)
             {
                 throw new KeyNotFoundException($"Employee with Id '{request.Id}' not found.");
             }
-            await employeeRepository.DeleteEmployeeAsync(existingEmployee);
+            dbContext.Employees.Remove(existingEmployee);
+            await dbContext.SaveChangesAsync();
 
             return new DeleteEmployeeResponse
             {

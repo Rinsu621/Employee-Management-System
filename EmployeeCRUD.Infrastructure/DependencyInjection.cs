@@ -1,4 +1,4 @@
-﻿using EmployeeCRUD.Application.Interfaces;
+﻿
 using EmployeeCRUD.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +16,11 @@ namespace EmployeeCRUD.Infrastructure
     {
         public static IServiceCollection AddInfrastructureDI(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<Data.AppDbContext>(optiond =>
+            services.AddDbContext<Data.AppDbContext>(options =>
             {
-                optiond.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            //services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             return services;
         }
     }

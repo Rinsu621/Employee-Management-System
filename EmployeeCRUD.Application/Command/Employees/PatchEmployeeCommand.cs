@@ -1,6 +1,7 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Application.Interfaces;
+using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
 using System;
@@ -16,11 +17,11 @@ namespace EmployeeCRUD.Application.Command.Employees
     public class PatchEmployeeHandler : IRequestHandler<PatchEmployeeCommand, EmployeeUpdateResponse>
     {
         private readonly IValidator<EmployeePatchDto> validator;
-        private readonly IEmployeeRepository employeeRepository;
-        public PatchEmployeeHandler(IValidator<EmployeePatchDto> _validator, IEmployeeRepository _employeeRepository)
+        private readonly AppDbContext dbContext;
+        public PatchEmployeeHandler(IValidator<EmployeePatchDto> _validator, AppDbContext _dbContext)
         {
             validator = _validator;
-            employeeRepository = _employeeRepository;
+            dbContext = _dbContext;
         }
         public async Task<EmployeeUpdateResponse> Handle(PatchEmployeeCommand request, CancellationToken cancellationToken)
         {
@@ -37,7 +38,7 @@ namespace EmployeeCRUD.Application.Command.Employees
                 throw new CustomValidationException(errors);
 
             }
-            var employee = await employeeRepository.GetEmployeeByIdAsync(request.Id);
+            var employee=await dbContext.Employees.FindAsync(request.Id);
 
             if (employee == null)
             {
@@ -53,7 +54,8 @@ namespace EmployeeCRUD.Application.Command.Employees
             if (request.Employee.Phone != null)
                 employee.Phone = request.Employee.Phone;
 
-            await employeeRepository.UpdateEmployeesAsync(employee);
+            dbContext.Employees.Update(employee);
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return new EmployeeUpdateResponse
             {
