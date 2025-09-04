@@ -29,6 +29,7 @@ namespace EmployeeCRUD.Api.Middleware
                     InvalidOperationException => StatusCodes.Status400BadRequest,
                     KeyNotFoundException => StatusCodes.Status404NotFound,
                     UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                    AlreadyExistsException => StatusCodes.Status409Conflict,
                     _ => StatusCodes.Status500InternalServerError
 
                 };
@@ -41,6 +42,11 @@ namespace EmployeeCRUD.Api.Middleware
                     CustomValidationException validationEx => JsonSerializer.Serialize(new
                     {
                         errors = validationEx.Errors,
+                        statusCode = context.Response.StatusCode
+                    }),
+                    AlreadyExistsException existsEx => JsonSerializer.Serialize(new
+                    {
+                        error = existsEx.Message,
                         statusCode = context.Response.StatusCode
                     }),
                     _ => JsonSerializer.Serialize(new

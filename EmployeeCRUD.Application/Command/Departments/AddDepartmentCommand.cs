@@ -5,6 +5,7 @@ using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,11 @@ namespace EmployeeCRUD.Application.Command.Departments
                 throw new CustomValidationException(errors);
             }
 
+            var exists=await dbContext.Departments.AnyAsync(d => d.DeptName.ToLower() == request.department.DeptName.ToLower(), cancellationToken);
+            if (exists)
+            {
+                throw new AlreadyExistsException($"Department with name '{request.department.DeptName}' already exists.");
+            }
             var entity = new Department
             {
                 DeptName = request.department.DeptName
