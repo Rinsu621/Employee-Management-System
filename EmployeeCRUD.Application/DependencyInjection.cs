@@ -1,7 +1,6 @@
 ﻿using EmployeeCRUD.Application.Command.Employees;
 using EmployeeCRUD.Application.Dtos.Employees;
-using EmployeeCRUD.Application.Interfaces;
-using EmployeeCRUD.Infrastructure.Repositories;
+
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;

@@ -1,5 +1,4 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
-using EmployeeCRUD.Application.Interfaces;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;

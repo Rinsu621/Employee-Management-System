@@ -30,7 +30,10 @@ namespace EmployeeCRUD.Infrastructure.Configurations
                 .IsRequired()
                 .HasMaxLength(10);
 
-
+            entity.HasOne(e => e.Department)
+                  .WithMany(d => d.Employees)
+                  .HasForeignKey(e => e.DepartmentId)
+                  .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

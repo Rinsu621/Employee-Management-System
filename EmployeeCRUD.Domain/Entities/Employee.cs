@@ -12,5 +12,10 @@ namespace EmployeeCRUD.Domain.Entities
         public required string EmpName { get; set; }
         public required string Email { get; set; }
         public required string Phone { get; set; }
+
+        //Department Foreign Key
+        public Guid? DepartmentId { get; set; }
+
+        public Department? Department { get; set; }
     }
 }
