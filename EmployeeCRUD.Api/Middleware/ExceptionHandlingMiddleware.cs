@@ -6,7 +6,7 @@ namespace EmployeeCRUD.Api.Middleware
 {
     public class ExceptionHandlingMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate _next; // represent next component in the pipeline
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
         public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
@@ -18,7 +18,7 @@ namespace EmployeeCRUD.Api.Middleware
         {
             try
             {
-                await _next(context);
+                await _next(context); //to invoke the next middleware or endpoints
             }
             catch (Exception ex)
             {
