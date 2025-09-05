@@ -31,8 +31,9 @@ namespace EmployeeCRUD.Application.Queries.Employees
                 Name = e.EmpName,
                 Email = e.Email,
                 Phone = e.Phone,
-                CreatedAt= e.CreatedAt
+                CreatedAt = e.CreatedAt
             });
+
         }
     }
 }

@@ -58,5 +58,19 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(new GetAllEmployeesSPQuery());
             return Ok(result);
         }
+
+        [HttpGet("GetById-using-SP/{id}")]
+        public async Task<IActionResult> GetEmployeeByIdUsingStoredProcedureAsync(Guid id)
+        {
+            var result = await sender.Send(new GetEmployeeByIdSpQuery(id));
+            return Ok(result);
+        }
+
+        [HttpDelete("delete-using-SP/{id}")]
+        public async Task<IActionResult> DeleteEmployeeUsingStoredProcedureAsync(Guid id)
+        {
+            var result = await sender.Send(new DeleteEmployeeSpCommand(id));
+            return Ok(result);
+        }
     }
 }

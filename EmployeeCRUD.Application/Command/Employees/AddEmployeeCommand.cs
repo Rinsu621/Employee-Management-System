@@ -52,6 +52,7 @@ namespace EmployeeCRUD.Application.Command.Employees
                 EmpName = request.employee.EmpName,
                 Email = request.employee.Email,
                 Phone = request.employee.Phone,
+                Department = null
             };
 
            dbContext.Employees.Add(entity);
