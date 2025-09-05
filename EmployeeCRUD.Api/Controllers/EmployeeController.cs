@@ -2,7 +2,6 @@
 using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Queries.Employees;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeCRUD.Api.Controllers
@@ -70,6 +69,26 @@ namespace EmployeeCRUD.Api.Controllers
         public async Task<IActionResult> DeleteEmployeeUsingStoredProcedureAsync(Guid id)
         {
             var result = await sender.Send(new DeleteEmployeeSpCommand(id));
+            return Ok(result);
+        }
+
+        [HttpPost("using-sp")]
+        public async Task<IActionResult> AddEmployeeUsingSp([FromBody] EmployeeDto employee)
+        {
+            var result = await sender.Send(new AddEmployeeSPCommand(employee));
+            return Ok(result);
+        }
+
+        [HttpPatch("patch-employee-sp")]
+        public async Task<IActionResult> PatchEmployeeUsingSp(Guid id, EmployeePatchDto employee)
+        {
+            var result = await sender.Send(new PatchEmployeeSpCommand(id, employee));
+            return Ok(result);
+        }
+        [HttpPut("update-employee-sp")]
+        public async Task<IActionResult> UpdateEmployeeUsingSp(Guid id, EmployeeDto employee)
+        {
+            var result = await sender.Send(new UpdateEmployeeSpCommand(id, employee));
             return Ok(result);
         }
     }

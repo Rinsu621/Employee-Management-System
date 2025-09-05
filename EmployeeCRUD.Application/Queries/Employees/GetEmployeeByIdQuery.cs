@@ -1,6 +1,7 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace EmployeeCRUD.Application.Queries.Employees
         }
         public async Task<EmployeeResponseDto> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
         {
-            var employee = await dbContext.Employees.FindAsync(request.Id);
+            var employee = await dbContext.Employees.Include(e => e.Department).FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
             if (employee == null)
             {
                 throw new KeyNotFoundException($"Employee with Id '{request.Id}' not found.");
@@ -31,6 +32,7 @@ namespace EmployeeCRUD.Application.Queries.Employees
                 Name = employee.EmpName,
                 Email = employee.Email,
                 Phone = employee.Phone,
+                
                 CreatedAt = employee.CreatedAt
             };
         }

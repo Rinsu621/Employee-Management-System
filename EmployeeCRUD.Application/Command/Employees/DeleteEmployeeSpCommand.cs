@@ -24,8 +24,7 @@ namespace EmployeeCRUD.Application.Command.Employees
 
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeSpCommand request, CancellationToken cancellationToken)
         {
-            //not interpolated as treated literally
-            //var rowAffected = await dbContext.Database.ExecuteSqlRawAsync("EXEC DeleteEmployee @Id={request.EmpId}");
+          
             var rowAffected = await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteEmployee @Id = {request.EmpId}");
 
             if (rowAffected == 0)

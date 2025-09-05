@@ -41,7 +41,7 @@ namespace EmployeeCRUD.Application.Command.Employees
                 throw new CustomValidationException(errors);
             }
 
-            var existingEmployee = await dbContext.Employees.FirstOrDefaultAsync(e => e.Email == request.employee.Email);
+                var existingEmployee = await dbContext.Employees.FirstOrDefaultAsync(e => e.Email == request.employee.Email);
 
             if (existingEmployee != null)
             {

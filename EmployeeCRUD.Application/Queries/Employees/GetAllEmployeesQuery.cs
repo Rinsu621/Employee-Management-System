@@ -24,13 +24,14 @@ namespace EmployeeCRUD.Application.Queries.Employees
         }
         public async Task<IEnumerable<EmployeeResponseDto>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var employees = await dbContext.Employees.ToListAsync(cancellationToken);
+            var employees = await dbContext.Employees.Include(e=>e.Department).ToListAsync(cancellationToken);
             return employees.Select(e => new EmployeeResponseDto
             {
                 Id = e.Id,
                 Name = e.EmpName,
                 Email = e.Email,
                 Phone = e.Phone,
+                DepartmentName = e.Department != null ? e.Department.DeptName : null,
                 CreatedAt = e.CreatedAt
             });
 

@@ -1,4 +1,6 @@
 ﻿using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Infrastructure.Data.keyless;
+using EmployeeCRUD.Infrastructure.Data.Keyless;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,8 @@ namespace EmployeeCRUD.Infrastructure.Data
             //This say go to the assesmbly i.e the project where AppDbContext lies and find all configure entities and apply automatically
             //modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            modelBuilder.Entity<EmployeeResponseKeyless>().HasNoKey();
+            modelBuilder.Entity<EmployeeUpdateKeyless>().HasNoKey();
 
             base.OnModelCreating(modelBuilder);
         }
