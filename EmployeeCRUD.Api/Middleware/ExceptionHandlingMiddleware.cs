@@ -1,5 +1,7 @@
 ﻿using EmployeeCRUD.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace EmployeeCRUD.Api.Middleware
@@ -29,6 +31,7 @@ namespace EmployeeCRUD.Api.Middleware
                     InvalidOperationException => StatusCodes.Status400BadRequest,
                     KeyNotFoundException => StatusCodes.Status404NotFound,
                     UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                    DbUpdateException dbEx when dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 2627 => StatusCodes.Status409Conflict,
                     AlreadyExistsException => StatusCodes.Status409Conflict,
                     _ => StatusCodes.Status500InternalServerError
 
@@ -48,6 +51,11 @@ namespace EmployeeCRUD.Api.Middleware
                     {
                         error = existsEx.Message,
                         statusCode = context.Response.StatusCode
+                    }),
+                    DbUpdateException dbEx when dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 2627 => JsonSerializer.Serialize(new
+                    {
+                        error = "Duplicate entry. Email already exists.",
+                        statusCode
                     }),
                     _ => JsonSerializer.Serialize(new
                     {

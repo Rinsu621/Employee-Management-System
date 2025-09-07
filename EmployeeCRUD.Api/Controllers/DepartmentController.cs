@@ -12,7 +12,7 @@ namespace EmployeeCRUD.Api.Controllers
     public class DepartmentController(ISender sender) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> AddDepartmentAsync([FromBody] DepartmentCreateDto department)
+        public async Task<IActionResult> AddDepartmentAsync( DepartmentCreateDto department)
         {
             var result = await sender.Send(new AddDepartmentCommand(department));
             return Ok(result);
@@ -32,7 +32,7 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDepartmentAsync(Guid id, [FromBody] DepartmentCreateDto department)
+        public async Task<IActionResult> UpdateDepartmentAsync(Guid id,  DepartmentCreateDto department)
         {
             var result = await sender.Send(new UpdateDepartmentCommand(id, department));
             return Ok(result);

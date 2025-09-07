@@ -11,7 +11,7 @@ namespace EmployeeCRUD.Api.Controllers
     public class EmployeeController(ISender sender) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> AddEmployeeAsync([FromBody] EmployeeDto employee)
+        public async Task<IActionResult> AddEmployeeAsync( EmployeeDto employee)
         {
             var result = await sender.Send(new AddEmployeeCommand(employee));
             return Ok(result);
@@ -32,14 +32,14 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployeeAsync(Guid id, [FromBody] EmployeeDto employee)
+        public async Task<IActionResult> UpdateEmployeeAsync(Guid id, EmployeeDto employee)
         {
             var result = await sender.Send(new UpdateEmployeeCommand(id, employee));
             return Ok(result);
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchEmployeeAsync(Guid id, [FromBody] EmployeePatchDto employee)
+        public async Task<IActionResult> PatchEmployeeAsync(Guid id,  EmployeePatchDto employee)
         {
             var result = await sender.Send(new PatchEmployeeCommand(id, employee));
             return Ok(result);
@@ -73,7 +73,7 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
         [HttpPost("using-sp")]
-        public async Task<IActionResult> AddEmployeeUsingSp([FromBody] EmployeeDto employee)
+        public async Task<IActionResult> AddEmployeeUsingSp( EmployeeDto employee)
         {
             var result = await sender.Send(new AddEmployeeSPCommand(employee));
             return Ok(result);
