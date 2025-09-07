@@ -27,9 +27,15 @@ namespace EmployeeCRUD.Application.Command.Employees
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
         {
             var existingEmployee = await dbContext.Employees.FindAsync(request.Id);
+           
+
             if (existingEmployee == null)
             {
-                throw new KeyNotFoundException($"Employee with Id '{request.Id}' not found.");
+                return new DeleteEmployeeResponse
+                {
+                    Success = false,
+                    Message = $"Employee with Id {request.Id} not found."
+                };
             }
             dbContext.Employees.Remove(existingEmployee);
             await dbContext.SaveChangesAsync();

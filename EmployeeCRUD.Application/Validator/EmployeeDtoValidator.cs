@@ -1,5 +1,7 @@
 ﻿using EmployeeCRUD.Application.Dtos.Employees;
+using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +12,21 @@ namespace EmployeeCRUD.Application.Validator
 {
     public class EmployeeDtoValidator : AbstractValidator<EmployeeDto>
     {
-        public EmployeeDtoValidator()
+        private readonly AppDbContext dbContext;
+        public EmployeeDtoValidator(AppDbContext _dbContext)
+            
         {
+            dbContext = _dbContext;
             RuleFor(e => e.EmpName)
                 .NotEmpty().WithMessage("Employee name is required.")
                 .MaximumLength(100).WithMessage("Employee name must not exceed 100 characters.");
 
             RuleFor(e => e.Email)
                 .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.");
+                .EmailAddress().WithMessage("Invalid email format.") 
+                .MustAsync(async (email, cancellation) =>
+                !await dbContext.Employees.AnyAsync(x => x.Email == email, cancellation))
+            .WithMessage("Email already exists.");
 
             RuleFor(e => e.Phone)
                 .NotEmpty().WithMessage("Phone number is required.")

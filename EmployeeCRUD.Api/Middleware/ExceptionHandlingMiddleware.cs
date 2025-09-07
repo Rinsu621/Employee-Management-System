@@ -59,7 +59,7 @@ namespace EmployeeCRUD.Api.Middleware
                     }),
                     _ => JsonSerializer.Serialize(new
                     {
-                        error = ex.Message,
+                        error = "Internal Server Error",
                         statusCode = context.Response.StatusCode
                     })
                 };

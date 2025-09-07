@@ -24,10 +24,6 @@ namespace EmployeeCRUD.Application.Queries.Departments
         {
             var department = await dbContext.Departments.Include(d => d.Employees).FirstOrDefaultAsync(d => d.Id == request.DepartmentId, cancellationToken);
 
-            if (department == null)
-            {
-                throw new KeyNotFoundException($"Department with Id '{request.DepartmentId}' was not found.");
-            }
 
             return new DepartmentResultDto
             {

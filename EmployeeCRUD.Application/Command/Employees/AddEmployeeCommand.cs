@@ -17,36 +17,17 @@ namespace EmployeeCRUD.Application.Command.Employees
 
     public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommand, EmployeeResponseDto>
     {
-        private readonly IValidator<EmployeeDto> validator;
+       
         private readonly AppDbContext dbContext;
 
-        public AddEmployeeHandler(IValidator<EmployeeDto> _validator, AppDbContext _dbContext)
-        {
-            validator = _validator;
+        public AddEmployeeHandler( AppDbContext _dbContext)
+        { 
             dbContext = _dbContext;
         }
 
         public async Task<EmployeeResponseDto> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request.employee, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors
-                    .GroupBy(e => e.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
-                    );
-
-                throw new CustomValidationException(errors);
-            }
-
-                var existingEmployee = await dbContext.Employees.FirstOrDefaultAsync(e => e.Email == request.employee.Email);
-
-            if (existingEmployee != null)
-            {
-                throw new InvalidOperationException($"An employee with email '{request.employee.Email}' already exists.");
-            }
+            
             var entity = new Employee
             {
                 EmpName = request.employee.EmpName,

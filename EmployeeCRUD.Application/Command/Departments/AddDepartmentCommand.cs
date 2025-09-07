@@ -21,32 +21,13 @@ namespace EmployeeCRUD.Application.Command.Departments
     {
         
            private readonly AppDbContext dbContext;
-            private readonly IValidator<DepartmentCreateDto> validator;
             public AddDepartmentHandler(AppDbContext _dbContext, IValidator<DepartmentCreateDto> _validator)
              {
                 dbContext = _dbContext;
-                validator = _validator;
              }
         public async Task<DepartmentResultDto> Handle(AddDepartmentCommand request, CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request.department, cancellationToken);
-
-            if(!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors
-                    .GroupBy(e => e.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
-                    );
-                throw new CustomValidationException(errors);
-            }
-
-            var exists=await dbContext.Departments.AnyAsync(d => d.DeptName.ToLower() == request.department.DeptName.ToLower(), cancellationToken);
-            if (exists)
-            {
-                throw new AlreadyExistsException($"Department with name '{request.department.DeptName}' already exists.");
-            }
+           
             var entity = new Department
             {
                 DeptName = request.department.DeptName

@@ -6,7 +6,7 @@ namespace EmployeeCRUD.Api
     {
         public static IServiceCollection AddApiDI(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddApplicationDI()
+            services.AddApplicationDI(configuration)
                 .AddInfrastructureDI(configuration);
 
             return services;

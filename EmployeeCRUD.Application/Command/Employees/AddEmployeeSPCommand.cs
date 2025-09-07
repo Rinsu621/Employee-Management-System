@@ -16,36 +16,23 @@ namespace EmployeeCRUD.Application.Command.Employees
     public class AddEmployeeSPHandler : IRequestHandler<AddEmployeeSPCommand, EmployeeResponseKeyless>
     {
         private readonly AppDbContext dbContext;
-        private readonly IValidator<EmployeeDto> validator;
+       
 
-        public AddEmployeeSPHandler(AppDbContext _dbContext, IValidator<EmployeeDto> _validator)
+        public AddEmployeeSPHandler(AppDbContext _dbContext )
         {
             dbContext = _dbContext;
-            validator = _validator;
+            
         }
 
-        public async Task<EmployeeResponseKeyless> Handle(AddEmployeeSPCommand request, CancellationToken cancellationToken)
+        public async Task<EmployeeResponseKeyless?> Handle(AddEmployeeSPCommand request, CancellationToken cancellationToken)
         {
-            var validationResult = await validator.ValidateAsync(request.employee, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors
-                    .GroupBy(e => e.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
-                    );
-
-                throw new CustomValidationException(errors);
-            }
-
-            var employeeKeyless = dbContext.Set<EmployeeResponseKeyless>()
+            var result = dbContext.Set<EmployeeResponseKeyless>()
             .FromSqlInterpolated($"EXEC AddEmployee @EmpName={request.employee.EmpName}, @Email={request.employee.Email}, @Phone={request.employee.Phone}")
-            .AsNoTracking()   //Donot track return entities
-            .AsEnumerable()   //IQuerable to IEnumerable  , execute, pull the result ot memory and LINQ
+            .AsNoTracking()
+            .AsEnumerable()
             .FirstOrDefault();
 
-            return employeeKeyless;
+            return await Task.FromResult(result);
         }
     }
 }
