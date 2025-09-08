@@ -57,6 +57,11 @@ namespace EmployeeCRUD.Api.Middleware
                         error = "Duplicate entry. Email already exists.",
                         statusCode
                     }),
+                    KeyNotFoundException knfEx=>JsonSerializer.Serialize(new
+                    {
+                        errors=knfEx.Message,
+                        statusCode=context.Response.StatusCode
+                    }),
                     _ => JsonSerializer.Serialize(new
                     {
                         error = "Internal Server Error",

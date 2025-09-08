@@ -2,6 +2,8 @@
 using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Pipeline;
 using EmployeeCRUD.Application.Validator;
+using EmployeeCRUD.Domain.Common;
+using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -29,8 +31,9 @@ namespace EmployeeCRUD.Application
 
 
             services.AddValidatorsFromAssembly(typeof(EmployeeDtoValidator).Assembly);
+            services.AddValidatorsFromAssembly(typeof(EntityIdValidator<>).Assembly);
 
-
+            services.AddTransient<IValidator<Guid>, EntityIdValidator<Employee>>();  // Register EntityIdValidator for Guid
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 

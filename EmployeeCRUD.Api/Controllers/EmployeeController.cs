@@ -68,6 +68,7 @@ namespace EmployeeCRUD.Api.Controllers
         [HttpDelete("delete-using-SP/{id}")]
         public async Task<IActionResult> DeleteEmployeeUsingStoredProcedureAsync(Guid id)
         {
+            Console.WriteLine("Writing");
             var result = await sender.Send(new DeleteEmployeeSpCommand(id));
             return Ok(result);
         }

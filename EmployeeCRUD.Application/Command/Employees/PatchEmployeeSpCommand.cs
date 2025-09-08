@@ -34,9 +34,6 @@ namespace EmployeeCRUD.Application.Command.Employees
                 .AsEnumerable()
                 .FirstOrDefault();
 
-            if (updatedEmployee == null)
-                throw new KeyNotFoundException($"Employee with Id '{request.Id}' not found.");
-
             return  updatedEmployee;
 
         }

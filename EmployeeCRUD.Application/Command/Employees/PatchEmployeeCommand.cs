@@ -26,11 +26,6 @@ namespace EmployeeCRUD.Application.Command.Employees
         {
             var employee=await dbContext.Employees.FindAsync(request.Id);
 
-            if (employee == null)
-            {
-                throw new KeyNotFoundException($"Employee with Id '{request.Id}' not found.");
-            }
-
             if (request.Employee.EmpName != null)
                 employee.EmpName = request.Employee.EmpName;
 

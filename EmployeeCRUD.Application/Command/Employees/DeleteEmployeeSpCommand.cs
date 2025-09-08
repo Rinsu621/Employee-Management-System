@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Command.Employees
 {
-    public record DeleteEmployeeSpCommand(Guid EmpId):IRequest<DeleteEmployeeResponse>;
+    public record DeleteEmployeeSpCommand(Guid Id):IRequest<DeleteEmployeeResponse>;
 
     public class DeleteEmployeeSpHandler:IRequestHandler<DeleteEmployeeSpCommand, DeleteEmployeeResponse>
     {
@@ -25,17 +25,12 @@ namespace EmployeeCRUD.Application.Command.Employees
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeSpCommand request, CancellationToken cancellationToken)
         {
           
-            var rowAffected = await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteEmployee @Id = {request.EmpId}");
-
-            if (rowAffected == 0)
-            {
-                throw new KeyNotFoundException($"Department with Id '{request.EmpId}' not found.");
-            }
+            var rowAffected = await dbContext.Database.ExecuteSqlInterpolatedAsync($"EXEC DeleteEmployee @Id = {request.Id}");
 
             return new DeleteEmployeeResponse
             {
                 Success = true,
-                Message = "Department removed successfully."
+                Message = "Employee removed successfully."
             };
         }
     }
