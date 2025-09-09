@@ -17,5 +17,9 @@ namespace EmployeeCRUD.Domain.Entities
         public Guid? DepartmentId { get; set; }
 
         public Department? Department { get; set; }
+
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
+
+        public ICollection<Project> ManagedProjects { get; set; } = new List<Project>();
     }
 }

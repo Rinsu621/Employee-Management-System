@@ -21,6 +21,11 @@ namespace EmployeeCRUD.Infrastructure.Configurations
 
             entity.HasIndex(d => d.DeptName)
                  .IsUnique();
+
+            entity.HasMany(d => d.Projects)
+                 .WithOne(p => p.Department)
+                 .HasForeignKey(p => p.DepartmentId)
+                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
  

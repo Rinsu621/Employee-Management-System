@@ -34,6 +34,16 @@ namespace EmployeeCRUD.Infrastructure.Configurations
                   .WithMany(d => d.Employees)
                   .HasForeignKey(e => e.DepartmentId)
                   .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasMany(e => e.ManagedProjects)
+                  .WithOne(p => p.ProjectManager)
+                  .HasForeignKey(p => p.ProjectMamagerId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasMany(e => e.Projects)
+                 .WithMany(p => p.TeamMember)
+                 .UsingEntity(j => j.ToTable("EmployeeProjects"));
+
         }
     }
 }

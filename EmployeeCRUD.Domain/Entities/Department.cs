@@ -11,5 +11,6 @@ namespace EmployeeCRUD.Domain.Entities
     {
         public required string DeptName { get; set; }
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
     }
 }
