@@ -2,6 +2,7 @@
 using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Application.Pipeline;
 using EmployeeCRUD.Application.Validator;
+using EmployeeCRUD.Application.Validator.EmployeesValidator;
 using EmployeeCRUD.Domain.Common;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
@@ -29,9 +30,9 @@ namespace EmployeeCRUD.Application
             });
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AddEmployeeSPHandler).Assembly));
 
-
-            services.AddValidatorsFromAssembly(typeof(EmployeeDtoValidator).Assembly);
-            services.AddValidatorsFromAssembly(typeof(EntityIdValidator<>).Assembly);
+            services.AddScoped<EmployeeDtoValidator>();
+            services.AddValidatorsFromAssembly(typeof(AddEmployeeCommandValidator).Assembly);
+            //services.AddValidatorsFromAssembly(typeof(EntityIdValidator<>).Assembly);
 
             services.AddTransient<IValidator<Guid>, EntityIdValidator<Employee>>();  // Register EntityIdValidator for Guid
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

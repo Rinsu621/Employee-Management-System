@@ -3,6 +3,7 @@ using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Queries.Employees
 {
-    public record GetEmployeeByIdSpQuery(Guid EmployeeId) : IRequest<EmployeeResponseKeyless>;
+    public record GetEmployeeByIdSpQuery([property: FromRoute] Guid Id) : IRequest<EmployeeResponseKeyless>;
 
     public class GetEmployeeByIdSpHandler : IRequestHandler<GetEmployeeByIdSpQuery, EmployeeResponseKeyless>
     {
@@ -25,7 +26,7 @@ namespace EmployeeCRUD.Application.Queries.Employees
         public async Task<EmployeeResponseKeyless> Handle(GetEmployeeByIdSpQuery request, CancellationToken cancellationToken)
         {
             var employee = dbContext.Set<EmployeeResponseKeyless>()
-        .FromSqlRaw("EXEC GetEmployeeById @Id = {0}", request.EmployeeId) 
+        .FromSqlRaw("EXEC GetEmployeeById @Id = {0}", request.Id) 
         .AsNoTracking() 
         .AsEnumerable() 
         .FirstOrDefault(); 

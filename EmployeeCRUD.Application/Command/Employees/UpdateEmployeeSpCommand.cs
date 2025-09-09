@@ -4,6 +4,7 @@ using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Command.Employees
 {
-    public record UpdateEmployeeSpCommand(Guid Id, EmployeeDto employee) : IRequest<EmployeeUpdateKeyless>;
+    public record UpdateEmployeeSpCommand( Guid Id,  EmployeeDto employee) : IRequest<EmployeeUpdateKeyless>;
 
     public class UpdateEmployeeSpHandler : IRequestHandler<UpdateEmployeeSpCommand, EmployeeUpdateKeyless>
     {

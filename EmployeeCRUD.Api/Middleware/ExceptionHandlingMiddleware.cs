@@ -52,11 +52,6 @@ namespace EmployeeCRUD.Api.Middleware
                         error = existsEx.Message,
                         statusCode = context.Response.StatusCode
                     }),
-                    DbUpdateException dbEx when dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 2627 => JsonSerializer.Serialize(new
-                    {
-                        error = "Duplicate entry. Email already exists.",
-                        statusCode
-                    }),
                     KeyNotFoundException knfEx=>JsonSerializer.Serialize(new
                     {
                         errors=knfEx.Message,

@@ -3,6 +3,7 @@ using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Command.Employees
 {
-   public record  PatchEmployeeCommand(Guid Id, EmployeePatchDto Employee) : IRequest<EmployeeUpdateResponse>;
+    public record PatchEmployeeCommand(Guid Id, EmployeePatchDto Employee) : IRequest<EmployeeUpdateResponse>;
 
     public class PatchEmployeeHandler : IRequestHandler<PatchEmployeeCommand, EmployeeUpdateResponse>
     {
@@ -25,15 +26,6 @@ namespace EmployeeCRUD.Application.Command.Employees
         public async Task<EmployeeUpdateResponse> Handle(PatchEmployeeCommand request, CancellationToken cancellationToken)
         {
             var employee=await dbContext.Employees.FindAsync(request.Id);
-
-            if (request.Employee.EmpName != null)
-                employee.EmpName = request.Employee.EmpName;
-
-            if (request.Employee.Email != null)
-                employee.Email = request.Employee.Email;
-
-            if (request.Employee.Phone != null)
-                employee.Phone = request.Employee.Phone;
 
             dbContext.Employees.Update(employee);
             await dbContext.SaveChangesAsync(cancellationToken);

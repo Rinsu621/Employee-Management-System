@@ -2,6 +2,7 @@
 using EmployeeCRUD.Application.Dtos.Employees;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Command.Employees
 {
-    public record DeleteEmployeeSpCommand(Guid Id):IRequest<DeleteEmployeeResponse>;
+    public record DeleteEmployeeSpCommand([property:FromRoute] Guid Id):IRequest<DeleteEmployeeResponse>;
 
     public class DeleteEmployeeSpHandler:IRequestHandler<DeleteEmployeeSpCommand, DeleteEmployeeResponse>
     {

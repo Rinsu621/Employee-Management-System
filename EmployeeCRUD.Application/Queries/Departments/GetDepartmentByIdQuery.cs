@@ -1,6 +1,7 @@
 ﻿using EmployeeCRUD.Application.Dtos.Departments;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Queries.Departments
 {
-    public record GetDepartmentByIdQuery(Guid DepartmentId) : IRequest<DepartmentResultDto>;
+    public record GetDepartmentByIdQuery([property:FromRoute] Guid Id) : IRequest<DepartmentResultDto>;
     public class GetDepartmentByIdHandler : IRequestHandler<GetDepartmentByIdQuery, DepartmentResultDto>
     {
         private readonly AppDbContext dbContext;
@@ -22,7 +23,7 @@ namespace EmployeeCRUD.Application.Queries.Departments
 
         public async Task<DepartmentResultDto> Handle(GetDepartmentByIdQuery request, CancellationToken cancellationToken)
         {
-            var department = await dbContext.Departments.Include(d => d.Employees).FirstOrDefaultAsync(d => d.Id == request.DepartmentId, cancellationToken);
+            var department = await dbContext.Departments.Include(d => d.Employees).FirstOrDefaultAsync(d => d.Id == request.Id, cancellationToken);
 
 
             return new DepartmentResultDto

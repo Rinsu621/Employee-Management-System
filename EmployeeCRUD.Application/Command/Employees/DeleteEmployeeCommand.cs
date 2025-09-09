@@ -3,6 +3,7 @@ using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
