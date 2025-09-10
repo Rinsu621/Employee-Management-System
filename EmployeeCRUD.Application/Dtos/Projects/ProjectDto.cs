@@ -1,13 +1,12 @@
-﻿using EmployeeCRUD.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Infrastructure.Data.keyless
+namespace EmployeeCRUD.Application.Dtos.Projects
 {
-    public class ProjectCreateKeyless
+    public class ProjectDto
     {
         public Guid Id { get; set; }
         public string ProjectName { get; set; } = null!;
@@ -17,11 +16,12 @@ namespace EmployeeCRUD.Infrastructure.Data.keyless
         public decimal Budget { get; set; }
         public string Status { get; set; } = "Planned";
         public string? ClientName { get; set; }
-        public Department? Department { get; set; }
-        public Employee? ProjectManager { get; set; }
 
-        // List of team member names (strings)
+        // Only include relevant info to avoid circular refs
+        public string? DepartmentName { get; set; }
+        public string? ProjectManagerName { get; set; }
+
         public List<string> TeamMember { get; set; } = new List<string>();
+
     }
 }
-

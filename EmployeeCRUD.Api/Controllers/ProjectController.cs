@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Application.Command.Projects;
+﻿using EmployeeCRUD.Api.Filter;
+using EmployeeCRUD.Application.Command.Projects;
+using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Application.Queries.Projects;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +19,17 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetProjects()
+        //{
+        //    var result = await sender.Send(new GetProjectQuery());
+        //    return Ok(result);
+        //}
+        [ServiceFilter(typeof(ProjectTeamMemberFilter))]
         [HttpGet]
-        public async Task<IActionResult> GetProjects()
+        public async Task<IActionResult> GetProjects([FromQuery] Guid employeeId)
         {
-            var result = await sender.Send(new GetProjectQuery());
+            var result = await sender.Send(new GetProjectQuery(employeeId));
             return Ok(result);
         }
 
@@ -37,6 +46,27 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPatch("assign-project-manager")]
+        public async Task<IActionResult> AssignProjectManager(AssignProjectManagerCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPatch("update-status")]
+        public async Task<IActionResult> UpdateStatus(UpdateStatusCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPatch("assign-team-member")]
+        public async Task<IActionResult> AssignTeamMember( AssignTeamMemberCommand command)
+        {
+         
+                var result = await sender.Send(command);  
+                return Ok(result); 
+        }
 
     }
 }
