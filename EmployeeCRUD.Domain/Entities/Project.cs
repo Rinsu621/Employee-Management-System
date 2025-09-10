@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Domain.Common;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Domain.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace EmployeeCRUD.Domain.Entities
 
 
 
-
+        
 
 
 

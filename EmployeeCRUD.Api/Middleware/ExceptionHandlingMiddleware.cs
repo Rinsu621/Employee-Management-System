@@ -28,6 +28,7 @@ namespace EmployeeCRUD.Api.Middleware
                 var statusCode = ex switch
                 {
                     CustomValidationException => StatusCodes.Status400BadRequest,
+                    ArgumentException => StatusCodes.Status400BadRequest, // handle GuardClauses
                     InvalidOperationException => StatusCodes.Status400BadRequest,
                     KeyNotFoundException => StatusCodes.Status404NotFound,
                     UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
@@ -46,6 +47,11 @@ namespace EmployeeCRUD.Api.Middleware
                     {
                         errors = validationEx.Errors,
                         statusCode = context.Response.StatusCode
+                    }),
+                    ArgumentException argEx => JsonSerializer.Serialize(new
+                    {
+                        error = argEx.Message, // this will show the GuardClause message
+                        statusCode
                     }),
                     AlreadyExistsException existsEx => JsonSerializer.Serialize(new
                     {

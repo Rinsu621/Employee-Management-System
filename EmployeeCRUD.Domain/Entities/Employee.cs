@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Domain.Common;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Domain.Common;
+using EmployeeCRUD.Domain.Guards;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +11,34 @@ namespace EmployeeCRUD.Domain.Entities
 {
     public class Employee : BaseEntity
     {
-        public required string EmpName { get; set; }
-        public required string Email { get; set; }
-        public required string Phone { get; set; }
+        public  string EmpName { get;  set; }
+        public  string Email { get;  set; }
+        public  string Phone { get;  set; }
 
-        //Department Foreign Key
-        public Guid? DepartmentId { get; set; }
+        public Guid? DepartmentId { get;  set; }
 
-        public Department? Department { get; set; }
+        public Department? Department { get;  set; }
 
-        public ICollection<Project> Projects { get; set; } = new List<Project>();
+        public ICollection<Project> Projects { get;  set; } = new List<Project>();
 
-        public ICollection<Project> ManagedProjects { get; set; } = new List<Project>();
+        public ICollection<Project> ManagedProjects { get;  set; } = new List<Project>();
+
+        public Employee(string empName, string email, string phone)
+        {
+            EmployeeGuard.Validate(empName, email, phone); // centralized guard
+            EmpName = empName;
+            Email = email;
+            Phone = phone;
+            
+        }
+
+        public void UpdateDetails(string empName, string email, string phone, Guid? departmentId = null)
+        {
+            EmployeeGuard.Validate(empName, email, phone);
+            EmpName = empName;
+            Email = email;
+            Phone = phone;
+            DepartmentId = departmentId;
+        }
     }
 }

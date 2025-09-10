@@ -26,10 +26,12 @@ namespace EmployeeCRUD.Application.Command.Employees
         {
 
             var employee = await dbContext.Employees.FindAsync(request.Id);
-            employee.EmpName = request.Employee.EmpName;
-            employee.Email = request.Employee.Email;
-             employee.Phone = request.Employee.Phone;
 
+            employee.UpdateDetails(
+            request.Employee.EmpName,
+            request.Employee.Email,
+            request.Employee.Phone
+            );
             dbContext.Employees.Update(employee);
             await dbContext.SaveChangesAsync(cancellationToken);
             return new EmployeeUpdateResponse
