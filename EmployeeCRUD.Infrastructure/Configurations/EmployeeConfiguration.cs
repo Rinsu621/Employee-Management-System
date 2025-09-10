@@ -37,7 +37,7 @@ namespace EmployeeCRUD.Infrastructure.Configurations
 
             entity.HasMany(e => e.ManagedProjects)
                   .WithOne(p => p.ProjectManager)
-                  .HasForeignKey(p => p.ProjectMamagerId)
+                  .HasForeignKey(p => p.ProjectManagerId)
                   .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasMany(e => e.Projects)

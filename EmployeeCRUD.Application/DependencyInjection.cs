@@ -32,9 +32,8 @@ namespace EmployeeCRUD.Application
 
             services.AddScoped<EmployeeDtoValidator>();
             services.AddValidatorsFromAssembly(typeof(AddEmployeeCommandValidator).Assembly);
-            //services.AddValidatorsFromAssembly(typeof(EntityIdValidator<>).Assembly);
 
-            services.AddTransient<IValidator<Guid>, EntityIdValidator<Employee>>();  // Register EntityIdValidator for Guid
+            //services.AddTransient<IValidator<Guid>, EntityIdValidator<Employee>>();  // Register EntityIdValidator for Guid
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 

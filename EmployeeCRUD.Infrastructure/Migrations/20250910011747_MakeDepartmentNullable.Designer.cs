@@ -4,6 +4,7 @@ using EmployeeCRUD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeCRUD.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250910011747_MakeDepartmentNullable")]
+    partial class MakeDepartmentNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,7 +120,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("bit");
 
-                    b.Property<Guid?>("ProjectManagerId")
+                    b.Property<Guid?>("ProjectMamagerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ProjectName")
@@ -142,7 +145,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.HasIndex("ProjectManagerId");
+                    b.HasIndex("ProjectMamagerId");
 
                     b.HasIndex("ProjectName")
                         .IsUnique();
@@ -268,7 +271,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
 
                     b.HasOne("EmployeeCRUD.Domain.Entities.Employee", "ProjectManager")
                         .WithMany("ManagedProjects")
-                        .HasForeignKey("ProjectManagerId")
+                        .HasForeignKey("ProjectMamagerId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Department");

@@ -14,9 +14,9 @@ namespace EmployeeCRUD.Domain.Entities
         public required string Description { get; set; }
 
         //Relation with the Department i.e one to many
-        public Guid DepartmentId { get; set; }
+        public Guid? DepartmentId { get; set; }
 
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
@@ -26,7 +26,7 @@ namespace EmployeeCRUD.Domain.Entities
 
         public string Status { get; set; } = "Planned";
 
-        public Guid? ProjectMamagerId { get; set; }
+        public Guid? ProjectManagerId { get; set; }
 
         public Employee? ProjectManager { get; set; }
 
