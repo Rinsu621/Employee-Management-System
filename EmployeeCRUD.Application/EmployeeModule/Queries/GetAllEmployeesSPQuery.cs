@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Domain.Entities;
+﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using FluentValidation;
@@ -13,20 +15,31 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Queries
 {
-    public record GetAllEmployeesSPQuery() : IRequest<IEnumerable<EmployeeResponseKeyless>>;
+    public record GetAllEmployeesSPQuery() : IRequest<IEnumerable<EmployeeResponseDto>>;
 
 
-    public class GetAllEmployeesSPHandler : IRequestHandler<GetAllEmployeesSPQuery, IEnumerable<EmployeeResponseKeyless>>
+    public class GetAllEmployeesSPHandler : IRequestHandler<GetAllEmployeesSPQuery, IEnumerable<EmployeeResponseDto>>
     {
-        private readonly AppDbContext dbContext;
-        public GetAllEmployeesSPHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public GetAllEmployeesSPHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
-        public async Task<IEnumerable<EmployeeResponseKeyless>> Handle(GetAllEmployeesSPQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<EmployeeResponseDto>> Handle(GetAllEmployeesSPQuery request, CancellationToken cancellationToken)
         {
 
-            var employees = await dbContext.Set<EmployeeResponseKeyless>().FromSqlRaw($"EXECUTE GetAllEmployees").ToListAsync(cancellationToken);
+            var employees = (await dbContext.Employees
+            .FromSqlRaw("EXEC GetAllEmployees")
+            .AsNoTracking()
+             .ToListAsync(cancellationToken))
+            .Select(x => new EmployeeResponseDto
+            {
+                Id = x.Id,
+                 Name = x.EmpName,
+                 Email = x.Email,
+                 Phone = x.Phone,
+                 CreatedAt = x.CreatedAt
+             });
             return employees;
 
         }

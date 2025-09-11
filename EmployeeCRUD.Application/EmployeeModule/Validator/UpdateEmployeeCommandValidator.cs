@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
     public class UpdateEmployeeCommandValidator:AbstractValidator<UpdateEmployeeCommand>
     {
-        private readonly AppDbContext dbContext;
-        public UpdateEmployeeCommandValidator(AppDbContext _dbContext, EmployeeDtoValidator employeeValidator)
+        private readonly IAppDbContext dbContext;
+        public UpdateEmployeeCommandValidator(IAppDbContext _dbContext, EmployeeDtoValidator employeeValidator)
         {
             dbContext = _dbContext;
             RuleFor(x => x.Id)

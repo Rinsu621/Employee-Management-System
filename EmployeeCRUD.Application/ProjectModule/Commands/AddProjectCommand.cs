@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Domain.Entities;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.ProjectModule.Dtos;
+using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
@@ -10,17 +12,17 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.ProjectModule.Commands
 {
-    public record AddProjectCommand(string ProjectName, string Description, DateTime StartDate, DateTime? EndDate, decimal Budget, string Status, string? ClientName): IRequest<ProjectCreateKeyless>;
+    public record AddProjectCommand(string ProjectName, string Description, DateTime StartDate, DateTime? EndDate, decimal Budget, string Status, string? ClientName): IRequest<ProjectCreateDto>;
 
-    public class  AddProjectHandler:IRequestHandler<AddProjectCommand, ProjectCreateKeyless>
+    public class  AddProjectHandler:IRequestHandler<AddProjectCommand, ProjectCreateDto>
     {
-        private readonly AppDbContext dbContext;
-        public  AddProjectHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public  AddProjectHandler(IAppDbContext _dbContext)
         {
            dbContext = _dbContext;
         }
 
-        public async Task<ProjectCreateKeyless > Handle(AddProjectCommand request, CancellationToken cancellationToken)
+        public async Task<ProjectCreateDto> Handle(AddProjectCommand request, CancellationToken cancellationToken)
         {
             var project = new Project
             {
@@ -34,7 +36,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
             };
             dbContext.Projects.Add(project);
             await dbContext.SaveChangesAsync(cancellationToken);
-            var result = new ProjectCreateKeyless
+            var result = new ProjectCreateDto
             {
                 Id = project.Id,
                 ProjectName = project.ProjectName,

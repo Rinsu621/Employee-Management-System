@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Domain.Entities;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.ProjectModule.Dtos;
+using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
@@ -11,18 +13,18 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.ProjectModule.Commands
 {
-    public record AssignDepartmentInProjectCommand(Guid ProjectId, Guid DepartmentId): IRequest<ProjectDepartmentResponse>;
+    public record AssignDepartmentInProjectCommand(Guid ProjectId, Guid DepartmentId): IRequest<ProjectDepartmentDto>;
 
-    public class AssignDepartmentInProjectHandler : IRequestHandler<AssignDepartmentInProjectCommand, ProjectDepartmentResponse>
+    public class AssignDepartmentInProjectHandler : IRequestHandler<AssignDepartmentInProjectCommand, ProjectDepartmentDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public AssignDepartmentInProjectHandler(AppDbContext dbContext)
+        public AssignDepartmentInProjectHandler(IAppDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public async Task<ProjectDepartmentResponse> Handle(AssignDepartmentInProjectCommand request, CancellationToken cancellationToken)
+        public async Task<ProjectDepartmentDto> Handle(AssignDepartmentInProjectCommand request, CancellationToken cancellationToken)
         {
             var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken);
             var department = await dbContext.Departments.FirstOrDefaultAsync(d => d.Id == request.DepartmentId, cancellationToken);
@@ -30,7 +32,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
             dbContext.Projects.Update(project);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return new ProjectDepartmentResponse
+            return new ProjectDepartmentDto
             {
                 ProjectName = project.ProjectName,
                 DepartmentName = department.DeptName

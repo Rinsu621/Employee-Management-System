@@ -1,5 +1,6 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Guards;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
@@ -18,8 +19,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class UpdateEmployeeHandler : IRequestHandler<UpdateEmployeeCommand, EmployeeUpdateResponse>
     {
-       private readonly AppDbContext dbContext;
-        public UpdateEmployeeHandler( AppDbContext _dbContext)
+       private readonly IAppDbContext dbContext;
+        public UpdateEmployeeHandler( IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

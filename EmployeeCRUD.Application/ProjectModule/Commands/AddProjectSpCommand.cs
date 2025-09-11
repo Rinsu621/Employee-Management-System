@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.ProjectModule.Dtos;
+using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,21 +12,31 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.ProjectModule.Commands
 {
-    public record AddProjectSpCommand(string ProjectName, string Description, DateTime StartDate, DateTime? EndDate, decimal Budget, string Status, string? ClientName):IRequest<ProjectCreateKeyless>;
+    public record AddProjectSpCommand(string ProjectName, string Description, DateTime StartDate, DateTime? EndDate, decimal Budget, string Status, string? ClientName):IRequest<ProjectCreateDto>;
 
-    public class AddProjectSpHandler:IRequestHandler<AddProjectSpCommand, ProjectCreateKeyless>
+    public class AddProjectSpHandler:IRequestHandler<AddProjectSpCommand, ProjectCreateDto>
     {
-        private readonly AppDbContext dbContext;
-        public AddProjectSpHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public AddProjectSpHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
-        public async Task<ProjectCreateKeyless> Handle(AddProjectSpCommand request, CancellationToken cancellationToken)
+        public async Task<ProjectCreateDto> Handle(AddProjectSpCommand request, CancellationToken cancellationToken)
         {
-            var result = dbContext.Set<ProjectCreateKeyless>()
-                 .FromSqlInterpolated($"EXEC CreateProject @ProjectName={request.ProjectName}, @Description={request.Description}, @StartDate={request.StartDate}, @EndDate={request.EndDate}, @Budget={request.Budget}, @Status={request.Status}, @ClientName={request.ClientName}")
+            var result = dbContext.Projects
+                 .FromSqlInterpolated($"EXEC CreateProject {request.ProjectName}, {request.Description}, {request.StartDate}, {request.EndDate}, {request.Budget}, {request.Status}, {request.ClientName}")
                  .AsNoTracking()
-                 .AsEnumerable()
+                 .Select(p=> new ProjectCreateDto
+                 {
+                     Id = p.Id,
+                     ProjectName = p.ProjectName,
+                     Description = p.Description,
+                     StartDate = p.StartDate,
+                     EndDate = p.EndDate,
+                     Budget = p.Budget,
+                     Status = p.Status,
+                     ClientName = p.ClientName
+                 })
                  .FirstOrDefault();
 
             return  result;

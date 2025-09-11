@@ -1,6 +1,6 @@
-﻿using EmployeeCRUD.Application.Department.Command;
-using EmployeeCRUD.Application.Department.Queries;
+﻿
 using EmployeeCRUD.Application.DepartmentModule.Command;
+using EmployeeCRUD.Application.DepartmentModule.Query;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

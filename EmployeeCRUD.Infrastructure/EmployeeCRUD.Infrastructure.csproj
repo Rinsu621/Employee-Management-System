@@ -23,4 +23,8 @@
     <ProjectReference Include="..\EmployeeCRUD.Domain\EmployeeCRUD.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Scripts\StoredProcedures\" />
+  </ItemGroup>
+
 </Project>

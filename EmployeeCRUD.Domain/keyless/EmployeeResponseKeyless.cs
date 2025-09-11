@@ -13,7 +13,7 @@ namespace EmployeeCRUD.Infrastructure.Data.Keyless
 
         public required string Email { get; set; }
         public required string Phone { get; set; }
-        public string? DepartmentName { get; set; } // nullable
+        public string? DepartmentName { get; set; } 
         public DateTime CreatedAt { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(
         DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time"));
     }

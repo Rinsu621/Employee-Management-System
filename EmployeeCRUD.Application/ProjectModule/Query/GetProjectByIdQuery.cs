@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.ProjectModule.Dtos;
+using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,23 +12,23 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.ProjectModule.Query
 {
-    public record GetProjectByIdQuery(Guid Id) : IRequest<ProjectCreateKeyless>;
+    public record GetProjectByIdQuery(Guid Id) : IRequest<ProjectCreateDto>;
 
-    public class GetProjectByIdHandler : IRequestHandler<GetProjectByIdQuery, ProjectCreateKeyless>
+    public class GetProjectByIdHandler : IRequestHandler<GetProjectByIdQuery, ProjectCreateDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public GetProjectByIdHandler(AppDbContext _dbContext)
+        public GetProjectByIdHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
 
-        public async Task<ProjectCreateKeyless> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ProjectCreateDto> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
         {
 
             var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.Id == request.Id);
 
-            return new ProjectCreateKeyless
+            return new ProjectCreateDto
             {
                 Id = project.Id,
                 ProjectName = project.ProjectName,

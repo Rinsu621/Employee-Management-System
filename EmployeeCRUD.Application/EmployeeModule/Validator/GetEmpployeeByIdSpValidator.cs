@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Queries;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
     public class GetEmpployeeByIdSpValidator:AbstractValidator<GetEmployeeByIdSpQuery>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
         
-        public GetEmpployeeByIdSpValidator(AppDbContext _dbContext)
+        public GetEmpployeeByIdSpValidator(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(x => x.Id)

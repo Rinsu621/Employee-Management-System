@@ -1,5 +1,5 @@
-﻿using EmployeeCRUD.Application.Department.Dtos;
-using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.DepartmentModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +9,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.Department.Queries
+namespace EmployeeCRUD.Application.DepartmentModule.Query
 {
     public record GetDepartmentByIdQuery([property:FromRoute] Guid Id) : IRequest<DepartmentResultDto>;
     public class GetDepartmentByIdHandler : IRequestHandler<GetDepartmentByIdQuery, DepartmentResultDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public GetDepartmentByIdHandler(AppDbContext _dbContext)
+        public GetDepartmentByIdHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

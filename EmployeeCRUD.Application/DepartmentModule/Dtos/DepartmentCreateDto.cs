@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.Department.Dtos
+namespace EmployeeCRUD.Application.DepartmentModule.Dtos
 {
     public class DepartmentCreateDto
     {

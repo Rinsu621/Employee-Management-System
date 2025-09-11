@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -17,8 +18,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetAllEmployeesHandler : IRequestHandler<GetAllEmployeesQuery, IEnumerable<EmployeeResponseDto>>
     {
-        private readonly AppDbContext dbContext;
-        public GetAllEmployeesHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public GetAllEmployeesHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
-using EmployeeCRUD.Application.Department.Dtos;
+using EmployeeCRUD.Application.DepartmentModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Infrastructure.Data;
+using EmployeeCRUD.Application.Interface;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,15 +10,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.Department.Command
+namespace EmployeeCRUD.Application.DepartmentModule.Command
 {
     public record UpdateDepartmentCommand(Guid DepartmentId, DepartmentCreateDto department): IRequest<DepartmentResultDto>;
 
     public class UpdateDepartmentHandler : IRequestHandler<UpdateDepartmentCommand, DepartmentResultDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public UpdateDepartmentHandler(AppDbContext _dbContext)
+        public UpdateDepartmentHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

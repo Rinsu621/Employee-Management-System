@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
     public class PatchEmployeeSpValidator : AbstractValidator<PatchEmployeeSpCommand>
     {
-        private readonly AppDbContext dbContext;
-        public PatchEmployeeSpValidator(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public PatchEmployeeSpValidator(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(x => x.Id)
@@ -28,7 +29,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
             RuleFor(x => x.employee.EmpName)
              .NotEmpty().WithMessage("Employee name is required.")
              .MaximumLength(100).WithMessage("Employee name must not exceed 100 characters.")
-             .When(x => !string.IsNullOrEmpty(x.employee.EmpName)); // Only validate if EmpName is provided
+             .When(x => !string.IsNullOrEmpty(x.employee.EmpName));
 
             RuleFor(x => x.employee.Email)
                .EmailAddress().WithMessage("Invalid email format.")

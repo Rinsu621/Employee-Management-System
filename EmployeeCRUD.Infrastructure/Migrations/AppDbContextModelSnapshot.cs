@@ -44,7 +44,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.HasIndex("DeptName")
                         .IsUnique();
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Employee", b =>
@@ -84,7 +84,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Project", b =>
@@ -147,7 +147,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.HasIndex("ProjectName")
                         .IsUnique();
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.Keyless.EmployeeResponseKeyless", b =>
@@ -173,7 +173,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("EmployeeResponseKeyless");
+                    b.ToTable("EmployeeResponseKeyless", (string)null);
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.EmployeeUpdateKeyless", b =>
@@ -199,7 +199,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.ToTable("EmployeeUpdateKeyless");
+                    b.ToTable("EmployeeUpdateKeyless", (string)null);
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.ProjectCreateKeyless", b =>
@@ -245,7 +245,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
 
                     b.HasIndex("ProjectManagerId");
 
-                    b.ToTable("ProjectCreateKeyless");
+                    b.ToTable("ProjectCreateKeyless", (string)null);
                 });
 
             modelBuilder.Entity("EmployeeProject", b =>

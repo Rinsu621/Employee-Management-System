@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
-using EmployeeCRUD.Application.Department.Dtos;
-using EmployeeCRUD.Infrastructure.Data;
+using EmployeeCRUD.Application.DepartmentModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,14 +9,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.Department.Command
+namespace EmployeeCRUD.Application.DepartmentModule.Command
 {
     public record DeleteDepartmentCommand([property:FromRoute]Guid Id) : IRequest<DeleteDepartmentResponse>;
 
     public class DeleteDepartmentHandler: IRequestHandler<DeleteDepartmentCommand, DeleteDepartmentResponse>
     {
-        private readonly AppDbContext dbContext;
-        public DeleteDepartmentHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public DeleteDepartmentHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

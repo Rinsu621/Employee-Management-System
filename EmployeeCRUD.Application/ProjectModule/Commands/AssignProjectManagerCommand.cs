@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.ProjectModule.Dtos;
+using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +12,18 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.ProjectModule.Commands
 {
-    public record AssignProjectManagerCommand(Guid ProjectId, Guid EmployeeId) : IRequest<ProjectManagerAssignmentResponse>;
+    public record AssignProjectManagerCommand(Guid ProjectId, Guid EmployeeId) : IRequest<ProjectManagerAssignmentDto>;
 
-    public class AssignProjectManagerHandler : IRequestHandler<AssignProjectManagerCommand, ProjectManagerAssignmentResponse>
+    public class AssignProjectManagerHandler : IRequestHandler<AssignProjectManagerCommand, ProjectManagerAssignmentDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public AssignProjectManagerHandler(AppDbContext _dbContext)
+        public AssignProjectManagerHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
 
-        public async Task<ProjectManagerAssignmentResponse> Handle(AssignProjectManagerCommand request, CancellationToken cancellationToken)
+        public async Task<ProjectManagerAssignmentDto> Handle(AssignProjectManagerCommand request, CancellationToken cancellationToken)
         {
             var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken);
             var employee = await dbContext.Employees.FirstOrDefaultAsync(e => e.Id == request.EmployeeId, cancellationToken);
@@ -31,7 +33,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
             dbContext.Projects.Update(project);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return new ProjectManagerAssignmentResponse
+            return new ProjectManagerAssignmentDto
             {
 
                 ProjectName = project.ProjectName,

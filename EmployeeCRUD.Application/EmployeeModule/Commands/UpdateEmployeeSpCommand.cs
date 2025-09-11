@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record UpdateEmployeeSpCommand( Guid Id,  EmployeeDto employee) : IRequest<EmployeeUpdateKeyless>;
+    public record UpdateEmployeeSpCommand( Guid Id,  EmployeeDto employee) : IRequest<EmployeeUpdateResponse>;
 
-    public class UpdateEmployeeSpHandler : IRequestHandler<UpdateEmployeeSpCommand, EmployeeUpdateKeyless>
+    public class UpdateEmployeeSpHandler : IRequestHandler<UpdateEmployeeSpCommand, EmployeeUpdateResponse>
     {
         private readonly AppDbContext dbContext;
 
@@ -25,14 +25,21 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
             dbContext = _dbContext;
         }
 
-        public async Task<EmployeeUpdateKeyless> Handle(UpdateEmployeeSpCommand request, CancellationToken cancellationToken)
+        public async Task<EmployeeUpdateResponse> Handle(UpdateEmployeeSpCommand request, CancellationToken cancellationToken)
         {
 
-            var updatedEmployee = dbContext.Set<EmployeeUpdateKeyless>()
+            var updatedEmployee =await dbContext.Employees
                 .FromSqlInterpolated($"EXEC UpdateEmployee @Id={request.Id}, @EmpName={request.employee.EmpName}, @Email={request.employee.Email}, @Phone={request.employee.Phone}")
                 .AsNoTracking()
-                .AsEnumerable()
-                .FirstOrDefault();
+                .Select(x=> new EmployeeUpdateResponse
+                {
+                    Id = x.Id,
+                    Name = x.EmpName,
+                    Email = x.Email,
+                    Phone = x.Phone,
+                    UpdatedAt = x.UpdatedAt
+                })
+                .FirstOrDefaultAsync(cancellationToken);
             return updatedEmployee;
         }
     }

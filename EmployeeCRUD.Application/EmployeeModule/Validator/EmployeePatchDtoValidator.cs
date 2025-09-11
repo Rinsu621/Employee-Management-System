@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
     public class EmployeePatchDtoValidator : AbstractValidator<EmployeePatchDto>
     {
-        private readonly AppDbContext dbContext;
-        public EmployeePatchDtoValidator(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public EmployeePatchDtoValidator(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(e => e.EmpName)

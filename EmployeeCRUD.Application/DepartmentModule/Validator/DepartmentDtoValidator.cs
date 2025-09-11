@@ -1,5 +1,5 @@
-﻿using EmployeeCRUD.Application.Department.Dtos;
-using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.DepartmentModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,13 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.Department.Validator
+namespace EmployeeCRUD.Application.DepartmentModule.Validator
 {
     public class DepartmentDtoValidator: AbstractValidator<DepartmentCreateDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public DepartmentDtoValidator(AppDbContext _dbContext)
+        public DepartmentDtoValidator(IAppDbContext _dbContext)
         {
             dbContext=_dbContext;
             RuleFor(d => d.DeptName)

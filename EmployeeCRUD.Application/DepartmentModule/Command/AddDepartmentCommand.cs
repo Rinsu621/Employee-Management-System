@@ -1,17 +1,13 @@
-﻿using EmployeeCRUD.Application.Department.Dtos;
-using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Application.Exceptions;
-
-using EmployeeCRUD.Infrastructure.Data;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EmployeeCRUD.Application.DepartmentModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 
 namespace EmployeeCRUD.Application.DepartmentModule.Command
 {
@@ -20,8 +16,8 @@ namespace EmployeeCRUD.Application.DepartmentModule.Command
     public class  AddDepartmentHandler:IRequestHandler<AddDepartmentCommand , DepartmentResultDto>
     {
         
-           private readonly AppDbContext dbContext;
-            public AddDepartmentHandler(AppDbContext _dbContext, IValidator<DepartmentCreateDto> _validator)
+           private readonly IAppDbContext dbContext;
+            public AddDepartmentHandler(IAppDbContext _dbContext, IValidator<DepartmentCreateDto> _validator)
              {
                 dbContext = _dbContext;
              }
