@@ -14,11 +14,10 @@ namespace EmployeeCRUD.Infrastructure.Data
     {
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
-        public DbSet<Project> Project { get; set; }
+        public DbSet<Project> Projects { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //This say go to the assesmbly i.e the project where AppDbContext lies and find all configure entities and apply automatically
-            //modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
             modelBuilder.Entity<EmployeeResponseKeyless>().HasNoKey();
             modelBuilder.Entity<EmployeeUpdateKeyless>().HasNoKey();

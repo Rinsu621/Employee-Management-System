@@ -1,4 +1,4 @@
-﻿using EmployeeCRUD.Application.Command.Departments;
+﻿using EmployeeCRUD.Application.Department.Command;
 using EmployeeCRUD.Application.Dtos.Departments;
 using EmployeeCRUD.Application.Queries.Departments;
 using MediatR;

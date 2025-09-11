@@ -1,6 +1,6 @@
 ﻿using EmployeeCRUD.Api.Filter;
-using EmployeeCRUD.Application.Command.Projects;
 using EmployeeCRUD.Application.Exceptions;
+using EmployeeCRUD.Application.ProjectModule.Commands;
 using EmployeeCRUD.Application.Queries.Projects;
 using MediatR;
 using Microsoft.AspNetCore.Http;

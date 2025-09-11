@@ -1,8 +1,6 @@
-﻿using EmployeeCRUD.Application.Command.Employees;
-using EmployeeCRUD.Application.Dtos.Employees;
+﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Application.EmployeeModule.Validator;
 using EmployeeCRUD.Application.Pipeline;
-using EmployeeCRUD.Application.Validator;
-using EmployeeCRUD.Application.Validator.EmployeesValidator;
 using EmployeeCRUD.Domain.Common;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;

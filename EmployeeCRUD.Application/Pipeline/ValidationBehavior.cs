@@ -1,5 +1,4 @@
 ﻿using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Application.Validator;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;

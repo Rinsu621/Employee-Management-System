@@ -23,22 +23,6 @@ namespace EmployeeCRUD.Domain.Entities
 
         public ICollection<Project> ManagedProjects { get;  set; } = new List<Project>();
 
-        public Employee(string empName, string email, string phone)
-        {
-            EmployeeGuard.Validate(empName, email, phone); // centralized guard
-            EmpName = empName;
-            Email = email;
-            Phone = phone;
-            
-        }
-
-        public void UpdateDetails(string empName, string email, string phone, Guid? departmentId = null)
-        {
-            EmployeeGuard.Validate(empName, email, phone);
-            EmpName = empName;
-            Email = email;
-            Phone = phone;
-            DepartmentId = departmentId;
-        }
+       
     }
 }
