@@ -33,7 +33,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Validator
             RuleFor(x => x)
                .MustAsync(async (command, cancellation) =>
                {
-                   var project = await dbContext.Project
+                   var project = await dbContext.Projects
                        .Include(p => p.TeamMember)  
                        .FirstOrDefaultAsync(p => p.Id == command.ProjectId, cancellation);
 

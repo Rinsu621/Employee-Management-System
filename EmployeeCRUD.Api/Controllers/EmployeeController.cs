@@ -1,6 +1,6 @@
-﻿using EmployeeCRUD.Application.Dtos.Employees;
+﻿
 using EmployeeCRUD.Application.EmployeeModule.Commands;
-using EmployeeCRUD.Application.Queries.Employees;
+using EmployeeCRUD.Application.EmployeeModule.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

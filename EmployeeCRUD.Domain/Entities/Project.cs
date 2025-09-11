@@ -35,12 +35,5 @@ namespace EmployeeCRUD.Domain.Entities
 
         public bool IsArchived { get; set; } = false;
 
-
-
-        
-
-
-
-
     }
 }

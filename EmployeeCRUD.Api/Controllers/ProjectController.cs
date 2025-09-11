@@ -1,7 +1,7 @@
 ﻿using EmployeeCRUD.Api.Filter;
 using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Application.ProjectModule.Commands;
-using EmployeeCRUD.Application.Queries.Projects;
+using EmployeeCRUD.Application.ProjectModule.Query;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,18 +25,26 @@ namespace EmployeeCRUD.Api.Controllers
         //    var result = await sender.Send(new GetProjectQuery());
         //    return Ok(result);
         //}
-        [ServiceFilter(typeof(ProjectTeamMemberFilter))]
+        //[ServiceFilter(typeof(ProjectTeamMemberFilter))]
+        //[HttpGet]
+        //public async Task<IActionResult> GetProjects([FromQuery] Guid employeeId)
+        //{
+        //    var result = await sender.Send(new GetProjectQuery(employeeId));
+        //    return Ok(result);
+        //}
+
+        //[ServiceFilter(typeof(ProjectTeamMemberFilter))]
         [HttpGet]
-        public async Task<IActionResult> GetProjects([FromQuery] Guid employeeId)
+        public async Task<IActionResult> GetProjects()
         {
-            var result = await sender.Send(new GetProjectQuery(employeeId));
+            var result = await sender.Send(new GetProjectQuery());
             return Ok(result);
         }
 
         [HttpGet("get-by-id")]
         public async Task<IActionResult> GetProjectById(Guid id)
-        { 
-        var result = await sender.Send(new GetProjectByIdQuery(id));
+        {
+            var result = await sender.Send(new GetProjectByIdQuery(id));
             return Ok(result);
         }
         [HttpPatch("assign-department")]
@@ -61,12 +69,19 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
         [HttpPatch("assign-team-member")]
-        public async Task<IActionResult> AssignTeamMember( AssignTeamMemberCommand command)
+        public async Task<IActionResult> AssignTeamMember(AssignTeamMemberCommand command)
         {
-         
-                var result = await sender.Send(command);  
-                return Ok(result); 
+
+            var result = await sender.Send(command);
+            return Ok(result);
         }
 
+        //Using SP
+        [HttpPost("add-project-sp")]
+        public async Task<IActionResult> AddProjectUsingSP(AddProjectSpCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
     }
 }

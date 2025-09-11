@@ -1,6 +1,7 @@
 ﻿using EmployeeCRUD.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace EmployeeCRUD.Infrastructure.Data.keyless
         public Employee? ProjectManager { get; set; }
 
         // List of team member names (strings)
+        [NotMapped]
         public List<string> TeamMember { get; set; } = new List<string>();
     }
 }

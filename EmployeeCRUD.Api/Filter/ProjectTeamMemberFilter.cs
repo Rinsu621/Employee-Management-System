@@ -26,7 +26,7 @@ namespace EmployeeCRUD.Api.Filter
             }
 
             // Fetch projects where the employee is a team member
-            var projects = await dbContext.Project
+            var projects = await dbContext.Projects
                 .Include(p => p.TeamMember)
                 .Where(p => p.TeamMember.Any(e => e.Id == employeeId))
                 .ToListAsync();
