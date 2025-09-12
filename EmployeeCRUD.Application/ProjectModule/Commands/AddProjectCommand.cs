@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
@@ -14,8 +15,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
     public class  AddProjectHandler:IRequestHandler<AddProjectCommand, ProjectCreateKeyless>
     {
-        private readonly AppDbContext dbContext;
-        public  AddProjectHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public  AddProjectHandler(IAppDbContext _dbContext)
         {
            dbContext = _dbContext;
         }

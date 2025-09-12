@@ -1,5 +1,7 @@
-﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -17,9 +19,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public class DeleteEmployeeHandler : IRequestHandler<DeleteEmployeeCommand, DeleteEmployeeResponse>
     {
        
-        private readonly AppDbContext dbContext;
+        private readonly Domain.Interface.IAppDbContext dbContext;
 
-        public DeleteEmployeeHandler( AppDbContext _dbContext)
+        public DeleteEmployeeHandler(Domain.Interface.IAppDbContext _dbContext)
         {
            
             dbContext = _dbContext;
@@ -28,8 +30,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
         {
             var existingEmployee = await dbContext.Employees.FindAsync(request.Id);
+            Guard.Against.Null(existingEmployee, nameof(existingEmployee), $"Employee with Id '{request.Id}' not found.");
             dbContext.Employees.Remove(existingEmployee);
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return new DeleteEmployeeResponse
             {

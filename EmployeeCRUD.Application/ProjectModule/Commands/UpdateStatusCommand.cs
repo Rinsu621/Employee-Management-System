@@ -1,13 +1,8 @@
 ﻿using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using EmployeeCRUD.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.ProjectModule.Commands
 {
@@ -15,8 +10,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
     public class UpdateStatusHandler:IRequestHandler<UpdateStatusCommand, Project>
     {
-        private readonly AppDbContext dbContext;
-        public UpdateStatusHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public UpdateStatusHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
@@ -26,7 +21,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
             var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.Id == request.id, cancellationToken);
 
             project.Status = request.status;
-            dbContext.Update(project);
+            dbContext.Projects.Update(project);
             await dbContext.SaveChangesAsync(cancellationToken);
 
             return project;

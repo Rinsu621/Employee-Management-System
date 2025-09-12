@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,8 @@ namespace EmployeeCRUD.Api.Filter
 {
     public class ProjectTeamMemberFilter:IAsyncActionFilter
     {
-        private readonly AppDbContext dbContext;
-        public ProjectTeamMemberFilter(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public ProjectTeamMemberFilter(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

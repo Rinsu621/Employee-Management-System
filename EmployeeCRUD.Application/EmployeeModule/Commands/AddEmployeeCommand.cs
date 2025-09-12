@@ -1,5 +1,6 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -17,28 +18,23 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommand, EmployeeResponseDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly Domain.Interface.IAppDbContext dbContext;
 
-        public AddEmployeeHandler(AppDbContext _dbContext)
+        public AddEmployeeHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
 
         public async Task<EmployeeResponseDto> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
-        {
-            
+        {  
             var entity = new  Employee
             {
                 EmpName = request.employee.EmpName,
                 Email = request.employee.Email,
                 Phone = request.employee.Phone
             };
-
-            // Add to the database
             dbContext.Employees.Add(entity);
             await dbContext.SaveChangesAsync(cancellationToken);
-
-            // Return a response DTO
             return new EmployeeResponseDto
             {
                 Id = entity.Id,

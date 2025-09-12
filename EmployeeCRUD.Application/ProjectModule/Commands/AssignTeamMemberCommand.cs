@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +15,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
     public class AssignTeamMemberHandler:IRequestHandler<AssignTeamMemberCommand, TeamMemberAssignmentResponse>
     {
-        private readonly AppDbContext dbContext;
-        public AssignTeamMemberHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public AssignTeamMemberHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

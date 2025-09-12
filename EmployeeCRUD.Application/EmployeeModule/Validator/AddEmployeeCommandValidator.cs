@@ -1,5 +1,6 @@
 ﻿
 using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,6 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
     public class AddEmployeeCommandValidator:AbstractValidator<AddEmployeeCommand>
 
     {
-        private readonly AppDbContext dbContext;
         public AddEmployeeCommandValidator(EmployeeDtoValidator employeeValidator)
         {
             //dbContext=_dbContext;

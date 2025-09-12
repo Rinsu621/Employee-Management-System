@@ -1,6 +1,8 @@
-﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Domain.Guards;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -18,8 +20,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class UpdateEmployeeHandler : IRequestHandler<UpdateEmployeeCommand, EmployeeUpdateResponse>
     {
-       private readonly AppDbContext dbContext;
-        public UpdateEmployeeHandler( AppDbContext _dbContext)
+       private readonly Domain.Interface.IAppDbContext dbContext;
+        public UpdateEmployeeHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
@@ -27,7 +29,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         {
 
             var employee = await dbContext.Employees.FindAsync(request.Id);
-            EmployeeGuard.Validate(request.Employee.EmpName, request.Employee.Email, request.Employee.Phone);
+            Guard.Against.Null(employee, nameof(employee), $"Employee with Id '{request.Id}' not found.");
+
             employee.EmpName= request.Employee.EmpName;
             employee.Email = request.Employee.Email;
             employee.Phone = request.Employee.Phone;

@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.Department.Dtos;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +16,8 @@ namespace EmployeeCRUD.Application.Department.Command
 
     public class DeleteDepartmentHandler: IRequestHandler<DeleteDepartmentCommand, DeleteDepartmentResponse>
     {
-        private readonly AppDbContext dbContext;
-        public DeleteDepartmentHandler(AppDbContext _dbContext)
+        private readonly Domain.Interface.IAppDbContext dbContext;
+        public DeleteDepartmentHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
@@ -26,7 +27,7 @@ namespace EmployeeCRUD.Application.Department.Command
            Guard.Against.Null(existingDepartment, nameof(existingDepartment), $"Department with Id '{request.Id}' not found.");
 
             dbContext.Departments.Remove(existingDepartment);
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
             return new DeleteDepartmentResponse
             {
                 Success = true,

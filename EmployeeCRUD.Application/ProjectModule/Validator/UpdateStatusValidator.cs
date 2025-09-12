@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.ProjectModule.Commands;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Validator
 {
     public class UpdateStatusValidator:AbstractValidator<UpdateStatusCommand>
     {
-        private readonly AppDbContext dbContext;
-        public UpdateStatusValidator(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public UpdateStatusValidator(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(x => x.id)

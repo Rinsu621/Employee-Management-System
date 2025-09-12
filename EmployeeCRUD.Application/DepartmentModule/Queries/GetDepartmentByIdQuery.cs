@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Application.Department.Dtos;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Application.Department.Dtos;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +16,9 @@ namespace EmployeeCRUD.Application.Department.Queries
     public record GetDepartmentByIdQuery([property:FromRoute] Guid Id) : IRequest<DepartmentResultDto>;
     public class GetDepartmentByIdHandler : IRequestHandler<GetDepartmentByIdQuery, DepartmentResultDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly Domain.Interface.IAppDbContext dbContext;
 
-        public GetDepartmentByIdHandler(AppDbContext _dbContext)
+        public GetDepartmentByIdHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
@@ -24,8 +26,7 @@ namespace EmployeeCRUD.Application.Department.Queries
         public async Task<DepartmentResultDto> Handle(GetDepartmentByIdQuery request, CancellationToken cancellationToken)
         {
             var department = await dbContext.Departments.Include(d => d.Employees).FirstOrDefaultAsync(d => d.Id == request.Id, cancellationToken);
-
-
+            Guard.Against.Null(department, nameof(department), $"Department with Id '{request.Id}' not found.");
             return new DepartmentResultDto
             {
                 Id = department.Id,

@@ -1,5 +1,5 @@
 ﻿using EmployeeCRUD.Application.ProjectModule.Query;
-
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +14,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Validator
   
     public class GetProjectByIdValidator : AbstractValidator<GetProjectByIdQuery>
     {
-        private readonly AppDbContext dbContext;
-        public GetProjectByIdValidator(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public GetProjectByIdValidator(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(x => x.Id)

@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,21 +16,19 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetEmployeeByIdSpHandler : IRequestHandler<GetEmployeeByIdSpQuery, EmployeeResponseKeyless>
     {
-        private readonly AppDbContext dbContext;
-        public GetEmployeeByIdSpHandler(AppDbContext _dbContext)
+        private readonly Domain.Interface.IAppDbContext dbContext;
+        public GetEmployeeByIdSpHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
 
         public async Task<EmployeeResponseKeyless> Handle(GetEmployeeByIdSpQuery request, CancellationToken cancellationToken)
         {
-            var employee = dbContext.Set<EmployeeResponseKeyless>()
-        .FromSqlRaw("EXEC GetEmployeeById @Id = {0}", request.Id) 
-        .AsNoTracking() 
-        .AsEnumerable() 
-        .FirstOrDefault(); 
-
-           
+            var employee =await dbContext.EmployeeResponseKeyless
+            .FromSqlRaw("EXEC GetEmployeeById @Id = {0}", request.Id) 
+            .AsNoTracking() 
+            .FirstOrDefaultAsync(); 
+        
             return employee;
         }
 

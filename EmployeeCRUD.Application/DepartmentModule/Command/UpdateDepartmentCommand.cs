@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.Department.Dtos;
 using EmployeeCRUD.Application.Exceptions;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +17,9 @@ namespace EmployeeCRUD.Application.Department.Command
 
     public class UpdateDepartmentHandler : IRequestHandler<UpdateDepartmentCommand, DepartmentResultDto>
     {
-        private readonly AppDbContext dbContext;
+        private readonly Domain.Interface.IAppDbContext dbContext;
 
-        public UpdateDepartmentHandler(AppDbContext _dbContext)
+        public UpdateDepartmentHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

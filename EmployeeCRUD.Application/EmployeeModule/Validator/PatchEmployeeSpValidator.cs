@@ -1,19 +1,15 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
     public class PatchEmployeeSpValidator : AbstractValidator<PatchEmployeeSpCommand>
     {
-        private readonly AppDbContext dbContext;
-        public PatchEmployeeSpValidator(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public PatchEmployeeSpValidator(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(x => x.Id)

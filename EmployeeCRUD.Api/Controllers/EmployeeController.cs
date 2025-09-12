@@ -38,7 +38,7 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("/patch")]
         public async Task<IActionResult> PatchEmployeeAsync(PatchEmployeeCommand command)
         {
             var result = await sender.Send(command);

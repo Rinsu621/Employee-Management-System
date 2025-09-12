@@ -1,6 +1,8 @@
-﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using FluentValidation;
@@ -20,20 +22,22 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public class PatchEmployeeSpHandler : IRequestHandler<PatchEmployeeSpCommand, EmployeeUpdateKeyless>
 
     {
-        private readonly AppDbContext dbContext;
+        private readonly Domain.Interface.IAppDbContext dbContext;
 
-        public PatchEmployeeSpHandler( AppDbContext _dbContext)
+        public PatchEmployeeSpHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
         public async Task<EmployeeUpdateKeyless> Handle(PatchEmployeeSpCommand request, CancellationToken cancellationToken)
         { 
 
-            var updatedEmployee =  dbContext.Set<EmployeeUpdateKeyless>()
-                .FromSqlInterpolated($"EXEC PatchEmployee @Id={request.Id}, @EmpName={request.employee.EmpName}, @Email={request.employee.Email}, @Phone={request.employee.Phone}")
+            var updatedEmployee =  dbContext.EmployeeUpdateKeyless
+                .FromSqlInterpolated($"EXEC PatchEmployee {request.Id}, {request.employee.EmpName}, {request.employee.Email}, {request.employee.Phone}")
                 .AsNoTracking()
                 .AsEnumerable()
                 .FirstOrDefault();
+
+            Guard.Against.Null(updatedEmployee, nameof(updatedEmployee), $"Employee with {request.Id} not found");
 
             return  updatedEmployee;
 

@@ -3,6 +3,7 @@ using EmployeeCRUD.Application.EmployeeModule.Validator;
 using EmployeeCRUD.Application.Pipeline;
 using EmployeeCRUD.Domain.Common;
 using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;

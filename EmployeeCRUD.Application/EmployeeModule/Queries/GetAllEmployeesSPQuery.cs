@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using FluentValidation;
@@ -18,15 +19,15 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetAllEmployeesSPHandler : IRequestHandler<GetAllEmployeesSPQuery, IEnumerable<EmployeeResponseKeyless>>
     {
-        private readonly AppDbContext dbContext;
-        public GetAllEmployeesSPHandler(AppDbContext _dbContext)
+        private readonly Domain.Interface.IAppDbContext dbContext;
+        public GetAllEmployeesSPHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
         public async Task<IEnumerable<EmployeeResponseKeyless>> Handle(GetAllEmployeesSPQuery request, CancellationToken cancellationToken)
         {
 
-            var employees = await dbContext.Set<EmployeeResponseKeyless>().FromSqlRaw($"EXECUTE GetAllEmployees").ToListAsync(cancellationToken);
+            var employees = await dbContext.EmployeeResponseKeyless.FromSqlRaw($"EXECUTE GetAllEmployees").ToListAsync(cancellationToken);
             return employees;
 
         }

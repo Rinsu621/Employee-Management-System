@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
     public class DeleteEmployeeSpCommandValidator:AbstractValidator<DeleteEmployeeSpCommand>
     {
-        private readonly AppDbContext dbContext;
-        public DeleteEmployeeSpCommandValidator(AppDbContext _dbContext)
+        private readonly Domain.Interface.IAppDbContext dbContext;
+        public DeleteEmployeeSpCommandValidator(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(x => x.Id)

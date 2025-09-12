@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,20 +15,20 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
     public class AddProjectSpHandler:IRequestHandler<AddProjectSpCommand, ProjectCreateKeyless>
     {
-        private readonly AppDbContext dbContext;
-        public AddProjectSpHandler(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public AddProjectSpHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
         public async Task<ProjectCreateKeyless> Handle(AddProjectSpCommand request, CancellationToken cancellationToken)
         {
-            var result = dbContext.Set<ProjectCreateKeyless>()
-                 .FromSqlInterpolated($"EXEC CreateProject @ProjectName={request.ProjectName}, @Description={request.Description}, @StartDate={request.StartDate}, @EndDate={request.EndDate}, @Budget={request.Budget}, @Status={request.Status}, @ClientName={request.ClientName}")
+            var result = dbContext.ProjectCreateKeyless
+                 .FromSqlInterpolated($"EXEC CreateProject {request.ProjectName}, {request.Description}, {request.StartDate}, {request.EndDate}, {request.Budget}, {request.Status}, {request.ClientName}")
                  .AsNoTracking()
                  .AsEnumerable()
                  .FirstOrDefault();
 
-            return  result;
+            return   result;
         }
     }
 }

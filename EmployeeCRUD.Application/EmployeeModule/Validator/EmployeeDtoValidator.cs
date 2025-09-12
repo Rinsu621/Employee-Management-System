@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
     public class EmployeeDtoValidator : AbstractValidator<EmployeeDto>
     {
-        private readonly AppDbContext dbContext;
-        public EmployeeDtoValidator(AppDbContext _dbContext)
+        private readonly Domain.Interface.IAppDbContext dbContext;
+        public EmployeeDtoValidator(Domain.Interface.IAppDbContext _dbContext)
             
         {
             dbContext = _dbContext;

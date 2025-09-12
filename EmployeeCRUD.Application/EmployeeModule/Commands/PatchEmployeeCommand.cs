@@ -1,5 +1,7 @@
-﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -17,8 +19,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public class PatchEmployeeHandler : IRequestHandler<PatchEmployeeCommand, EmployeeUpdateResponse>
     {
        
-        private readonly AppDbContext dbContext;
-        public PatchEmployeeHandler( AppDbContext _dbContext)
+        private readonly Domain.Interface.IAppDbContext dbContext;
+        public PatchEmployeeHandler(Domain.Interface.IAppDbContext _dbContext)
         {
            
             dbContext = _dbContext;
@@ -26,9 +28,22 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         public async Task<EmployeeUpdateResponse> Handle(PatchEmployeeCommand request, CancellationToken cancellationToken)
         {
             var employee=await dbContext.Employees.FindAsync(request.Id);
+            Guard.Against.Null(employee, nameof(employee), $"Employee with Id '{request.Id}' not found.");
 
-            dbContext.Employees.Update(employee);
+            if (!string.IsNullOrEmpty(request.Employee.EmpName))
+                employee.EmpName = request.Employee.EmpName;
+
+            if (!string.IsNullOrEmpty(request.Employee.Email))
+                employee.Email = request.Employee.Email;
+
+            if (!string.IsNullOrEmpty(request.Employee.Phone))
+                employee.Phone = request.Employee.Phone;
+
+            employee.UpdatedAt = DateTime.UtcNow;
+
             await dbContext.SaveChangesAsync(cancellationToken);
+
+          
 
             return new EmployeeUpdateResponse
             {

@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,9 @@ namespace EmployeeCRUD.Application.ProjectModule.Query
 
     public class GetProjectByIdHandler : IRequestHandler<GetProjectByIdQuery, ProjectCreateKeyless>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public GetProjectByIdHandler(AppDbContext _dbContext)
+        public GetProjectByIdHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

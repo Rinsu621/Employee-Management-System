@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
@@ -15,9 +16,9 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
     public class AssignDepartmentInProjectHandler : IRequestHandler<AssignDepartmentInProjectCommand, ProjectDepartmentResponse>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public AssignDepartmentInProjectHandler(AppDbContext dbContext)
+        public AssignDepartmentInProjectHandler(IAppDbContext dbContext)
         {
             this.dbContext = dbContext;
         }

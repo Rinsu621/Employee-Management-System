@@ -1,5 +1,6 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using FluentValidation;
@@ -18,9 +19,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class UpdateEmployeeSpHandler : IRequestHandler<UpdateEmployeeSpCommand, EmployeeUpdateKeyless>
     {
-        private readonly AppDbContext dbContext;
+        private readonly Domain.Interface.IAppDbContext dbContext;
 
-        public UpdateEmployeeSpHandler( AppDbContext _dbContext)
+        public UpdateEmployeeSpHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
@@ -28,11 +29,12 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         public async Task<EmployeeUpdateKeyless> Handle(UpdateEmployeeSpCommand request, CancellationToken cancellationToken)
         {
 
-            var updatedEmployee = dbContext.Set<EmployeeUpdateKeyless>()
-                .FromSqlInterpolated($"EXEC UpdateEmployee @Id={request.Id}, @EmpName={request.employee.EmpName}, @Email={request.employee.Email}, @Phone={request.employee.Phone}")
+            var updatedEmployee = dbContext.EmployeeUpdateKeyless
+                .FromSqlInterpolated($"EXEC UpdateEmployee {request.Id}, {request.employee.EmpName}, {request.employee.Email}, {request.employee.Phone}")
                 .AsNoTracking()
                 .AsEnumerable()
                 .FirstOrDefault();
+
             return updatedEmployee;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.ProjectModule.Commands;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Validator
   
     public class AssignProjectManagerValidator : AbstractValidator<AssignProjectManagerCommand>
     {
-        private readonly AppDbContext dbContext;
-        public AssignProjectManagerValidator(AppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public AssignProjectManagerValidator(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
             RuleFor(x => x.ProjectId)

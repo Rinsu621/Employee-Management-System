@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.ProjectModule.Dtos;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
@@ -53,9 +54,9 @@ namespace EmployeeCRUD.Application.ProjectModule.Query
 
     public class GetProjectHandler : IRequestHandler<GetProjectQuery, IEnumerable<ProjectDto>>
     {
-        private readonly AppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public GetProjectHandler(AppDbContext _dbContext)
+        public GetProjectHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

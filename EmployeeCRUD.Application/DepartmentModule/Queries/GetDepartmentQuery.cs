@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.Department.Dtos;
+using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,9 @@ namespace EmployeeCRUD.Application.Department.Queries
 
     public class GetDepartmentQueryHandler : IRequestHandler<GetDepartmentQuery, IEnumerable<DepartmentResultDto>>
     {
-        private readonly AppDbContext dbContext;
+        private readonly Domain.Interface.IAppDbContext dbContext;
 
-        public GetDepartmentQueryHandler(AppDbContext _dbContext)
+        public GetDepartmentQueryHandler(Domain.Interface.IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
