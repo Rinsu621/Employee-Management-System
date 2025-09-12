@@ -19,6 +19,7 @@ namespace EmployeeCRUD.Infrastructure.Data
         public DbSet<ProjectCreateKeyless> ProjectCreateKeyless { get; set; }
         public DbSet<TeamMemberAssignmentResponse> TeamMemberAssignmentResponses { get; set; }
         public DbSet<TeamMemberAssignmentRow> TeamMemberAssignmentRows { get; set; }
+        public DbSet<ProjectDepartmentResponse>ProjectDepartmentResponses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,8 @@ namespace EmployeeCRUD.Infrastructure.Data
             modelBuilder.Entity<ProjectCreateKeyless>().HasNoKey();
             modelBuilder.Entity<TeamMemberAssignmentResponse>().HasNoKey();
             modelBuilder.Entity<TeamMemberAssignmentRow>().HasNoKey();
+            modelBuilder.Entity<ProjectDepartmentResponse>().HasNoKey();
+
 
 
             base.OnModelCreating(modelBuilder);

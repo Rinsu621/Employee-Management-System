@@ -90,5 +90,12 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
+
+        [HttpPatch("assign-department-sp")]
+        public async Task<IActionResult> AssignDepartmentInProjectUsingSP(AssignDepartmentSpCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
     }
 }

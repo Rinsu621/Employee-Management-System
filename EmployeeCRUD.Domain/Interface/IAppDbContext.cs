@@ -22,6 +22,7 @@ namespace EmployeeCRUD.Domain.Interface
         DbSet<ProjectCreateKeyless> ProjectCreateKeyless { get; set; }
         DbSet<TeamMemberAssignmentResponse> TeamMemberAssignmentResponses { get; set; }
         DbSet<TeamMemberAssignmentRow> TeamMemberAssignmentRows { get; set; }
+        DbSet<ProjectDepartmentResponse> ProjectDepartmentResponses { get; set; }
 
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
