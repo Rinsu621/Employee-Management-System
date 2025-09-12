@@ -1,7 +1,8 @@
 ﻿using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Domain.keyless;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
-using EmployeeCRUD.Domain.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeCRUD.Infrastructure.Data
@@ -16,6 +17,8 @@ namespace EmployeeCRUD.Infrastructure.Data
         public DbSet<EmployeeResponseKeyless> EmployeeResponseKeyless { get; set; }
         public DbSet<EmployeeUpdateKeyless> EmployeeUpdateKeyless { get; set; }
         public DbSet<ProjectCreateKeyless> ProjectCreateKeyless { get; set; }
+        public DbSet<TeamMemberAssignmentResponse> TeamMemberAssignmentResponses { get; set; }
+        public DbSet<TeamMemberAssignmentRow> TeamMemberAssignmentRows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +26,9 @@ namespace EmployeeCRUD.Infrastructure.Data
             modelBuilder.Entity<EmployeeResponseKeyless>().HasNoKey();
             modelBuilder.Entity<EmployeeUpdateKeyless>().HasNoKey();
             modelBuilder.Entity<ProjectCreateKeyless>().HasNoKey();
+            modelBuilder.Entity<TeamMemberAssignmentResponse>().HasNoKey();
+            modelBuilder.Entity<TeamMemberAssignmentRow>().HasNoKey();
+
 
             base.OnModelCreating(modelBuilder);
         }

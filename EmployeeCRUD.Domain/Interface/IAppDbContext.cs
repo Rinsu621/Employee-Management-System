@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.keyless;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,8 @@ namespace EmployeeCRUD.Domain.Interface
         DbSet<EmployeeResponseKeyless> EmployeeResponseKeyless { get; set; }
         DbSet<EmployeeUpdateKeyless> EmployeeUpdateKeyless { get; set; }
         DbSet<ProjectCreateKeyless> ProjectCreateKeyless { get; set; }
+        DbSet<TeamMemberAssignmentResponse> TeamMemberAssignmentResponses { get; set; }
+        DbSet<TeamMemberAssignmentRow> TeamMemberAssignmentRows { get; set; }
 
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

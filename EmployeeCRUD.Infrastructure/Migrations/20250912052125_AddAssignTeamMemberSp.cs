@@ -1,0 +1,52 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace EmployeeCRUD.Infrastructure.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddAssignTeamMemberSp : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "TeamMember",
+                table: "ProjectCreateKeyless");
+
+            migrationBuilder.CreateTable(
+                name: "TeamMemberAssignmentResponses",
+                columns: table => new
+                {
+                    ProjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TeamMembers = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                });
+
+            migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\AssignTeamMember.sql"));
+
+
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "TeamMemberAssignmentResponses");
+
+            migrationBuilder.AddColumn<string>(
+                name: "TeamMember",
+                table: "ProjectCreateKeyless",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.Sql("DROP PROCEDURE IF EXISTS AssignTeamMember");
+        }
+    }
+}

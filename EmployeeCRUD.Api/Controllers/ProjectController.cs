@@ -83,5 +83,12 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
+
+        [HttpPatch("assign-team-member-sp")]
+        public async Task<IActionResult> AssignTeamMemberUsingSP(AssignTeamMemberSpCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
     }
 }
