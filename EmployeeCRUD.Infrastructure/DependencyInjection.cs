@@ -1,11 +1,13 @@
 ﻿
 using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using EmployeeCRUD.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,10 @@ namespace EmployeeCRUD.Infrastructure
 
             // Map IAppDbContext to AppDbContext for DI
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+
+            //Register Dapper
+            services.AddScoped<IDbConnection>(sp =>
+           new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
 
             return services;
         }

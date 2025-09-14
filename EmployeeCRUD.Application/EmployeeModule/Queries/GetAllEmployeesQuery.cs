@@ -29,7 +29,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             return employees.Select(e => new EmployeeResponseDto
             {
                 Id = e.Id,
-                Name = e.EmpName,
+                EmpName = e.EmpName,
                 Email = e.Email,
                 Phone = e.Phone,
                 DepartmentName = e.Department != null ? e.Department.DeptName : null,

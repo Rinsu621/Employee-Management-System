@@ -38,7 +38,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
             return new EmployeeResponseDto
             {
                 Id = entity.Id,
-                Name = entity.EmpName,
+                EmpName = entity.EmpName,
                 Email = entity.Email,
                 Phone = entity.Phone,
                 CreatedAt = entity.CreatedAt

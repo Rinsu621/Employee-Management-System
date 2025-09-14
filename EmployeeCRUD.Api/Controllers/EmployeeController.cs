@@ -91,5 +91,12 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
+
+        [HttpPost("add-employee-using-dapper")]
+        public async Task<IActionResult> AddEmployeeUsingDapper(AddEmployeeDapperCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
     }
 }

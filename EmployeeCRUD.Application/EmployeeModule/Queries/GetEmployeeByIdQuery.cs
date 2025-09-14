@@ -27,7 +27,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             return new EmployeeResponseDto
             {
                 Id = employee.Id,
-                Name = employee.EmpName,
+                EmpName = employee.EmpName,
                 Email = employee.Email,
                 Phone = employee.Phone,
                 
