@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Api.Filter;
+﻿
+using EmployeeCRUD.Api.Filter;
 using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Application.ProjectModule.Commands;
 using EmployeeCRUD.Application.ProjectModule.Query;
@@ -47,31 +48,38 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(new GetProjectByIdQuery(id));
             return Ok(result);
         }
-        [HttpPatch("assign-department")]
-        public async Task<IActionResult> AssignDepartmentInProject([FromBody] AssignDepartmentInProjectCommand command)
-        {
-            var result = await sender.Send(command);
-            return Ok(result);
-        }
+        //[HttpPatch("assign-department")]
+        //public async Task<IActionResult> AssignDepartmentInProject([FromBody] AssignDepartmentInProjectCommand command)
+        //{
+        //    var result = await sender.Send(command);
+        //    return Ok(result);
+        //}
 
-        [HttpPatch("assign-project-manager")]
-        public async Task<IActionResult> AssignProjectManager(AssignProjectManagerCommand command)
-        {
-            var result = await sender.Send(command);
-            return Ok(result);
-        }
+        //[HttpPatch("assign-project-manager")]
+        //public async Task<IActionResult> AssignProjectManager(AssignProjectManagerCommand command)
+        //{
+        //    var result = await sender.Send(command);
+        //    return Ok(result);
+        //}
 
-        [HttpPatch("update-status")]
-        public async Task<IActionResult> UpdateStatus(UpdateStatusCommand command)
-        {
-            var result = await sender.Send(command);
-            return Ok(result);
-        }
+        //[HttpPatch("update-status")]
+        //public async Task<IActionResult> UpdateStatus(UpdateStatusCommand command)
+        //{
+        //    var result = await sender.Send(command);
+        //    return Ok(result);
+        //}
 
-        [HttpPatch("assign-team-member")]
-        public async Task<IActionResult> AssignTeamMember(AssignTeamMemberCommand command)
-        {
+        //[HttpPatch("assign-team-member")]
+        //public async Task<IActionResult> AssignTeamMember(AssignTeamMemberCommand command)
+        //{
 
+        //    var result = await sender.Send(command);
+        //    return Ok(result);
+        //}
+
+        [HttpPatch("Patch-Project")]
+        public async Task<IActionResult> PatchProject(PatchProjectCommand command)
+        {
             var result = await sender.Send(command);
             return Ok(result);
         }
@@ -93,6 +101,13 @@ namespace EmployeeCRUD.Api.Controllers
 
         [HttpPatch("assign-department-sp")]
         public async Task<IActionResult> AssignDepartmentInProjectUsingSP(AssignDepartmentSpCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPost("add-project-dapper")]
+        public async Task<IActionResult> AddProjectUsingDapper(AddProjectDapperCommand command)
         {
             var result = await sender.Send(command);
             return Ok(result);
