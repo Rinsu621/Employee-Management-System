@@ -35,10 +35,10 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
             project.IsArchived = request.project.IsArchived ?? project.IsArchived;
 
 
-            if (request.project.TeamMemberIds?.Any() == true)
+            if (request.project.TeamMembersIds?.Any() == true)
             {
                 var employees = await dbContext.Employees
-                    .Where(e => request.project.TeamMemberIds.Contains(e.Id))
+                    .Where(e => request.project.TeamMembersIds.Contains(e.Id))
                     .ToListAsync(cancellationToken);
 
                 foreach (var emp in employees)

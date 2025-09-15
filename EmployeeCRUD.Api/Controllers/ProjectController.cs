@@ -84,6 +84,13 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("delete-project")]
+        public async Task<IActionResult> DeleteProject(DeleteProjectCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
         //Using SP
         [HttpPost("add-project-sp")]
         public async Task<IActionResult> AddProjectUsingSP(AddProjectSpCommand command)
@@ -112,5 +119,15 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
+
+        //using dapper
+        [HttpPatch("patch-project-dapper")]
+        public async Task<IActionResult> PatchProjectUsingDapper(PatchProjectDapperCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+
     }
 }

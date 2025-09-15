@@ -40,20 +40,20 @@ namespace EmployeeCRUD.Application.ProjectModule.Validator
                 .When(x => x.project.Budget.HasValue);
 
             // Validate TeamMemberIds list only if provided
-            RuleFor(x => x.project.TeamMemberIds)
+            RuleFor(x => x.project.TeamMembersIds)
                 .Must(list => list == null || list.All(id => id != Guid.Empty))
                 .WithMessage("Team member IDs cannot be empty GUIDs.")
-                .When(x => x.project.TeamMemberIds != null);
+                .When(x => x.project.TeamMembersIds != null);
 
-            RuleForEach(x => x.project.TeamMemberIds)
+            RuleForEach(x => x.project.TeamMembersIds)
                 .NotEmpty().WithMessage("Team member ID cannot be empty.")
-                .When(x => x.project.TeamMemberIds != null);
+                .When(x => x.project.TeamMembersIds != null);
 
             // Validate if all employee IDs exist in DB
-            RuleFor(x => x.project.TeamMemberIds)
+            RuleFor(x => x.project.TeamMembersIds)
                 .MustAsync(AllEmployeesExist)
                 .WithMessage("One or more team members do not exist.")
-                .When(x => x.project.TeamMemberIds != null && x.project.TeamMemberIds.Any());
+                .When(x => x.project.TeamMembersIds != null && x.project.TeamMembersIds.Any());
         }
 
         private async Task<bool> AllEmployeesExist(List<Guid> ids, CancellationToken cancellationToken)

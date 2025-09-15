@@ -17,6 +17,6 @@ namespace EmployeeCRUD.Application.ProjectModule.Dtos
         public string? Status { get; set; }
         public Guid? ProjectManagerId { get; set; }
         public bool? IsArchived { get; set; }          
-        public List<Guid>? TeamMemberIds { get; set; }
+        public List<Guid>? TeamMembersIds { get; set; }
     }
 }
