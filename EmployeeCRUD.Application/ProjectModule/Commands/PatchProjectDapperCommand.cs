@@ -21,6 +21,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
         {
             connection = _connection;
         }
+
         public async Task<ProjectDto> Handle(PatchProjectDapperCommand request, CancellationToken cancellationToken)
         {
             var parameters = new DynamicParameters();
