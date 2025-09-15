@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record DeleteEmployeeSpCommand([property:FromRoute] Guid Id):IRequest<DeleteEmployeeResponse>;
+    public record DeleteEmployeeSpCommand(Guid Id):IRequest<DeleteEmployeeResponse>;
 
     public class DeleteEmployeeSpHandler:IRequestHandler<DeleteEmployeeSpCommand, DeleteEmployeeResponse>
     {

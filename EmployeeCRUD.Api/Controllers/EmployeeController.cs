@@ -98,5 +98,33 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
+
+        [HttpDelete("delete-employee-using-dapper/{id}")]
+        public async Task<IActionResult> DeleteEmployeeUsingDapper(Guid id)
+        {
+            var result = await sender.Send(new DeleteEmployeeDapperCommand(id));
+            return Ok(result);
+        }
+
+        [HttpPatch("patch-employee-using-dapper")]
+        public async Task<IActionResult> PatchEmployeeUsingDapper(PatchEmployeeDapperCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("get-all-employees-using-dapper")]
+        public async Task<IActionResult> GetAllEmployeesUsingDapper()
+        {
+            var result =  await sender.Send(new GetAllEmployeeDapperQuery());
+            return Ok(result);
+        }
+
+        [HttpGet("get-employee-by-id-using-dapper/{id}")]
+        public async Task<IActionResult> GetEmployeeByIdUsingDapper(Guid id)
+        {
+            var result = await sender.Send(new GetEmployeeByIdDapperQuery(id));
+            return Ok(result);
+        }
     }
 }
