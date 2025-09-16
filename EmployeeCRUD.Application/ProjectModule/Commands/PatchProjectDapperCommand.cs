@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Ardalis.GuardClauses;
+using Dapper;
 using EmployeeCRUD.Application.ProjectModule.Dtos;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
@@ -43,6 +44,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
             if (result == null)
                 throw new KeyNotFoundException($"Project with Id '{request.Id}' not found.");
+            //Guard.Against.Null(result, nameof(result), $"Project with Id '{request.Id}' not found.");
 
             var teamMembers = (result.TeamMembers as string)?.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>();
 

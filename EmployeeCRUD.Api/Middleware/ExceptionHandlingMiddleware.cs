@@ -53,9 +53,19 @@ namespace EmployeeCRUD.Api.Middleware
                         error = argEx.Message, // this will show the GuardClause message
                         statusCode
                     }),
+                    InvalidOperationException invOpEx => JsonSerializer.Serialize(new
+                    {
+                        error = invOpEx.Message,
+                        statusCode
+                    }),
                     AlreadyExistsException existsEx => JsonSerializer.Serialize(new
                     {
                         error = existsEx.Message,
+                        statusCode = context.Response.StatusCode
+                    }),
+                    UnauthorizedAccessException uaEx => JsonSerializer.Serialize(new
+                    {
+                        error = uaEx.Message,
                         statusCode = context.Response.StatusCode
                     }),
                     KeyNotFoundException knfEx=>JsonSerializer.Serialize(new

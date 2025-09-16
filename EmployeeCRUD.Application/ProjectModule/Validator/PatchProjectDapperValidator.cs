@@ -49,6 +49,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Validator
                 .When(x => x.TeamMembersIds != null && x.TeamMembersIds.Any());
         }
 
+        //If pass Id1, Id2, Id3 but only Id1 and Id3 exist in the db, existingIds= Id1, Id3
         private async Task<bool> AllEmployeesExist(List<Guid> ids, CancellationToken cancellationToken)
         {
             if (ids == null || !ids.Any())
