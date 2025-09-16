@@ -1,5 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;

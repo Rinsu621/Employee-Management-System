@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Domain.Interface;
+﻿using EmployeeCRUD.Application.Interface;
+
 using EmployeeCRUD.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

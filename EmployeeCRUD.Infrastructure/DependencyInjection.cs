@@ -1,5 +1,5 @@
 ﻿
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

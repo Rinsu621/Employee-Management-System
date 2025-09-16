@@ -1,5 +1,5 @@
 ﻿using Ardalis.GuardClauses;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

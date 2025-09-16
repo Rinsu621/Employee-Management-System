@@ -1,5 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +16,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponseDto>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
-        public GetEmployeeByIdHandler(Domain.Interface.IAppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public GetEmployeeByIdHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

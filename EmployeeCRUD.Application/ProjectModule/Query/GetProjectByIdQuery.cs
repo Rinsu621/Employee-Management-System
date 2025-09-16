@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Domain.Interface;
+﻿
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;

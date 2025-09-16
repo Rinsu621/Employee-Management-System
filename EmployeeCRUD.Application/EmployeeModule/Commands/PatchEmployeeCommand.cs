@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -19,8 +19,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public class PatchEmployeeHandler : IRequestHandler<PatchEmployeeCommand, EmployeeUpdateResponse>
     {
        
-        private readonly Domain.Interface.IAppDbContext dbContext;
-        public PatchEmployeeHandler(Domain.Interface.IAppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public PatchEmployeeHandler(IAppDbContext _dbContext)
         {
            
             dbContext = _dbContext;

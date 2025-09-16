@@ -1,6 +1,6 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using FluentValidation;
@@ -19,9 +19,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class UpdateEmployeeSpHandler : IRequestHandler<UpdateEmployeeSpCommand, EmployeeUpdateKeyless>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public UpdateEmployeeSpHandler(Domain.Interface.IAppDbContext _dbContext)
+        public UpdateEmployeeSpHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

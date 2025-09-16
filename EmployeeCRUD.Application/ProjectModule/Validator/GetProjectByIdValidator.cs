@@ -1,5 +1,5 @@
-﻿using EmployeeCRUD.Application.ProjectModule.Query;
-using EmployeeCRUD.Domain.Interface;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.ProjectModule.Query;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;

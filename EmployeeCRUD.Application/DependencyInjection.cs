@@ -2,8 +2,7 @@
 using EmployeeCRUD.Application.EmployeeModule.Validator;
 using EmployeeCRUD.Application.Pipeline;
 using EmployeeCRUD.Domain.Common;
-using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Domain.Interface;
+
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -23,10 +22,10 @@ namespace EmployeeCRUD.Application
     {
         public static IServiceCollection AddApplicationDI(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            });
+            //services.AddDbContext<AppDbContext>(options =>
+            //{
+            //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            //});
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AddEmployeeSPHandler).Assembly));
 
             services.AddScoped<EmployeeDtoValidator>();

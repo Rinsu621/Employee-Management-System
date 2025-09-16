@@ -1,7 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Dapper;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
-using EmployeeCRUD.Domain.Interface;
 using MediatR;
 using System;
 using System.Collections.Generic;

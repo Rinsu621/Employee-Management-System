@@ -1,5 +1,5 @@
-﻿using EmployeeCRUD.Application.ProjectModule.Dtos;
-using EmployeeCRUD.Domain.Interface;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.ProjectModule.Dtos;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;

@@ -1,5 +1,5 @@
-﻿using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Domain.Interface;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using FluentValidation;
@@ -19,8 +19,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetAllEmployeesSPHandler : IRequestHandler<GetAllEmployeesSPQuery, IEnumerable<EmployeeResponseKeyless>>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
-        public GetAllEmployeesSPHandler(Domain.Interface.IAppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public GetAllEmployeesSPHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

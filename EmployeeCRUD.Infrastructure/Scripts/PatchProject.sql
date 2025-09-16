@@ -1,4 +1,4 @@
-CREATE PROCEDURE PatchProject
+CREATE OR ALTER PROCEDURE PatchProject
 @Id UNIQUEIDENTIFIER,
     @ProjectName VARCHAR(100) = NULL,
     @Description VARCHAR(500) = NULL,
@@ -12,6 +12,8 @@ CREATE PROCEDURE PatchProject
 AS
 BEGIN
     SET NOCOUNT ON;
+    BEGIN TRY
+    BEGIN TRANSACTION;
 
 
     UPDATE Projects
@@ -36,6 +38,13 @@ BEGIN
             WHERE ProjectsId = @Id AND TeamMemberId = CAST(value AS UNIQUEIDENTIFIER)
         );
     END;
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+--Rollback transaction if any error occurs and if any transaction open
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION; 
+    THROW;
+END CATCH;
 
     SELECT 
         p.Id,

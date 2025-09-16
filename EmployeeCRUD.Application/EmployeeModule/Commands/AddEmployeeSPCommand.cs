@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using FluentValidation;
@@ -17,22 +17,21 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class AddEmployeeSPHandler : IRequestHandler<AddEmployeeSPCommand, EmployeeResponseKeyless>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
        
 
-        public AddEmployeeSPHandler(Domain.Interface.IAppDbContext _dbContext )
+        public AddEmployeeSPHandler(IAppDbContext _dbContext )
         {
             dbContext = _dbContext;
             
         }
         public async Task<EmployeeResponseKeyless> Handle(AddEmployeeSPCommand request, CancellationToken cancellationToken)
         {
-            var result =  dbContext.EmployeeResponseKeyless
-            .FromSqlInterpolated($"EXEC AddEmployee {request.employee.EmpName},{request.employee.Email}, {request.employee.Phone}")
+            var result = await dbContext.Set<EmployeeResponseKeyless>()
+            .FromSqlInterpolated($"EXEC AddEmployee {request.employee.EmpName}, {request.employee.Email}, {request.employee.Phone}")
             .AsNoTracking()
-            .AsEnumerable()
-            .FirstOrDefault();
-             Guard.Against.Null(result, nameof(result), "Failed to add employee");
+             .FirstOrDefaultAsync(cancellationToken);
+            Guard.Against.Null(result, nameof(result), "Failed to add employee");
             return result;
         }
     }

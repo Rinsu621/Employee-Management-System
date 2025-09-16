@@ -10,13 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Domain.Interface
+namespace EmployeeCRUD.Application.Interface
 {
     public interface IAppDbContext
     {
-         DbSet<Employee> Employees { get; set; }
-         DbSet<Department> Departments { get; set; }
-         DbSet<Project> Projects { get; set; }
+        DbSet<Employee> Employees { get; set; }
+        DbSet<EmployeeCRUD.Domain.Entities.Department> Departments { get; set; }
+        DbSet<Project> Projects { get; set; }
         DbSet<EmployeeResponseKeyless> EmployeeResponseKeyless { get; set; }
         DbSet<EmployeeUpdateKeyless> EmployeeUpdateKeyless { get; set; }
         DbSet<ProjectCreateKeyless> ProjectCreateKeyless { get; set; }
@@ -26,5 +26,6 @@ namespace EmployeeCRUD.Domain.Interface
 
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        DbSet<T> Set<T>() where T : class;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Application.ProjectModule.Dtos;
-using EmployeeCRUD.Domain.Interface;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;

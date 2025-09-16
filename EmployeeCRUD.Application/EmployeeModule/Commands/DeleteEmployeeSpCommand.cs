@@ -1,5 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +16,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class DeleteEmployeeSpHandler:IRequestHandler<DeleteEmployeeSpCommand, DeleteEmployeeResponse>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public DeleteEmployeeSpHandler(Domain.Interface.IAppDbContext _dbContext)
+        public DeleteEmployeeSpHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

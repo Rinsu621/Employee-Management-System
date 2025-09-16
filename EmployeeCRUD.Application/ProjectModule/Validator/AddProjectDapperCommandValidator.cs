@@ -1,5 +1,4 @@
 ﻿using EmployeeCRUD.Application.ProjectModule.Commands;
-using EmployeeCRUD.Domain.Interface;
 using FluentValidation;
 using System;
 using System.Collections.Generic;

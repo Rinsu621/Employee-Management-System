@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -19,9 +19,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public class DeleteEmployeeHandler : IRequestHandler<DeleteEmployeeCommand, DeleteEmployeeResponse>
     {
        
-        private readonly Domain.Interface.IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public DeleteEmployeeHandler(Domain.Interface.IAppDbContext _dbContext)
+        public DeleteEmployeeHandler(IAppDbContext _dbContext)
         {
            
             dbContext = _dbContext;

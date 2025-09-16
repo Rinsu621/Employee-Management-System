@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.Department.Dtos;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +16,9 @@ namespace EmployeeCRUD.Application.Department.Command
 
     public class AddEmployeeToDepartmentHandler : IRequestHandler<AddEmployeeToDepartmentCommand, DepartmentResultDto>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public AddEmployeeToDepartmentHandler(Domain.Interface.IAppDbContext _dbContext)
+        public AddEmployeeToDepartmentHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

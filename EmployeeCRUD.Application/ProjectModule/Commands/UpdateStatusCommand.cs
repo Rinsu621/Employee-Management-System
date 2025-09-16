@@ -1,6 +1,5 @@
-﻿using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Domain.Interface;
-using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

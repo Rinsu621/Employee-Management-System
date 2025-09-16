@@ -1,4 +1,4 @@
-﻿using EmployeeCRUD.Domain.Interface;
+﻿using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using MediatR;
@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.ProjectModule.Commands
 {
-    public record AddProjectSpCommand(string ProjectName, string Description, DateTime StartDate, DateTime? EndDate, decimal Budget, string Status, string? ClientName):IRequest<ProjectCreateKeyless>;
+    public record AddProjectSpCommand(string ProjectName, string Description, DateTime StartDate, DateTime? EndDate, decimal Budget, string Status, string? ClientName) : IRequest<ProjectCreateKeyless>;
 
-    public class AddProjectSpHandler:IRequestHandler<AddProjectSpCommand, ProjectCreateKeyless>
+    public class AddProjectSpHandler : IRequestHandler<AddProjectSpCommand, ProjectCreateKeyless>
     {
         private readonly IAppDbContext dbContext;
         public AddProjectSpHandler(IAppDbContext _dbContext)
@@ -28,7 +28,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
                  .AsEnumerable()
                  .FirstOrDefault();
 
-            return   result;
+            return result;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.Department.Dtos;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +16,8 @@ namespace EmployeeCRUD.Application.Department.Command
 
     public class DeleteDepartmentHandler: IRequestHandler<DeleteDepartmentCommand, DeleteDepartmentResponse>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
-        public DeleteDepartmentHandler(Domain.Interface.IAppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public DeleteDepartmentHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

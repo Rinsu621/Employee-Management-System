@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.Department.Dtos;
-using EmployeeCRUD.Domain.Interface;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +16,9 @@ namespace EmployeeCRUD.Application.Department.Queries
     public record GetDepartmentByIdQuery([property:FromRoute] Guid Id) : IRequest<DepartmentResultDto>;
     public class GetDepartmentByIdHandler : IRequestHandler<GetDepartmentByIdQuery, DepartmentResultDto>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public GetDepartmentByIdHandler(Domain.Interface.IAppDbContext _dbContext)
+        public GetDepartmentByIdHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

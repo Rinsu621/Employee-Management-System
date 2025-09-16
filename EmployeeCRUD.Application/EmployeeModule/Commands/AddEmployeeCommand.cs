@@ -1,6 +1,6 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Domain.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -18,9 +18,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommand, EmployeeResponseDto>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
+        private readonly IAppDbContext dbContext;
 
-        public AddEmployeeHandler(Domain.Interface.IAppDbContext _dbContext)
+        public AddEmployeeHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }

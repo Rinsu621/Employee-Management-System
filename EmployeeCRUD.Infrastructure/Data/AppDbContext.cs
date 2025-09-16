@@ -1,5 +1,5 @@
-﻿using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Domain.Interface;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Domain.keyless;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
@@ -30,6 +30,8 @@ namespace EmployeeCRUD.Infrastructure.Data
             modelBuilder.Entity<TeamMemberAssignmentResponse>().HasNoKey();
             modelBuilder.Entity<TeamMemberAssignmentRow>().HasNoKey();
             modelBuilder.Entity<ProjectDepartmentResponse>().HasNoKey();
+
+            modelBuilder.Entity<EmployeeResponseKeyless>().ToView(null);
 
 
 

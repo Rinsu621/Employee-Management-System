@@ -1,4 +1,4 @@
-﻿using EmployeeCRUD.Domain.Interface;
+﻿using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using MediatR;
@@ -16,8 +16,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetEmployeeByIdSpHandler : IRequestHandler<GetEmployeeByIdSpQuery, EmployeeResponseKeyless>
     {
-        private readonly Domain.Interface.IAppDbContext dbContext;
-        public GetEmployeeByIdSpHandler(Domain.Interface.IAppDbContext _dbContext)
+        private readonly IAppDbContext dbContext;
+        public GetEmployeeByIdSpHandler(IAppDbContext _dbContext)
         {
             dbContext = _dbContext;
         }
