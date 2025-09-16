@@ -1,0 +1,44 @@
+﻿using Ardalis.GuardClauses;
+using Dapper;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EmployeeCRUD.Application.EmployeeModule.Commands
+{
+    public record AddEmployeeDapperCommand(EmployeeDto employee): IRequest<EmployeeResponseDto>;
+
+    public class AddEmployeeDapperHandler : IRequestHandler<AddEmployeeDapperCommand, EmployeeResponseDto>
+    {
+        private readonly IDbConnection connection;
+        public AddEmployeeDapperHandler(IDbConnection _connection)
+        {
+            connection = _connection;
+        }
+        public async Task<EmployeeResponseDto> Handle(AddEmployeeDapperCommand request, CancellationToken cancellationToken)
+        {
+            //var parameters = new DynamicParameters();
+            //parameters.Add("EmpName", request.employee.EmpName);
+            //parameters.Add("Email", request.employee.Email);
+            //parameters.Add("Phone", request.employee.Phone);
+
+            //var result = await connection.QuerySingleAsync<EmployeeResponseDto>(
+            //    "AddEmployee",
+            //    parameters,
+            //    commandType: CommandType.StoredProcedure);
+
+            var result = await connection.QuerySingleAsync<EmployeeResponseDto>("AddEmployee",
+                new { request.employee.EmpName, request.employee.Email, request.employee.Phone },
+                commandType: CommandType.StoredProcedure);
+
+            Guard.Against.Null(result, nameof(result), "Failed to add employee");
+            return result;
+
+        }
+    }
+}

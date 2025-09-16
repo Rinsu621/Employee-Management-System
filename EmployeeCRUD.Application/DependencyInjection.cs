@@ -1,9 +1,8 @@
-﻿using EmployeeCRUD.Application.Command.Employees;
-using EmployeeCRUD.Application.Dtos.Employees;
+﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Application.EmployeeModule.Validator;
 using EmployeeCRUD.Application.Pipeline;
-using EmployeeCRUD.Application.Validator;
 using EmployeeCRUD.Domain.Common;
-using EmployeeCRUD.Domain.Entities;
+
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
@@ -23,17 +22,16 @@ namespace EmployeeCRUD.Application
     {
         public static IServiceCollection AddApplicationDI(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            });
+            //services.AddDbContext<AppDbContext>(options =>
+            //{
+            //    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            //});
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AddEmployeeSPHandler).Assembly));
 
+            services.AddScoped<EmployeeDtoValidator>();
+            services.AddValidatorsFromAssembly(typeof(AddEmployeeCommandValidator).Assembly);
 
-            services.AddValidatorsFromAssembly(typeof(EmployeeDtoValidator).Assembly);
-            services.AddValidatorsFromAssembly(typeof(EntityIdValidator<>).Assembly);
-
-            services.AddTransient<IValidator<Guid>, EntityIdValidator<Employee>>();  // Register EntityIdValidator for Guid
+            //services.AddTransient<IValidator<Guid>, EntityIdValidator<Employee>>();  // Register EntityIdValidator for Guid
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 

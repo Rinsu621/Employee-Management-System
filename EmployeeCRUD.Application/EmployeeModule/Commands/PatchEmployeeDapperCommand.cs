@@ -1,0 +1,30 @@
+﻿using Dapper;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EmployeeCRUD.Application.EmployeeModule.Commands
+{
+    public record PatchEmployeeDapperCommand(Guid Id, EmployeeDto employee): IRequest<EmployeeUpdateResponse>;
+    
+    public class PatchEmployeeDapperHandler : IRequestHandler<PatchEmployeeDapperCommand, EmployeeUpdateResponse>
+    {
+        private readonly IDbConnection connection;
+        public PatchEmployeeDapperHandler(IDbConnection _connection)
+        {
+           connection = _connection;
+        }
+        public async Task<EmployeeUpdateResponse> Handle(PatchEmployeeDapperCommand request, CancellationToken cancellationToken)
+        {
+            var result= await connection.QuerySingleAsync<EmployeeUpdateResponse>("PatchEmployee",
+                new { Id = request.Id, request.employee.EmpName, request.employee.Email, request.employee.Phone },
+                commandType: CommandType.StoredProcedure);
+            return result;
+        }
+    }
+}

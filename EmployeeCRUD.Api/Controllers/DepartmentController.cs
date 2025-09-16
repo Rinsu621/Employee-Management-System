@@ -1,6 +1,6 @@
-﻿using EmployeeCRUD.Application.Command.Departments;
-using EmployeeCRUD.Application.Dtos.Departments;
-using EmployeeCRUD.Application.Queries.Departments;
+﻿using EmployeeCRUD.Application.Department.Command;
+using EmployeeCRUD.Application.Department.Queries;
+using EmployeeCRUD.Application.DepartmentModule.Command;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +12,9 @@ namespace EmployeeCRUD.Api.Controllers
     public class DepartmentController(ISender sender) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> AddDepartmentAsync( DepartmentCreateDto department)
+        public async Task<IActionResult> AddDepartmentAsync(AddDepartmentCommand command)
         {
-            var result = await sender.Send(new AddDepartmentCommand(department));
+            var result = await sender.Send(command);
             return Ok(result);
         }
 
@@ -31,24 +31,24 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDepartmentAsync(Guid id,  DepartmentCreateDto department)
+        [HttpPut("/update-department")]
+        public async Task<IActionResult> UpdateDepartmentAsync(UpdateDepartmentCommand command)
         {
-            var result = await sender.Send(new UpdateDepartmentCommand(id, department));
+            var result = await sender.Send(command);
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("/delete/{id}")]
         public async Task<IActionResult> DeleteDepartmentAsync(Guid id)
         {
             var result = await sender.Send(new DeleteDepartmentCommand(id));
             return Ok(result);
         }
 
-        [HttpPost("add-employee/{departmentId}/{employeeId}")]
-        public async Task<IActionResult> AddEmployeeToDepartmentAsync(Guid departmentId, Guid employeeId)
+        [HttpPost("add-employee")]
+        public async Task<IActionResult> AddEmployeeToDepartmentAsync(AddEmployeeToDepartmentCommand command)
         {
-            var result = await sender.Send(new AddEmployeeToDepartmentCommand(departmentId, employeeId));
+            var result = await sender.Send(command);
             return Ok(result);
         }
     }

@@ -1,6 +1,6 @@
-﻿using EmployeeCRUD.Application.Command.Employees;
-using EmployeeCRUD.Application.Dtos.Employees;
-using EmployeeCRUD.Application.Queries.Employees;
+﻿
+using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Application.EmployeeModule.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +11,9 @@ namespace EmployeeCRUD.Api.Controllers
     public class EmployeeController(ISender sender) : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> AddEmployeeAsync( EmployeeDto employee)
+        public async Task<IActionResult> AddEmployeeAsync( AddEmployeeCommand command)
         {
-            var result = await sender.Send(new AddEmployeeCommand(employee));
+            var result = await sender.Send(command);
             return Ok(result);
         }
 
@@ -27,21 +27,21 @@ namespace EmployeeCRUD.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEmployeeByIdAsync(Guid id)
         {
-            var result = await sender.Send(new GetEmployeeByIdQuery(id));
+            var result = await sender.Send(new GetEmployeeByIdQuery(id));  
             return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployeeAsync(Guid id, EmployeeDto employee)
+        [HttpPut("/update")]
+        public async Task<IActionResult> UpdateEmployeeAsync(UpdateEmployeeCommand command)
         {
-            var result = await sender.Send(new UpdateEmployeeCommand(id, employee));
+            var result = await sender.Send(command);
             return Ok(result);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchEmployeeAsync(Guid id,  EmployeePatchDto employee)
+        [HttpPatch("/patch")]
+        public async Task<IActionResult> PatchEmployeeAsync(PatchEmployeeCommand command)
         {
-            var result = await sender.Send(new PatchEmployeeCommand(id, employee));
+            var result = await sender.Send(command);
             return Ok(result);
         }
 
@@ -59,7 +59,7 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
         [HttpGet("GetById-using-SP/{id}")]
-        public async Task<IActionResult> GetEmployeeByIdUsingStoredProcedureAsync(Guid id)
+        public async Task<IActionResult> GetEmployeeByIdUsingStoredProcedureAsync( Guid id)
         {
             var result = await sender.Send(new GetEmployeeByIdSpQuery(id));
             return Ok(result);
@@ -68,28 +68,62 @@ namespace EmployeeCRUD.Api.Controllers
         [HttpDelete("delete-using-SP/{id}")]
         public async Task<IActionResult> DeleteEmployeeUsingStoredProcedureAsync(Guid id)
         {
-            Console.WriteLine("Writing");
             var result = await sender.Send(new DeleteEmployeeSpCommand(id));
             return Ok(result);
         }
 
         [HttpPost("using-sp")]
-        public async Task<IActionResult> AddEmployeeUsingSp( EmployeeDto employee)
+        public async Task<IActionResult> AddEmployeeUsingSp(AddEmployeeSPCommand command)
         {
-            var result = await sender.Send(new AddEmployeeSPCommand(employee));
+            var result = await sender.Send(command);
             return Ok(result);
         }
 
         [HttpPatch("patch-employee-sp")]
-        public async Task<IActionResult> PatchEmployeeUsingSp(Guid id, EmployeePatchDto employee)
+        public async Task<IActionResult> PatchEmployeeUsingSp(PatchEmployeeSpCommand command)
         {
-            var result = await sender.Send(new PatchEmployeeSpCommand(id, employee));
+            var result = await sender.Send(command);
             return Ok(result);
         }
         [HttpPut("update-employee-sp")]
-        public async Task<IActionResult> UpdateEmployeeUsingSp(Guid id, EmployeeDto employee)
+        public async Task<IActionResult> UpdateEmployeeUsingSp(UpdateEmployeeSpCommand command)
         {
-            var result = await sender.Send(new UpdateEmployeeSpCommand(id, employee));
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPost("add-employee-using-dapper")]
+        public async Task<IActionResult> AddEmployeeUsingDapper(AddEmployeeDapperCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+        [HttpDelete("delete-employee-using-dapper/{id}")]
+        public async Task<IActionResult> DeleteEmployeeUsingDapper(Guid id)
+        {
+            var result = await sender.Send(new DeleteEmployeeDapperCommand(id));
+            return Ok(result);
+        }
+
+        [HttpPatch("patch-employee-using-dapper")]
+        public async Task<IActionResult> PatchEmployeeUsingDapper(PatchEmployeeDapperCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("get-all-employees-using-dapper")]
+        public async Task<IActionResult> GetAllEmployeesUsingDapper()
+        {
+            var result =  await sender.Send(new GetAllEmployeeDapperQuery());
+            return Ok(result);
+        }
+
+        [HttpGet("get-employee-by-id-using-dapper/{id}")]
+        public async Task<IActionResult> GetEmployeeByIdUsingDapper(Guid id)
+        {
+            var result = await sender.Send(new GetEmployeeByIdDapperQuery(id));
             return Ok(result);
         }
     }

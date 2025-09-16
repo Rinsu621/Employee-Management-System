@@ -1,4 +1,5 @@
-﻿using EmployeeCRUD.Domain.Common;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Domain.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,8 @@ namespace EmployeeCRUD.Domain.Entities
     {
         public required string DeptName { get; set; }
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
+        public ICollection<Project> Projects { get; set; } = new List<Project>();
+
+      
     }
 }

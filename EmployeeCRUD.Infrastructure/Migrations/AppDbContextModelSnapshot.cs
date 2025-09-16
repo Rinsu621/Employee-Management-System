@@ -87,6 +87,231 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Budget")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ClientName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ProjectManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Planned");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("ProjectManagerId");
+
+                    b.HasIndex("ProjectName")
+                        .IsUnique();
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Domain.keyless.TeamMemberAssignmentRow", b =>
+                {
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeamMember")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("TeamMemberAssignmentRows");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.Keyless.EmployeeResponseKeyless", b =>
+                {
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DepartmentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmpName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("EmployeeResponseKeyless");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.EmployeeUpdateKeyless", b =>
+                {
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmpName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("EmployeeUpdateKeyless");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.ProjectCreateKeyless", b =>
+                {
+                    b.Property<decimal>("Budget")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ClientName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProjectManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("ProjectManagerId");
+
+                    b.ToTable("ProjectCreateKeyless");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.ProjectDepartmentResponse", b =>
+                {
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("ProjectDepartmentResponses");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.TeamMemberAssignmentResponse", b =>
+                {
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.PrimitiveCollection<string>("TeamMembers")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("TeamMemberAssignmentResponses");
+                });
+
+            modelBuilder.Entity("EmployeeProject", b =>
+                {
+                    b.Property<Guid>("ProjectsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TeamMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProjectsId", "TeamMemberId");
+
+                    b.HasIndex("TeamMemberId");
+
+                    b.ToTable("EmployeeProjects", (string)null);
+                });
+
             modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("EmployeeCRUD.Domain.Entities.Department", "Department")
@@ -97,9 +322,63 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.Navigation("Department");
                 });
 
+            modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Project", b =>
+                {
+                    b.HasOne("EmployeeCRUD.Domain.Entities.Department", "Department")
+                        .WithMany("Projects")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("EmployeeCRUD.Domain.Entities.Employee", "ProjectManager")
+                        .WithMany("ManagedProjects")
+                        .HasForeignKey("ProjectManagerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Department");
+
+                    b.Navigation("ProjectManager");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.ProjectCreateKeyless", b =>
+                {
+                    b.HasOne("EmployeeCRUD.Domain.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId");
+
+                    b.HasOne("EmployeeCRUD.Domain.Entities.Employee", "ProjectManager")
+                        .WithMany()
+                        .HasForeignKey("ProjectManagerId");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("ProjectManager");
+                });
+
+            modelBuilder.Entity("EmployeeProject", b =>
+                {
+                    b.HasOne("EmployeeCRUD.Domain.Entities.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EmployeeCRUD.Domain.Entities.Employee", null)
+                        .WithMany()
+                        .HasForeignKey("TeamMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Department", b =>
                 {
                     b.Navigation("Employees");
+
+                    b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Employee", b =>
+                {
+                    b.Navigation("ManagedProjects");
                 });
 #pragma warning restore 612, 618
         }
