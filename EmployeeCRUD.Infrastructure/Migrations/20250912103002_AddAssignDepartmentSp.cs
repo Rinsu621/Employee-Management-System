@@ -24,7 +24,9 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                 {
                 });
 
-            migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\AssignDepartment.sql"));
+            //migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\AssignDepartment.sql"));
+            var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "AssignDepartment.sql");
+            migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
         }
 
         /// <inheritdoc />

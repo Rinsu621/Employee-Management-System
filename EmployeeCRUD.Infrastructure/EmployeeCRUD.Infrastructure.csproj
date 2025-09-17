@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\AssignTeamMember.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Scripts\AssignTeamMember.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
@@ -32,5 +24,17 @@
     <ProjectReference Include="..\EmployeeCRUD.Application\EmployeeCRUD.Application.csproj" />
     <ProjectReference Include="..\EmployeeCRUD.Domain\EmployeeCRUD.Domain.csproj" />
   </ItemGroup>
+	<ItemGroup>
+		<None Update="Scripts\AssignTeamMember.sql">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+
+		<None Update="Scripts\PatchProject.sql">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Scripts\AssignDepartment.sql">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

@@ -10,8 +10,9 @@ namespace EmployeeCRUD.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\PatchProject.sql"));
-            
+            var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "PatchProject.sql");
+            migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
+
         }
 
         /// <inheritdoc />

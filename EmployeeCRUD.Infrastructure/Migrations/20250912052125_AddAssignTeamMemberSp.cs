@@ -28,8 +28,9 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                 {
                 });
 
-            migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\AssignTeamMember.sql"));
-
+            //migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\AssignTeamMember.sql"));
+            var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "AssignTeamMember.sql");
+            migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
 
         }
 
