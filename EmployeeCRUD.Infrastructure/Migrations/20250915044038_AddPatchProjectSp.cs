@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using EmployeeCRUD.Infrastructure.Helper;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,11 +14,13 @@ namespace EmployeeCRUD.Infrastructure.Migrations
             //var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "PatchProject.sql");
             //migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
 
-            var assembly = typeof(AddPatchProjectSp).Assembly;
-            using var stream = assembly.GetManifestResourceStream("EmployeeCRUD.Infrastructure.Scripts.PatchProject.sql");
-            using var reader = new StreamReader(stream);
-            var sql = reader.ReadToEnd();
-            migrationBuilder.Sql(sql);
+            //var assembly = typeof(AddPatchProjectSp).Assembly;
+            //using var stream = assembly.GetManifestResourceStream("EmployeeCRUD.Infrastructure.Scripts.PatchProject.sql");
+            //using var reader = new StreamReader(stream);
+            //var sql = reader.ReadToEnd();
+            //migrationBuilder.Sql(sql);
+
+            MigrationHelper.RunSqlScript(migrationBuilder, "EmployeeCRUD.Infrastructure.Scripts.PatchProject.sql");
 
         }
 

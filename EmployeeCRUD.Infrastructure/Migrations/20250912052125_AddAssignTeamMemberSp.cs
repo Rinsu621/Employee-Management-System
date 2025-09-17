@@ -1,4 +1,5 @@
 ﻿using System;
+using EmployeeCRUD.Infrastructure.Helper;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -33,11 +34,13 @@ namespace EmployeeCRUD.Infrastructure.Migrations
             //var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "AssignTeamMember.sql");
             //migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
 
-            var assembly = typeof(AddAssignTeamMemberSp).Assembly;
-            using var stream = assembly.GetManifestResourceStream("EmployeeCRUD.Infrastructure.Scripts.AssignTeamMember.sql");
-            using var reader = new StreamReader(stream);
-            var sql = reader.ReadToEnd();
-            migrationBuilder.Sql(sql);
+            //var assembly = typeof(AddAssignTeamMemberSp).Assembly;
+            //using var stream = assembly.GetManifestResourceStream("EmployeeCRUD.Infrastructure.Scripts.AssignTeamMember.sql");
+            //using var reader = new StreamReader(stream);
+            //var sql = reader.ReadToEnd();
+            //migrationBuilder.Sql(sql);
+
+            MigrationHelper.RunSqlScript(migrationBuilder, "EmployeeCRUD.Infrastructure.Scripts.AssignTeamMember.sql");
 
         }
 

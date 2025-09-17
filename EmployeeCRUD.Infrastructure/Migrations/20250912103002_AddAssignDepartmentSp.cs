@@ -1,4 +1,5 @@
 ﻿using System;
+using EmployeeCRUD.Infrastructure.Helper;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -25,14 +26,17 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                 });
 
             //migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\AssignDepartment.sql"));
+
             //var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "AssignDepartment.sql");
             //migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
 
-            var assembly = typeof(AddAssignDepartmentSp).Assembly;
-            using var stream = assembly.GetManifestResourceStream("EmployeeCRUD.Infrastructure.Scripts.AssignDepartment.sql");
-            using var reader = new StreamReader(stream);
-            var sql = reader.ReadToEnd();
-            migrationBuilder.Sql(sql);
+            //var assembly = typeof(AddAssignDepartmentSp).Assembly;
+            //using var stream = assembly.GetManifestResourceStream("EmployeeCRUD.Infrastructure.Scripts.AssignDepartment.sql");
+            //using var reader = new StreamReader(stream);
+            //var sql = reader.ReadToEnd();
+            //migrationBuilder.Sql(sql);
+
+            MigrationHelper.RunSqlScript(migrationBuilder, "EmployeeCRUD.Infrastructure.Scripts.AssignDepartment.sql");
         }
 
         /// <inheritdoc />
