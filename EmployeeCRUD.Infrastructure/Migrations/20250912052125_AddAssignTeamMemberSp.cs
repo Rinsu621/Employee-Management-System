@@ -29,8 +29,15 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                 });
 
             //migrationBuilder.Sql(File.ReadAllText(@"..\EmployeeCRUD.Infrastructure\Scripts\AssignTeamMember.sql"));
-            var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "AssignTeamMember.sql");
-            migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
+
+            //var sqlFilePath = Path.Combine(AppContext.BaseDirectory, "Scripts", "AssignTeamMember.sql");
+            //migrationBuilder.Sql(File.ReadAllText(sqlFilePath));
+
+            var assembly = typeof(AddAssignTeamMemberSp).Assembly;
+            using var stream = assembly.GetManifestResourceStream("EmployeeCRUD.Infrastructure.Scripts.AssignTeamMember.sql");
+            using var reader = new StreamReader(stream);
+            var sql = reader.ReadToEnd();
+            migrationBuilder.Sql(sql);
 
         }
 
