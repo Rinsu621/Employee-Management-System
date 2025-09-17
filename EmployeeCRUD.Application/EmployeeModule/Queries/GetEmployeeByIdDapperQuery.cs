@@ -21,7 +21,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             public async Task<EmployeeResponseDto> Handle(GetEmployeeByIdDapperQuery request, CancellationToken cancellationToken)
             {
                 var result = await connection.QuerySingleOrDefaultAsync<EmployeeResponseDto>(
-                     "GetEmployeeById",
+                     "GetAllEmployeeById",
                      new { Id = request.Id },
                      commandType: CommandType.StoredProcedure);
                 

@@ -7,21 +7,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\AddEmployee.sql" />
     <None Remove="Scripts\AssignDepartment.sql" />
     <None Remove="Scripts\AssignTeamMember.sql" />
+    <None Remove="Scripts\DeleteEmployee.sql" />
+    <None Remove="Scripts\GetAllEmployees.sql" />
+    <None Remove="Scripts\GetEmployeeById.sql" />
+    <None Remove="Scripts\PatchEmployee.sql" />
     <None Remove="Scripts\PatchProject.sql" />
+    <None Remove="Scripts\UpdateEmployee.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\AddEmployee.sql" />
     <EmbeddedResource Include="Scripts\AssignDepartment.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Scripts\AssignTeamMember.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\DeleteEmployee.sql" />
+    <EmbeddedResource Include="Scripts\GetAllEmployees.sql" />
+    <EmbeddedResource Include="Scripts\GetEmployeeById.sql" />
+    <EmbeddedResource Include="Scripts\PatchEmployee.sql" />
     <EmbeddedResource Include="Scripts\PatchProject.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\UpdateEmployee.sql" />
   </ItemGroup>
 
   <ItemGroup>

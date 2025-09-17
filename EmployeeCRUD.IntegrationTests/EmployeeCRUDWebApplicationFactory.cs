@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace EmployeeCRUD.IntegrationTests
 {
@@ -26,6 +28,10 @@ namespace EmployeeCRUD.IntegrationTests
                     options.UseSqlServer("Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True"
                     );
                 });
+
+                services.RemoveAll<IDbConnection>();
+                services.AddScoped<IDbConnection>(sp =>
+                    new SqlConnection("Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True"));
 
                 var sp = services.BuildServiceProvider();
                 using var scope = sp.CreateScope();

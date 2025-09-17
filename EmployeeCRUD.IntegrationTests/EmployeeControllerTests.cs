@@ -7,7 +7,9 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Numerics;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Xunit.Abstractions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EmployeeCRUD.IntegrationTests
@@ -16,10 +18,13 @@ namespace EmployeeCRUD.IntegrationTests
     {
         private readonly EmployeeCRUDWebApplicationFactory factory;
         private readonly HttpClient client;
-        public EmployeeControllerTests(EmployeeCRUDWebApplicationFactory _factory)
+        private readonly ITestOutputHelper output;
+
+        public EmployeeControllerTests(EmployeeCRUDWebApplicationFactory _factory, ITestOutputHelper _output)
         {
             factory = _factory;
             client = factory.CreateClient();
+            output = _output;
         }
         [Fact]
         public async Task AddEmployee_ReturnsCreatedEmployee()
@@ -86,24 +91,37 @@ namespace EmployeeCRUD.IntegrationTests
         }
 
         [Fact]
-        public async Task AddEmployeeDapper_ReturnsCrestedEmployee()
+        public async Task AddEmployeeDapper_ReturnsCreateddEmployee()
         {
-            //Arrange
+            // Arrange
             var employeeDto = new EmployeeDto
             {
-                EmpName = "TestA",
-                Email = "testa@gmail.com",
+                EmpName = "Testz",
+                Email = "testz@gmail.com",
                 Phone = "9876544321"
             };
-            var command = new AddEmployeeSPCommand(employeeDto);
+            var command = new AddEmployeeDapperCommand(employeeDto);
 
-            //Act
-            var response = await client.PostAsJsonAsync("/api/Employee/using-sp", command);
+            // Act
+            var response = await client.PostAsJsonAsync("/api/Employee/add-employee-using-dapper", command);
 
-            //Assert
+            // Log the response for debugging
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error Response: {errorContent}");
+            }
 
-            Assert.True(response.IsSuccessStatusCode);
-           
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var createdEmployee = await response.Content.ReadFromJsonAsync<EmployeeResponseDto>(
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            Assert.NotNull(createdEmployee);
+            Assert.Equal(employeeDto.EmpName, createdEmployee.EmpName);
+            Assert.Equal(employeeDto.Email, createdEmployee.Email);
+            Assert.Equal(employeeDto.Phone, createdEmployee.Phone);
         }
+
     }
 }
