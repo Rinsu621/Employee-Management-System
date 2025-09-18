@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeCRUD.Api", "EmployeeCRUD.Api\EmployeeCRUD.Api.csproj", "{D5C5F21E-149C-43AC-98E3-78276835501A}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeCRUD.Infrastructure", "EmployeeCRUD.Infrastructure\EmployeeCRUD.Infrastructure.csproj", "{B2B4F72B-DC0D-41B0-9262-497C4A67DD68}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeCRUD.Domain", "EmployeeCRUD.Domain\EmployeeCRUD.Domain.csproj", "{C74B0DAA-3853-4041-97F5-113E007F79B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeCRUD.IntegrationTests", "EmployeeCRUD.IntegrationTests\EmployeeCRUD.IntegrationTests.csproj", "{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{C74B0DAA-3853-4041-97F5-113E007F79B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C74B0DAA-3853-4041-97F5-113E007F79B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C74B0DAA-3853-4041-97F5-113E007F79B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,10 +9,10 @@ namespace EmployeeCRUD.Application.EmployeeModule.Dtos
     public class EmployeeResponseDto
     {
         public Guid Id { get; set; }
-        public required string EmpName { get; set; }
+        public  string EmpName { get; set; }
 
-        public required string Email { get; set; }
-        public required string Phone { get; set; }
+        public  string Email { get; set; }
+        public  string Phone { get; set; }
         public string? DepartmentName { get; set; } // nullable
         public DateTime CreatedAt { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(
         DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time"));

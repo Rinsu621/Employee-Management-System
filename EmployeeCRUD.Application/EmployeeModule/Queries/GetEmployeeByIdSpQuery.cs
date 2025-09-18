@@ -25,7 +25,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
         public async Task<EmployeeResponseKeyless> Handle(GetEmployeeByIdSpQuery request, CancellationToken cancellationToken)
         {
             var employee =await dbContext.EmployeeResponseKeyless
-            .FromSqlRaw("EXEC GetEmployeeById @Id = {0}", request.Id) 
+            .FromSqlRaw("EXEC GetAllEmployeeById @Id = {0}", request.Id) 
             .AsNoTracking() 
             .FirstOrDefaultAsync(); 
         
