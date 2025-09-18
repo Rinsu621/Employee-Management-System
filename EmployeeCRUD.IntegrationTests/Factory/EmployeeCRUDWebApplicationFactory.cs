@@ -1,19 +1,20 @@
-﻿using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data;
-using Microsoft.Data.SqlClient;
 
-namespace EmployeeCRUD.IntegrationTests
+namespace EmployeeCRUD.IntegrationTests.Factory
 {
     public class EmployeeCRUDWebApplicationFactory:WebApplicationFactory<Program>
     {
@@ -28,10 +29,19 @@ namespace EmployeeCRUD.IntegrationTests
                     options.UseSqlServer("Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True"
                     );
                 });
+                services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+
 
                 services.RemoveAll<IDbConnection>();
+                //services.AddScoped<IDbConnection>(sp =>
+                //    new SqlConnection("Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True"));
+
                 services.AddScoped<IDbConnection>(sp =>
-                    new SqlConnection("Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True"));
+                    new SqlConnection(
+                        "Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True"
+                    )
+                );
+
 
                 var sp = services.BuildServiceProvider();
                 using var scope = sp.CreateScope();

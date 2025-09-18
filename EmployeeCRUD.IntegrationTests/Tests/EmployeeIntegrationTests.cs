@@ -1,6 +1,7 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.EmployeeModule.Queries;
+using EmployeeCRUD.IntegrationTests.Factory;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +17,9 @@ using System.Threading.Tasks;
 using Xunit.Abstractions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace EmployeeCRUD.IntegrationTests
+namespace EmployeeCRUD.IntegrationTests.Tests
 {
-    public class EmployeeControllerTests : IClassFixture<EmployeeCRUDWebApplicationFactory>
+    public class EmployeeIntegrationTests : IClassFixture<EmployeeCRUDWebApplicationFactory>
     {
         private readonly EmployeeCRUDWebApplicationFactory factory;
         private readonly HttpClient client;
@@ -26,7 +27,7 @@ namespace EmployeeCRUD.IntegrationTests
         private readonly IServiceScope scope;
         private readonly IMediator mediator;
 
-        public EmployeeControllerTests(EmployeeCRUDWebApplicationFactory _factory, ITestOutputHelper _output)
+        public EmployeeIntegrationTests(EmployeeCRUDWebApplicationFactory _factory, ITestOutputHelper _output)
         {
             factory = _factory;
             client = factory.CreateClient();

@@ -21,7 +21,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
         }
         public async Task<ProjectDto> Handle(AddProjectDapperCommand request, CancellationToken cancellationToken)
         {
-            var result = await connection.QuerySingleAsync<ProjectDto>("CreateProject",
+            var result = await connection.QuerySingleAsync<ProjectDto>("AddProject",
                 new { request.ProjectName, request.Description, request.StartDate, request.EndDate, request.Budget, request.Status, request.ClientName },
                 commandType: CommandType.StoredProcedure);
 

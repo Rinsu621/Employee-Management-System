@@ -23,7 +23,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
         public async Task<ProjectCreateKeyless> Handle(AddProjectSpCommand request, CancellationToken cancellationToken)
         {
             var result = dbContext.ProjectCreateKeyless
-                 .FromSqlInterpolated($"EXEC CreateProject {request.ProjectName}, {request.Description}, {request.StartDate}, {request.EndDate}, {request.Budget}, {request.Status}, {request.ClientName}")
+                 .FromSqlInterpolated($"EXEC AddProject {request.ProjectName}, {request.Description}, {request.StartDate}, {request.EndDate}, {request.Budget}, {request.Status}, {request.ClientName}")
                  .AsNoTracking()
                  .AsEnumerable()
                  .FirstOrDefault();

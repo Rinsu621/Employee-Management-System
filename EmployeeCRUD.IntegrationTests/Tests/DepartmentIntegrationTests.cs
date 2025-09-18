@@ -2,6 +2,7 @@
 using EmployeeCRUD.Application.Department.Dtos;
 using EmployeeCRUD.Application.Department.Queries;
 using EmployeeCRUD.Application.DepartmentModule.Command;
+using EmployeeCRUD.IntegrationTests.Factory;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,9 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
 
-namespace EmployeeCRUD.IntegrationTests
+namespace EmployeeCRUD.IntegrationTests.Tests
 {
-    public class DepartmentControllerTests:IClassFixture<EmployeeCRUDWebApplicationFactory>
+    public class DepartmentIntegrationTests:IClassFixture<EmployeeCRUDWebApplicationFactory>
     {
         private readonly EmployeeCRUDWebApplicationFactory factory;
         private readonly HttpClient client;
@@ -22,7 +23,7 @@ namespace EmployeeCRUD.IntegrationTests
         private readonly IServiceScope scope;
         private readonly IMediator mediator;
 
-        public DepartmentControllerTests(EmployeeCRUDWebApplicationFactory _factory, ITestOutputHelper _output)
+        public DepartmentIntegrationTests(EmployeeCRUDWebApplicationFactory _factory, ITestOutputHelper _output)
         {
             factory = _factory;
             client = factory.CreateClient();

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\AddEmployee.sql" />
     <None Remove="Scripts\AssignDepartment.sql" />
     <None Remove="Scripts\AssignTeamMember.sql" />
     <None Remove="Scripts\DeleteEmployee.sql" />
@@ -19,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\AddProject.sql" />
     <EmbeddedResource Include="Scripts\AddEmployee.sql" />
     <EmbeddedResource Include="Scripts\AssignDepartment.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
