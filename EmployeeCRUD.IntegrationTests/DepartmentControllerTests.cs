@@ -1,4 +1,9 @@
-﻿using MediatR;
+﻿using EmployeeCRUD.Application.Department.Command;
+using EmployeeCRUD.Application.Department.Dtos;
+using EmployeeCRUD.Application.Department.Queries;
+using EmployeeCRUD.Application.DepartmentModule.Command;
+using FluentAssertions;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -31,8 +36,52 @@ namespace EmployeeCRUD.IntegrationTests
         [InlineData("IT")]
         public async Task AddDepartment_ReturnsCreatedDepartment(string deptName)
         {
-            
-           
+            //Assign
+            var department= new DepartmentCreateDto
+            {
+                DeptName = deptName
+            };
+            var command = new AddDepartmentCommand(department);
+
+            //Act
+            var addedDepartment = await mediator.Send(command);
+
+            var result= await mediator.Send(new GetDepartmentQuery());
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Should().ContainSingle(d => d.Name == deptName);
+
+            foreach(var dept in result)
+            {
+                output.WriteLine($"Department ID: {dept.Id}, Name: {dept.Name}");
+            }
+
+        }
+
+        [Theory]
+        [InlineData("HR")]
+        [InlineData("IT")]
+        public async Task DeleteDepartment_ReturnSucess(string deptName)
+        {
+            //Assign
+            var department = new DepartmentCreateDto
+            {
+                DeptName = deptName
+            };
+            var command = new AddDepartmentCommand(department);
+            var addedDepartment = await mediator.Send(command);
+
+            //Act
+
+            var delteCommand = new DeleteDepartmentCommand(addedDepartment.Id);
+            var result = await mediator.Send(delteCommand);
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Success.Should().BeTrue();
+            result.Message.Should().Be("Department removed successfully.");
+
         }
 
     }
