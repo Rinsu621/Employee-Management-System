@@ -4,6 +4,7 @@ using EmployeeCRUD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeCRUD.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250919050831_UpdateAppDbContext")]
+    partial class UpdateAppDbContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,7 +123,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.HasIndex("DeptName")
                         .IsUnique();
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Employee", b =>
@@ -160,7 +163,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Project", b =>
@@ -223,7 +226,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.HasIndex("ProjectName")
                         .IsUnique();
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Salary", b =>
@@ -267,7 +270,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Salary", (string)null);
+                    b.ToTable("Salary");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Domain.keyless.TeamMemberAssignmentRow", b =>
@@ -287,7 +290,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("TeamMemberAssignmentRows", (string)null);
+                    b.ToTable("TeamMemberAssignmentRows");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.Keyless.EmployeeResponseKeyless", b =>
@@ -341,7 +344,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.ToTable("EmployeeUpdateKeyless", (string)null);
+                    b.ToTable("EmployeeUpdateKeyless");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.ProjectCreateKeyless", b =>
@@ -383,7 +386,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
 
                     b.HasIndex("ProjectManagerId");
 
-                    b.ToTable("ProjectCreateKeyless", (string)null);
+                    b.ToTable("ProjectCreateKeyless");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.ProjectDepartmentResponse", b =>
@@ -396,7 +399,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("ProjectDepartmentResponses", (string)null);
+                    b.ToTable("ProjectDepartmentResponses");
                 });
 
             modelBuilder.Entity("EmployeeCRUD.Infrastructure.Data.keyless.TeamMemberAssignmentResponse", b =>
@@ -416,7 +419,7 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("TeamMemberAssignmentResponses", (string)null);
+                    b.ToTable("TeamMemberAssignmentResponses");
                 });
 
             modelBuilder.Entity("EmployeeProject", b =>

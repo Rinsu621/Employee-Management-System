@@ -11,5 +11,6 @@ namespace EmployeeCRUD.Application.Interface
     public interface ISalaryDbContext
     {
         DbSet<Salary> Salarys { get; set; }
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

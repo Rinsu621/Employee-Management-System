@@ -33,14 +33,8 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<ISalaryDbContext>(provider=> provider.GetRequiredService<SalaryDbContext>());
 
             //Register Dapper
-            services.AddScoped<Func<string, IDbConnection>>(sp => (name) =>
-            {
-                if (name == "Default")
-                    return new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
-                else if (name == "Salary")
-                    return new SqlConnection(configuration.GetConnectionString("SalaryConnection"));
-                throw new ArgumentException("Invalid connection name");
-            });
+            services.AddScoped<IDbConnection>(sp =>
+     new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
 
             return services;
         }

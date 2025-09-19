@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Infrastructure.Data
 {
-    public class SalaryDbContext:IdentityDbContext<ApplicationUser, IdentityRole, string>,ISalaryDbContext
+    public class SalaryDbContext:DbContext,ISalaryDbContext
     {
         public SalaryDbContext(DbContextOptions<SalaryDbContext> options) : base(options) { }
 
@@ -23,6 +23,11 @@ namespace EmployeeCRUD.Infrastructure.Data
         {
             builder.ApplyConfigurationsFromAssembly(typeof(SalaryDbContext).Assembly);
             base.OnModelCreating(builder);
+        }
+
+         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }
