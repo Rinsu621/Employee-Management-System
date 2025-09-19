@@ -15,17 +15,18 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container like Issuer, Audience, SecretKey from appsetting.json
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 
 builder.Services.AddControllers();
+//it allow access to HttpContext inside services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectTeamMemberFilter>();
 
 //Identity Configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.Password.RequiredLength = 6;
+    options.Password.RequiredLength = 6; //Minimum length
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.User.RequireUniqueEmail = true;
@@ -40,6 +41,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 //    .AddDefaultTokenProviders();
 
 //here we can make changes, using this as usefuln for early testing
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -64,7 +66,7 @@ builder.Services.AddAuthentication(options =>
 // Authorization
 builder.Services.AddAuthorization();
 
-// Swagger configuration with JWT support
+// Swagger configuration with JWT support, Add authorization header for entering Bearer token
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -108,6 +110,8 @@ builder.Services.AddApiDI(builder.Configuration);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 var app = builder.Build();
+
+//seeding the value of seeder
 
 using (var scope = app.Services.CreateScope())
 {

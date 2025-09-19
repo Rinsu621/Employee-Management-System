@@ -13,6 +13,7 @@ namespace EmployeeCRUD.Domain.Entities
         public Guid EmployeeId { get; set; }
         public Employee Employee { get; set; } //To navigate from Identity user to Employee entity
 
+        //Stores Refresh token for user
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
     }

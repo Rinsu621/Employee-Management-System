@@ -15,8 +15,12 @@ namespace EmployeeCRUD.Infrastructure.Seeder
     {
         public static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
         {
+            //Manage Identity role(create , check the existence of rolw)
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            //manage identity like create , assign role , validate password
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            //access congiguration values like admin email, password
             var config = serviceProvider.GetRequiredService<IConfiguration>();
             //Defining role to seed
             var roles = new[] { "Admin", "Manager", "Employee" };
@@ -26,11 +30,12 @@ namespace EmployeeCRUD.Infrastructure.Seeder
             {
                 if(!await roleManager.RoleExistsAsync(role))
                 {
+                    //if not exists it create using CreateAsync
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
             }
 
-            //Seed admin user
+            //Seed admin user, read credential from config
             var adminEmail = config["AdminUser:Email"];
             var adminPassword = config["AdminUser:Password"];
             var userExist = await userManager.FindByEmailAsync(adminEmail);

@@ -28,14 +28,14 @@ namespace EmployeeCRUD.Application.Services
         {
             var claims = new List<Claim>
             {
-             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+             new Claim(JwtRegisteredClaimNames.Sub, user.Id),// subject which is user id
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName)
             };
             var roles= await userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes.Role, role)); // adds a claim for each role so that JWT can carry role-based authorization 
             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -52,6 +52,7 @@ namespace EmployeeCRUD.Application.Services
 
         public string GenerateRefreshToken()
         {
+            //create cryptographic secure random 32 byte number
             var randomNumber = new byte[32];
             using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
             {
@@ -70,9 +71,10 @@ namespace EmployeeCRUD.Application.Services
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"])),
                 ValidateLifetime = false //here we are saying that we don't care about the token's expiration date
             };
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler(); //to validate the token and extract claims
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
             var jwtSecurityToken = securityToken as JwtSecurityToken;
+            //ensure token is a JWT and uses the correct signing algorithm
             if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
             return principal;

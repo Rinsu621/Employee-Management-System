@@ -34,6 +34,10 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
            var user = await userManager.FindByEmailAsync(request.Email);
             Guard.Against.Null(user, "Invalid Email or Password");
 
+            var isPasswordValid = await userManager.CheckPasswordAsync(user, request.Password);
+            if (!isPasswordValid)
+                throw new InvalidOperationException("Invalid Email or Password");
+
 
             var token = await jwtService.GenerateAccessToken(user);
             var refreshtoken = jwtService.GenerateRefreshToken();
