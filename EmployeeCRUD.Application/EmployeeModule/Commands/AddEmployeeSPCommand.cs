@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record AddEmployeeSPCommand(EmployeeDto employee) : IRequest<EmployeeResponseKeyless>;
+    public record AddEmployeeSPCommand(string EmpName, string Email, string Phone) : IRequest<EmployeeResponseKeyless>;
 
     public class AddEmployeeSPHandler : IRequestHandler<AddEmployeeSPCommand, EmployeeResponseKeyless>
     {
@@ -27,10 +27,12 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         }
         public async Task<EmployeeResponseKeyless> Handle(AddEmployeeSPCommand request, CancellationToken cancellationToken)
         {
-            var result = await dbContext.Set<EmployeeResponseKeyless>()
-            .FromSqlInterpolated($"EXEC AddEmployee {request.employee.EmpName}, {request.employee.Email}, {request.employee.Phone}")
-            .AsNoTracking()
-             .FirstOrDefaultAsync(cancellationToken);
+            var newId = Guid.NewGuid();
+            var result = dbContext.Set<EmployeeResponseKeyless>()
+                .FromSqlInterpolated($"EXEC AddEmployee @Id={newId}, @EmpName={request.EmpName}, @Email={request.Email}, @Phone={request.Phone}")
+                .AsNoTracking()
+                .AsEnumerable()
+                .Single();
             Guard.Against.Null(result, nameof(result), "Failed to add employee");
             return result;
         }

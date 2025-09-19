@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record AddEmployeeDapperCommand(EmployeeDto employee): IRequest<EmployeeResponseDto>;
+    public record AddEmployeeDapperCommand(string EmpName, string Email, string Phone): IRequest<EmployeeResponseDto>;
 
     public class AddEmployeeDapperHandler : IRequestHandler<AddEmployeeDapperCommand, EmployeeResponseDto>
     {
@@ -25,7 +25,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
            
 
             var result = await connection.QuerySingleAsync<EmployeeResponseDto>("AddEmployee",
-                new { request.employee.EmpName, request.employee.Email, request.employee.Phone },
+                new { request.EmpName, request.Email, request.Phone },
                 commandType: CommandType.StoredProcedure);
 
             Guard.Against.Null(result, nameof(result), "Failed to add employee");

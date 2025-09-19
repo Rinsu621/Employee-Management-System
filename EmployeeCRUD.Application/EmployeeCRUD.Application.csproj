@@ -20,4 +20,8 @@
     <ProjectReference Include="..\EmployeeCRUD.Domain\EmployeeCRUD.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AuthModel\Queries\" />
+  </ItemGroup>
+
 </Project>

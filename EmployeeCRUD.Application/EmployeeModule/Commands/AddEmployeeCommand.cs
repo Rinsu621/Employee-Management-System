@@ -4,6 +4,7 @@ using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,15 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommand, EmployeeResponseDto>
     {
         private readonly IAppDbContext dbContext;
-
-        public AddEmployeeHandler(IAppDbContext _dbContext)
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        public AddEmployeeHandler(IAppDbContext _dbContext,
+                              UserManager<ApplicationUser> _userManager,
+                              RoleManager<IdentityRole> _roleManager)
         {
             dbContext = _dbContext;
+            userManager = _userManager;
+            roleManager = _roleManager;
         }
 
         public async Task<EmployeeResponseDto> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
@@ -35,6 +41,29 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
             };
             dbContext.Employees.Add(entity);
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            
+            var user = new ApplicationUser
+            {
+                UserName = entity.Email,
+                Email = entity.Email,
+                EmployeeId = entity.Id
+            };
+            var defaultPassword = "Default@123";
+            var result = await userManager.CreateAsync(user, defaultPassword);
+            if (!result.Succeeded)
+            {
+                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+
+            if (!await roleManager.RoleExistsAsync(request.employee.Role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(request.employee.Role));
+            }
+            await userManager.AddToRoleAsync(user, request.employee.Role);
+
+
+
             return new EmployeeResponseDto
             {
                 Id = entity.Id,

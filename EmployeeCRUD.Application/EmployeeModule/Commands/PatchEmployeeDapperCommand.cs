@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record PatchEmployeeDapperCommand(Guid Id, EmployeeDto employee): IRequest<EmployeeUpdateResponse>;
+    public record PatchEmployeeDapperCommand(Guid Id, string EmpName, string Email, string Phone): IRequest<EmployeeUpdateResponse>;
     
     public class PatchEmployeeDapperHandler : IRequestHandler<PatchEmployeeDapperCommand, EmployeeUpdateResponse>
     {
@@ -22,7 +22,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         public async Task<EmployeeUpdateResponse> Handle(PatchEmployeeDapperCommand request, CancellationToken cancellationToken)
         {
             var result= await connection.QuerySingleAsync<EmployeeUpdateResponse>("PatchEmployee",
-                new { Id = request.Id, request.employee.EmpName, request.employee.Email, request.employee.Phone },
+                new { Id = request.Id, request.EmpName, request.Email, request.Phone },
                 commandType: CommandType.StoredProcedure);
             return result;
         }

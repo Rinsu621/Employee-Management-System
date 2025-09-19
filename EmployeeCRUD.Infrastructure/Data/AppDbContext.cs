@@ -3,11 +3,13 @@ using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Domain.keyless;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeCRUD.Infrastructure.Data
 {
-    public class AppDbContext : DbContext,IAppDbContext
+    public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole, string>, IAppDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

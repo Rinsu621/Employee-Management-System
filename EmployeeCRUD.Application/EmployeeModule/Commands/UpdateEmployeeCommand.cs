@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-   public record UpdateEmployeeCommand(Guid Id,EmployeeDto Employee) : IRequest<EmployeeUpdateResponse>;
+   public record UpdateEmployeeCommand(Guid Id,string EmpName, string Email, string Phone) : IRequest<EmployeeUpdateResponse>;
 
     public class UpdateEmployeeHandler : IRequestHandler<UpdateEmployeeCommand, EmployeeUpdateResponse>
     {
@@ -31,9 +31,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
             var employee = await dbContext.Employees.FindAsync(request.Id);
             Guard.Against.Null(employee, nameof(employee), $"Employee with Id '{request.Id}' not found.");
 
-            employee.EmpName= request.Employee.EmpName;
-            employee.Email = request.Employee.Email;
-            employee.Phone = request.Employee.Phone;
+            employee.EmpName= request.EmpName;
+            employee.Email = request.Email;
+            employee.Phone = request.Phone;
 
             dbContext.Employees.Update(employee);
             await dbContext.SaveChangesAsync(cancellationToken);
