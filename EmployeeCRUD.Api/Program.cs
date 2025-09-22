@@ -127,14 +127,13 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    //var salaryDbContext = services.GetRequiredService<SalaryDbContext>();
-    //await salaryDbContext.Database.MigrateAsync();
+    var salaryDbContext = services.GetRequiredService<SalaryDbContext>();
+    await salaryDbContext.Database.MigrateAsync();
 
-    //var appDbContext = services.GetRequiredService<AppDbContext>();
-    //await appDbContext.Database.MigrateAsync();
-    //await IdentitySeeder.SeedRolesAndAdminAsync(services);
+    var appDbContext = services.GetRequiredService<AppDbContext>();
+    await appDbContext.Database.MigrateAsync();
+    await IdentitySeeder.SeedRolesAndAdminAsync(services);
 
-    // Migrate SalaryDbContext
   
 }
 

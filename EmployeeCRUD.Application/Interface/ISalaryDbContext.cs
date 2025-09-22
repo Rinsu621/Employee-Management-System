@@ -10,7 +10,7 @@ namespace EmployeeCRUD.Application.Interface
 {
     public interface ISalaryDbContext
     {
-        DbSet<Salary> Salarys { get; set; }
+        DbSet<Salary> Salaries { get; set; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

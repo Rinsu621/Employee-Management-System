@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Infrastructure.Configurations
+namespace EmployeeCRUD.Infrastructure.Configurations.SalaryDbContextConfiguration
 {
     public class SalaryConfiguration : IEntityTypeConfiguration<Salary>
     {

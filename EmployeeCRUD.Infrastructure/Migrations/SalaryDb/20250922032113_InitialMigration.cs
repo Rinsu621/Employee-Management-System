@@ -6,15 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EmployeeCRUD.Infrastructure.Migrations.SalaryDb
 {
     /// <inheritdoc />
-    public partial class InitialSalaryMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            
-
             migrationBuilder.CreateTable(
-                name: "Salarys",
+                name: "Salaries",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -25,27 +23,21 @@ namespace EmployeeCRUD.Infrastructure.Migrations.SalaryDb
                     PF = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ESI = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentMode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Salarys", x => x.Id);
+                    table.PrimaryKey("PK_Salaries", x => x.Id);
                 });
-
-           
-
-           
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-           
             migrationBuilder.DropTable(
-                name: "Salarys");
-
-           
+                name: "Salaries");
         }
     }
 }

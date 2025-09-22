@@ -226,50 +226,6 @@ namespace EmployeeCRUD.Infrastructure.Migrations
                     b.ToTable("Projects", (string)null);
                 });
 
-            modelBuilder.Entity("EmployeeCRUD.Domain.Entities.Salary", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("BasicSalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Conveyance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<decimal>("ESI")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("PF")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("PaymentMode")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<decimal>("Tax")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Salary", (string)null);
-                });
-
             modelBuilder.Entity("EmployeeCRUD.Domain.keyless.TeamMemberAssignmentRow", b =>
                 {
                     b.Property<Guid>("ProjectId")

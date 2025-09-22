@@ -21,6 +21,7 @@ namespace EmployeeCRUD.Domain.Entities
 
         public ICollection<Project> Projects { get;  set; } = new List<Project>();
 
+
         public ICollection<Project> ManagedProjects { get;  set; } = new List<Project>();
 
        

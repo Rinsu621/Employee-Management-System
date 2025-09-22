@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Infrastructure.Configurations
+namespace EmployeeCRUD.Infrastructure.Configurations.AppDBContextConfiguration
 {
     public class DepartmentConfiguration:IEntityTypeConfiguration<Department>
     {

@@ -48,7 +48,7 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
                 UpdatedAt = null
             };
 
-            salaryDbContext.Salarys.Add(salary);
+            salaryDbContext.Salaries.Add(salary);
             await salaryDbContext.SaveChangesAsync(cancellationToken);
 
             return new SalaryResponseDto

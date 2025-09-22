@@ -1,6 +1,7 @@
 ﻿using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Domain.keyless;
+using EmployeeCRUD.Infrastructure.Configurations.AppDBContextConfiguration;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using Microsoft.AspNetCore.Identity;
@@ -25,8 +26,12 @@ namespace EmployeeCRUD.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+            modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+            modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+            modelBuilder.ApplyConfiguration(new ProjectConfiguration());
+
+
+
             modelBuilder.Entity<EmployeeResponseKeyless>().HasNoKey();
             modelBuilder.Entity<EmployeeUpdateKeyless>().HasNoKey();
             modelBuilder.Entity<ProjectCreateKeyless>().HasNoKey();
@@ -36,9 +41,9 @@ namespace EmployeeCRUD.Infrastructure.Data
 
             modelBuilder.Entity<EmployeeResponseKeyless>().ToView(null);
 
-
-
             base.OnModelCreating(modelBuilder);
+
+
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

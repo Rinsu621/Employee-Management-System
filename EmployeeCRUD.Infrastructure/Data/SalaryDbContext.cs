@@ -16,12 +16,23 @@ namespace EmployeeCRUD.Infrastructure.Data
     {
         public SalaryDbContext(DbContextOptions<SalaryDbContext> options) : base(options) { }
 
-        public DbSet<Salary> Salarys { get; set; }
+        public DbSet<Salary> Salaries { get; set; }
       
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfigurationsFromAssembly(typeof(SalaryDbContext).Assembly);
+            var salaryConfigurations = typeof(SalaryDbContext).Assembly
+         .GetTypes()
+         .Where(t => t.GetInterfaces().Any(i =>
+             i.IsGenericType &&
+             i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>) &&
+             i.GetGenericArguments()[0] == typeof(Salary))); // only Salary
+
+            foreach (var config in salaryConfigurations)
+            {
+                dynamic instance = Activator.CreateInstance(config);
+                builder.ApplyConfiguration(instance);
+            }
             base.OnModelCreating(builder);
         }
 

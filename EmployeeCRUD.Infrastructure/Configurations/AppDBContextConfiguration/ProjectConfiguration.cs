@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Infrastructure.Configurations
+namespace EmployeeCRUD.Infrastructure.Configurations.AppDBContextConfiguration
 {
     public  class ProjectConfiguration:IEntityTypeConfiguration<Project>
     {
@@ -41,13 +41,9 @@ namespace EmployeeCRUD.Infrastructure.Configurations
                   .HasForeignKey(p => p.DepartmentId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(p => p.ProjectManager)
-                  .WithMany(e => e.ManagedProjects)
-                  .HasForeignKey(p => p.ProjectManagerId)
-                  .OnDelete(DeleteBehavior.SetNull);
+          
 
-            entity.HasMany(p => p.TeamMember)
-                .WithMany(e => e.Projects);
+           
         }
 
     }
