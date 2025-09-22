@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\AddEmployee.sql" />
+    <None Remove="Scripts\AddProject.sql" />
     <None Remove="Scripts\AssignDepartment.sql" />
     <None Remove="Scripts\AssignTeamMember.sql" />
     <None Remove="Scripts\DeleteEmployee.sql" />
@@ -18,26 +20,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\AddProject.sql" />
     <EmbeddedResource Include="Scripts\AddEmployee.sql" />
-    <EmbeddedResource Include="Scripts\AssignDepartment.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Scripts\AssignTeamMember.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\AddProject.sql" />
+    <EmbeddedResource Include="Scripts\AssignDepartment.sql" />
+    <EmbeddedResource Include="Scripts\AssignTeamMember.sql" />
     <EmbeddedResource Include="Scripts\DeleteEmployee.sql" />
     <EmbeddedResource Include="Scripts\GetAllEmployees.sql" />
     <EmbeddedResource Include="Scripts\GetEmployeeById.sql" />
     <EmbeddedResource Include="Scripts\PatchEmployee.sql" />
-    <EmbeddedResource Include="Scripts\PatchProject.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Scripts\PatchProject.sql" />
     <EmbeddedResource Include="Scripts\UpdateEmployee.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -48,6 +45,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>

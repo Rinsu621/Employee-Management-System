@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record UpdateEmployeeSpCommand( Guid Id,  EmployeeDto employee) : IRequest<EmployeeUpdateKeyless>;
+    public record UpdateEmployeeSpCommand( Guid Id,  string EmpName, string Email, string Phone) : IRequest<EmployeeUpdateKeyless>;
 
     public class UpdateEmployeeSpHandler : IRequestHandler<UpdateEmployeeSpCommand, EmployeeUpdateKeyless>
     {
@@ -30,7 +30,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         {
 
             var updatedEmployee = dbContext.EmployeeUpdateKeyless
-                .FromSqlInterpolated($"EXEC UpdateEmployee {request.Id}, {request.employee.EmpName}, {request.employee.Email}, {request.employee.Phone}")
+                .FromSqlInterpolated($"EXEC UpdateEmployee {request.Id}, {request.EmpName}, {request.Email}, {request.Phone}")
                 .AsNoTracking()
                 .AsEnumerable()
                 .FirstOrDefault();

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeCRUD.Domain", "Empl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeCRUD.IntegrationTests", "EmployeeCRUD.IntegrationTests\EmployeeCRUD.IntegrationTests.csproj", "{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeCRUD.UI", "EmployeeCRUD.UI\EmployeeCRUD.UI.csproj", "{EE6E8178-D33B-4CCC-AA89-BD87A5224A6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{094F8C2C-1E9B-4451-B2D5-A1E5002CECBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE6E8178-D33B-4CCC-AA89-BD87A5224A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE6E8178-D33B-4CCC-AA89-BD87A5224A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE6E8178-D33B-4CCC-AA89-BD87A5224A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE6E8178-D33B-4CCC-AA89-BD87A5224A6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -81,13 +81,13 @@ namespace EmployeeCRUD.IntegrationTests.Tests
         public async Task AddEmployee_GetBadRequest_WhenInvalidNumber()
         {
             //Arrange
-            var employeeDto = new EmployeeDto
-            {
-                EmpName = "TestA",
-                Email = "testa@gmail.com",
-                Phone = "1234567890"
-            };
-            var command = new AddEmployeeSPCommand(employeeDto);
+            var command = new AddEmployeeSPCommand
+            (
+                EmpName: "TestA",
+                Email: "testa@gmail.com",
+                Phone: "1234567890"
+            );
+            
 
             //Act
             var response = await client.PostAsJsonAsync("/api/Employee/using-sp", command);
@@ -103,13 +103,13 @@ namespace EmployeeCRUD.IntegrationTests.Tests
         public async Task AddEmployeeDapper_ReturnsCreatedEmployee()
         {
             // Arrange
-            var employeeDto = new EmployeeDto
-            {
-                EmpName = "Ram Ram",
-                Email = "ram@gmail.com",
-                Phone = "9876544321"
-            };
-            var command = new AddEmployeeDapperCommand(employeeDto);
+            var command = new AddEmployeeDapperCommand
+            (
+                EmpName : "Ram Ram",
+                Email: "ram@gmail.com",
+                Phone: "9876544321"
+            );
+           
 
             // Act
             var response = await client.PostAsJsonAsync("/api/Employee/add-employee-using-dapper", command);
@@ -118,9 +118,9 @@ namespace EmployeeCRUD.IntegrationTests.Tests
             response.EnsureSuccessStatusCode();
             var createdEmployee = await response.Content.ReadFromJsonAsync<EmployeeResponseDto>();
             Assert.NotNull(createdEmployee);
-            Assert.Equal(employeeDto.EmpName, createdEmployee.EmpName);
-            Assert.Equal(employeeDto.Email, createdEmployee.Email);
-            Assert.Equal(employeeDto.Phone, createdEmployee.Phone);
+            Assert.Equal(command.EmpName, createdEmployee.EmpName);
+            Assert.Equal(command.Email, createdEmployee.Email);
+            Assert.Equal(command.Phone, createdEmployee.Phone);
         }
 
         [Theory]
@@ -130,33 +130,34 @@ namespace EmployeeCRUD.IntegrationTests.Tests
         //    using var scope = factory.Services.CreateScope();
         //    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            var employeeDto = new EmployeeDto
-            {
-                EmpName = EmpName,
-                Email = Email,
-                Phone = Phone
-            };
-            var addCommand = new AddEmployeeDapperCommand(employeeDto);
-            var createdEmployee = await mediator.Send(addCommand);
+            var command = new AddEmployeeDapperCommand
+            (
+                EmpName : EmpName,
+                Email : Email,
+                Phone : Phone
+            );
+          
+            var createdEmployee = await mediator.Send(command);
 
             output.WriteLine($"Created Employee Id: {createdEmployee.Id}");
 
-            var updatedDto = new EmployeeDto
-            {
-                EmpName = "Updated Employee",
-                Email = "updated@gmail.com",
-                Phone = "9876544321"
-            };
+            var updateCommand = new UpdateEmployeeSpCommand
+            (
+                Id: createdEmployee.Id,
+                EmpName : "Updated Employee",
+                Email : "updated@gmail.com",
+                Phone : "9876544321"
+            );
 
-            var updateCommand = new UpdateEmployeeSpCommand(createdEmployee.Id, updatedDto);
+           
             var updatedEmployee = await mediator.Send(updateCommand);
 
             output.WriteLine($"Updated Employee: {updatedEmployee.EmpName}, {updatedEmployee.Email}, {updatedEmployee.Phone}");
             //Assert
             Assert.NotNull(updatedEmployee);
-            Assert.Equal(updatedDto.EmpName, updatedEmployee.EmpName);
-            Assert.Equal(updatedDto.Email, updatedEmployee.Email);
-            Assert.Equal(updatedDto.Phone, updatedEmployee.Phone);
+            Assert.Equal(updateCommand.EmpName, updatedEmployee.EmpName);
+            Assert.Equal(updateCommand.Email, updatedEmployee.Email);
+            Assert.Equal(updateCommand.Phone, updatedEmployee.Phone);
         }
 
         [Theory]
@@ -164,14 +165,14 @@ namespace EmployeeCRUD.IntegrationTests.Tests
         [InlineData("TestB", "testb@gmail.com", "9812322122")]
         public async Task GetAllEmployee_ReturnAllEmployee(string EmpName, string Email, string Phone)
         {
-            var employeeDto = new EmployeeDto
-            {
-                EmpName = EmpName,
-                Email = Email,
-                Phone = Phone
-            };
-            var addCommand = new AddEmployeeDapperCommand(employeeDto);
-            var createdEmployee = await mediator.Send(addCommand);
+            var employeeDto = new AddEmployeeDapperCommand
+            (
+                EmpName : EmpName,
+                Email: Email,
+                Phone: Phone
+            );
+           
+            var createdEmployee = await mediator.Send(employeeDto);
 
             var response= await mediator.Send(new GetAllEmployeesQuery());
             response.Should().NotBeEmpty();
