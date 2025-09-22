@@ -24,10 +24,11 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
         public async Task<EmployeeResponseKeyless> Handle(GetEmployeeByIdSpQuery request, CancellationToken cancellationToken)
         {
-            var employee =await dbContext.EmployeeResponseKeyless
+            var employee = dbContext.EmployeeResponseKeyless
             .FromSqlRaw("EXEC GetAllEmployeeById @Id = {0}", request.Id) 
             .AsNoTracking() 
-            .FirstOrDefaultAsync(); 
+            .AsEnumerable()
+            .SingleOrDefault(); 
         
             return employee;
         }
