@@ -41,8 +41,9 @@ namespace EmployeeCRUD.Infrastructure.Configurations
                    .IsRequired();
 
             builder.Property(s => s.PaymentMode)
-                   .HasMaxLength(50)
-                   .IsRequired();
+                .HasConversion<string>()   //converting enum to string while saving in db
+                .HasMaxLength(50)
+                .IsRequired();
 
             // Computed columns
             builder.Ignore(s => s.GrossSalary);
@@ -56,6 +57,11 @@ namespace EmployeeCRUD.Infrastructure.Configurations
             builder.Property(s => s.UpdatedAt)
                    .HasDefaultValueSql("GETUTCDATE()")
                    .IsRequired();
-        }
+
+            builder.Property(s => s.Status)
+                .HasConversion<string>()
+                .HasMaxLength(20)
+                .IsRequired();
+         }
     }
 }

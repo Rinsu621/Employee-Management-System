@@ -25,6 +25,7 @@ namespace EmployeeCRUD.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
             modelBuilder.Entity<EmployeeResponseKeyless>().HasNoKey();
             modelBuilder.Entity<EmployeeUpdateKeyless>().HasNoKey();

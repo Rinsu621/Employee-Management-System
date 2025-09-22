@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EmployeeCRUD.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ namespace EmployeeCRUD.Application.SalaryModule.DTO
         public decimal ESI { get; set; }
         public string PaymentMode { get; set; }
 
+        public string Status {  get; set; }
         public DateTime CreatedAt { get; set; }
 
 

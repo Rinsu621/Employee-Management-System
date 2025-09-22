@@ -17,7 +17,7 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("getallemployee")]
         public async Task<IActionResult> GetAllEmployeesAsync()
         {
             var result = await sender.Send(new GetAllEmployeesQuery());

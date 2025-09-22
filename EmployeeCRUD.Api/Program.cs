@@ -127,10 +127,15 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-   var dbContext = services.GetRequiredService<AppDbContext>();
+    //var salaryDbContext = services.GetRequiredService<SalaryDbContext>();
+    //await salaryDbContext.Database.MigrateAsync();
 
-    await dbContext.Database.MigrateAsync();
-    await IdentitySeeder.SeedRolesAndAdminAsync(services);
+    //var appDbContext = services.GetRequiredService<AppDbContext>();
+    //await appDbContext.Database.MigrateAsync();
+    //await IdentitySeeder.SeedRolesAndAdminAsync(services);
+
+    // Migrate SalaryDbContext
+  
 }
 
 // Configure the HTTP request pipeline.

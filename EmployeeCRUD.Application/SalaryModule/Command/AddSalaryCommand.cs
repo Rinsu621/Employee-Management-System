@@ -1,6 +1,7 @@
 ﻿using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Application.SalaryModule.DTO;
 using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Domain.Enums;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.SalaryModule.Command
 {
-    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod ):IRequest<SalaryResponseDto>;
+    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status ):IRequest<SalaryResponseDto>;
 
     public class AddSalaryCommandHandler : IRequestHandler<AddSalaryCommand, SalaryResponseDto>
     {
@@ -22,6 +23,16 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
 
         public async Task<SalaryResponseDto> Handle(AddSalaryCommand request, CancellationToken cancellationToken)
         {
+            if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentEnum))
+            {
+                throw new ArgumentException($"Invalid PaymentMethod: {request.PaymentMethod}");
+            }
+
+            if (!Enum.TryParse<SalaryStatus>(request.Status, true, out var statusEnum))
+            {
+                throw new ArgumentException($"Invalid Status: {request.Status}");
+            }
+
             var salary = new Salary
             {
                 Id = Guid.NewGuid(),
@@ -31,7 +42,8 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
                 Tax = request.Tax,
                 PF = request.Pf,
                 ESI = request.ESI,
-                PaymentMode = request.PaymentMethod,
+                PaymentMode = paymentEnum,
+                Status= statusEnum,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = null
             };
@@ -48,7 +60,8 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
                 Tax = salary.Tax,
                 PF = salary.PF,
                 ESI = salary.ESI,
-                PaymentMode = salary.PaymentMode,
+                PaymentMode = salary.PaymentMode.ToString(),
+                Status=salary.Status.ToString(),
                 CreatedAt = salary.CreatedAt,
                 GrossSalary = salary.GrossSalary,
                 NetSalary = salary.NetSalary

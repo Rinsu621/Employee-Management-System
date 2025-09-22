@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Domain.Common;
+﻿
+using EmployeeCRUD.Domain.Common;
+using EmployeeCRUD.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +18,12 @@ namespace EmployeeCRUD.Domain.Entities
         public decimal Tax { get; set; }
         public decimal PF { get; set; }
         public decimal ESI { get; set; }
-        public string PaymentMode { get; set; }
+        public PaymentMethod PaymentMode { get; set; }
+        public SalaryStatus Status { get; set; }= SalaryStatus.Unpaid;
 
         public decimal GrossSalary => BasicSalary+Conveyance;
 
         public decimal NetSalary => BasicSalary - (Tax + PF+ ESI);
-
 
     }
 }

@@ -5,45 +5,43 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.IntegrationTests.Factory
 {
-    public class EmployeeCRUDWebApplicationFactory:WebApplicationFactory<Program>
+    public class EmployeeCRUDWebApplicationFactory : WebApplicationFactory<Program>
     {
-       protected override void ConfigureWebHost(IWebHostBuilder builder)
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            // Load appsettings.Test.json for connection strings
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                config.AddJsonFile("appsettings.json")
+                      .AddJsonFile("appsettings.Test.json", optional: true);
+            });
+
             builder.ConfigureTestServices(services =>
             {
                 services.RemoveAll(typeof(DbContextOptions<AppDbContext>));
+                services.RemoveAll<IDbConnection>();
+
+                var sp = services.BuildServiceProvider();
+                var configuration = sp.GetRequiredService<IConfiguration>();
+
+                var connectionString = configuration.GetConnectionString("TestConnection");
 
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseSqlServer("Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True"
-                    );
+                    options.UseSqlServer(connectionString);
                 });
+
                 services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
 
+                services.AddScoped<IDbConnection>(_ => new SqlConnection(connectionString));
 
-                services.RemoveAll<IDbConnection>();
-                //services.AddScoped<IDbConnection>(sp =>
-                //    new SqlConnection("Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True"));
-
-                services.AddScoped<IDbConnection>(sp =>
-                    new SqlConnection(
-                        "Server=.;Database=EmployeeCRUD_Test;Trusted_Connection=True;TrustServerCertificate=True"
-                    )
-                );
-
-
-                var sp = services.BuildServiceProvider();
                 using var scope = sp.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 db.Database.EnsureDeleted();

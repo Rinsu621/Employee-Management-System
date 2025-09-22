@@ -11,8 +11,10 @@
         <h2>Enter Employee Salary</h2>
         <form id="salaryForm">
             <div class="mb-3">
-                <label for="employeeId" class="form-label">Employee ID</label>
-                <input type="text" class="form-control" id="employeeId" required>
+                <label for="employeeId" class="form-label">Employee </label>
+                <select id="employeeId" class="form-control" required>
+                    <option>Select Employee</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="basicSalary" class="form-label">Basic Salary</label>
@@ -36,7 +38,17 @@
             </div>
             <div class="mb-3">
                 <label for="paymentMode" class="form-label">Payment Mode</label>
-                <input type="text" class="form-control" id="paymentMode" required>
+                <select class="form-control" id="paymentMode" required>
+                    <option value="">Select Payment Mode</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="salaryStatus" class="form-label">Salary Status</label>
+                <select class="form-control" id="salaryStatus" required>
+                    <option value="Unpaid" selected>Unpaid</option>
+                    <option value="Paid">Paid</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
