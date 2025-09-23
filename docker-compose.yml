@@ -1,37 +1,26 @@
 
+
 networks:
   employeeapp:
 
-
-
 services:
-  servicedb:
-    container_name: app-db
-    image: mcr.microsoft.com/mssql/server:2019-latest
 
-    ports:
-      - 8002:1433
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=password@12345#
-    networks:
-      - employeeapp
 
   employeecrud.api:
     container_name: employee-management-system
-    image: ${DOCKER_REGISTRY-}employeecrudapi
     build:
       context: .
-      dockerfile: EmployeeCRUD.Api/Dockerfile
+      dockerfile: employeecrud.api/Dockerfile
+    image: ${docker_registry-}employeecrudapi
     ports:
       - 5001:8080
       - 5002:8081
-    depends_on:
-      - servicedb
     environment:
-      - DB_HOST:servicedb
-      - DB_USER=sa
-      - DB_SA_PASSWORD=password@12345#
+      - db_host=host.docker.internal
+      - db_user=sa
+      - db_sa_password=password@12345#
     networks:
-     - employeeapp
-      
+      - employeeapp
+
+
+

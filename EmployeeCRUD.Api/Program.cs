@@ -118,6 +118,8 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder.Services.AddApiDI(builder.Configuration);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Configuration.AddEnvironmentVariables();
+
 
 var app = builder.Build();
 
@@ -134,7 +136,7 @@ using (var scope = app.Services.CreateScope())
     await appDbContext.Database.MigrateAsync();
     await IdentitySeeder.SeedRolesAndAdminAsync(services);
 
-  
+
 }
 
 // Configure the HTTP request pipeline.
