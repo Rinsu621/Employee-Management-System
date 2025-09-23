@@ -14,6 +14,10 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+//if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+//{
+//    builder.WebHost.UseUrls("http://*:8080");
+//}
 
 // Add services to the container like Issuer, Audience, SecretKey from appsetting.json
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -22,6 +26,25 @@ builder.Services.AddControllers();
 //it allow access to HttpContext inside services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProjectTeamMemberFilter>();
+
+// FIX: Conditionally configure Kestrel based on environment
+if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+{
+    // Docker environment - HTTP only
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080); // HTTP only in Docker
+    });
+}
+else
+{
+    // Local development - HTTP and HTTPS
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080); // HTTP
+        options.ListenAnyIP(8081, listenOptions => listenOptions.UseHttps()); // HTTPS
+    });
+}
 
 //Identity Configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -125,30 +148,37 @@ var app = builder.Build();
 
 //seeding the value of seeder
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
 
-    var salaryDbContext = services.GetRequiredService<SalaryDbContext>();
-    await salaryDbContext.Database.MigrateAsync();
+//    var salaryDbContext = services.GetRequiredService<SalaryDbContext>();
+//    await salaryDbContext.Database.MigrateAsync();
 
-    var appDbContext = services.GetRequiredService<AppDbContext>();
-    await appDbContext.Database.MigrateAsync();
-    await IdentitySeeder.SeedRolesAndAdminAsync(services);
+//    var appDbContext = services.GetRequiredService<AppDbContext>();
+//    await appDbContext.Database.MigrateAsync();
+//    await IdentitySeeder.SeedRolesAndAdminAsync(services);
 
 
-}
+//}
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 
-app.UseHttpsRedirection();
+if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != "true")
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseAuthentication();
 
 app.UseAuthorization();
