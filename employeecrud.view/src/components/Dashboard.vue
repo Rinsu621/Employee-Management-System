@@ -1,65 +1,58 @@
 <template>
   <div>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Employee CRUD</a>
+    <Navbar />
 
-        <div class="collapse navbar-collapse justify-content-end">
-          <ul class="navbar-nav">
-            <li class="nav-item me-3">
-              <span class="nav-link">Hello, {{ userName }}</span>
-            </li>
-            <li class="nav-item me-3">
-              <button class="btn btn-outline-primary btn-sm" @click="changePassword">
-                Change Password
-              </button>
-            </li>
-            <li class="nav-item">
-              <button class="btn btn-outline-danger btn-sm" @click="logout">
-                Logout
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Dashboard Content -->
     <div class="container">
       <h2>Welcome to Dashboard</h2>
+
+      <div class="mt-4">
+        <button v-if="userRole === 'Admin'" class="btn btn-primary me-2 mb-2" @click="goToUserList">
+          User List
+        </button>
+
+        <button v-if="userRole === 'Admin'" class="btn btn-primary me-2 mb-2" @click="goToRoleList">
+          Role List
+        </button>
+
+        <button v-if="userRole === 'Admin' || userRole === 'Manager'" class="btn btn-primary me-2 mb-2" @click="goToEmployeeList">
+          Employee List
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue';
-  import { useRouter } from 'vue-router';
+  import Navbar from "../components/Navbar.vue"
+  import { ref, onMounted } from "vue"
+  import * as jwt_decode from "jwt-decode"
+  import { useRouter } from "vue-router"
 
-  const router = useRouter();
-  const userName = ref('');
+  const router = useRouter()
+  const userRole = ref("")
 
   onMounted(() => {
-    userName.value = localStorage.getItem('name') || '';
-  });
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        const decoded = jwt_decode.default(token)
+        userRole.value =
+          decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || ""
+      } catch (err) {
+        userRole.value = ""
+      }
+    }
+  })
 
-  // Logout function
-  function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("name");
-    userName.value = ''; 
-    router.push("/login");
+  function goToUserList() {
+    router.push("/userlist")
   }
 
-  // Change password function
-  function changePassword() {
-    router.push("/change-password");
+  function goToRoleList() {
+    router.push("/role-list")
+  }
+
+  function goToEmployeeList() {
+    router.push("/employee-list")
   }
 </script>
-
-<style>
-  .navbar-nav .nav-link {
-    color: #000;
-  }
-</style>

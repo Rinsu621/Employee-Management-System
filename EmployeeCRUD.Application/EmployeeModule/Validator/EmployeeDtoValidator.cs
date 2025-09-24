@@ -30,7 +30,11 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
 
             RuleFor(e => e.Phone)
                 .NotEmpty().WithMessage("Phone number is required.")
-                .Matches(@"^98\d{8}$").WithMessage("Phone number must be 10 digits and must start with 98.");
+                .Matches(@"^98\d{8}$").WithMessage("Phone number must be 10 digits and must start with 98.")
+            .MustAsync(async (phone, cancellation) =>
+            !await dbContext.Employees.AnyAsync(x => x.Phone == phone, cancellation))
+            .WithMessage("Number already exists.");
+
 
         }
     }

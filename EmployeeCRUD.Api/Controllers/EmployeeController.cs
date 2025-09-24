@@ -2,14 +2,17 @@
 using EmployeeCRUD.Application.EmployeeModule.Commands;
 using EmployeeCRUD.Application.EmployeeModule.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeCRUD.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class EmployeeController(ISender sender) : ControllerBase
     {
+       
         [HttpPost]
         public async Task<IActionResult> AddEmployeeAsync( AddEmployeeCommand command)
         {
@@ -30,15 +33,15 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(new GetEmployeeByIdQuery(id));  
             return Ok(result);
         }
-
-        [HttpPut("/update")]
+      
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateEmployeeAsync(UpdateEmployeeCommand command)
         {
             var result = await sender.Send(command);
             return Ok(result);
         }
 
-        [HttpPatch("/patch")]
+        [HttpPatch("patch")]
         public async Task<IActionResult> PatchEmployeeAsync(PatchEmployeeCommand command)
         {
             var result = await sender.Send(command);

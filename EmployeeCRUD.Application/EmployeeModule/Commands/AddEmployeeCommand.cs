@@ -70,6 +70,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 EmpName = entity.EmpName,
                 Email = entity.Email,
                 Phone = entity.Phone,
+                Role = request.employee.Role,
                 CreatedAt = entity.CreatedAt
             };
         }
