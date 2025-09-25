@@ -6,7 +6,14 @@
       </router-link>
 
       <div class="d-flex ms-auto">
-        <span class="nav-link me-3">Hello, {{ userName }}</span>
+        <router-link to="/profile" class="d-flex align-items-center text-decoration-none">
+          <img :src="userAvatar ? userAvatar : '/OIP.jpeg'"
+               alt="Profile"
+               class="rounded-circle me-2"
+               style="width: 35px; height: 35px; object-fit: cover;" />
+          <span class="nav-link me-3 mb-0">Hello, {{ userName }}</span>
+        </router-link>
+        
         <button class="btn btn-outline-primary btn-sm me-2" @click="changePassword">
           Change Password
         </button>

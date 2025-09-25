@@ -1,8 +1,6 @@
-﻿using Ardalis.GuardClauses;
-using EmployeeCRUD.Application.EmployeeModule.Dtos;
+﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +16,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         string EmpName,
         string Email,
         string Phone,
+        Guid? DepartmentId,
         string Role
     ) : IRequest<EmployeeUpdateResponse>;
 
@@ -36,55 +35,57 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
             userManager = _userManager;
             roleManager = _roleManager;
         }
-
         public async Task<EmployeeUpdateResponse> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
         {
-            // 1. Update Employee entity
-            var employee = await dbContext.Employees.FindAsync(new object[] { request.Id }, cancellationToken);
-            Guard.Against.Null(employee, nameof(employee), $"Employee with Id '{request.Id}' not found.");
-
+            // 1. Fetch employee with department
+            var employee = await dbContext.Employees
+                .Include(e => e.Department)
+                .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
+            if (employee == null)
+                throw new Exception($"Employee with Id {request.Id} not found.");
             employee.EmpName = request.EmpName;
             employee.Email = request.Email;
             employee.Phone = request.Phone;
+            employee.DepartmentId = request.DepartmentId;
 
             dbContext.Employees.Update(employee);
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            // 2. Fetch the user via UserManager
-            var user = await userManager.Users
-                .AsNoTracking() // Ensure EF doesn't track
-                .FirstOrDefaultAsync(u => u.EmployeeId == employee.Id, cancellationToken);
-
+            var user = await userManager.FindByIdAsync(employee.Id.ToString());
             if (user != null)
-            {
-                // Update user details
-                user.UserName = request.Email;
+            {    
                 user.Email = request.Email;
-                await userManager.UpdateAsync(user); // Explicitly update user
-
-                // Remove old roles
-                var oldRoles = await userManager.GetRolesAsync(user);
-                if (oldRoles.Any())
+                user.UserName = request.Email;
+                
+                var updateResult = await userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
                 {
-                    await userManager.RemoveFromRolesAsync(user, oldRoles);
+                    throw new Exception($"Failed to update user: {string.Join(", ", updateResult.Errors.Select(e => e.Description))}");
                 }
+                
+                var roles = await userManager.GetRolesAsync(user);
+                var currentRole = roles.FirstOrDefault();
 
-                // Ensure new role exists
-                if (!await roleManager.RoleExistsAsync(request.Role))
+                if (currentRole != request.Role)
                 {
-                    await roleManager.CreateAsync(new IdentityRole(request.Role));
+                    if (!string.IsNullOrEmpty(currentRole))
+                    {
+                        await userManager.RemoveFromRoleAsync(user, currentRole);
+                    }
+                    if (!await roleManager.RoleExistsAsync(request.Role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(request.Role));
+                    }
+                    await userManager.AddToRoleAsync(user, request.Role);
                 }
-
-                // Add new role
-                await userManager.AddToRoleAsync(user, request.Role);
             }
-
             return new EmployeeUpdateResponse
             {
                 Id = employee.Id,
                 Name = employee.EmpName,
                 Email = employee.Email,
                 Phone = employee.Phone,
+                DepartmentName = employee.Department?.DeptName,
                 Role = request.Role,
                 CreatedAt = employee.CreatedAt,
                 UpdatedAt = DateTime.UtcNow

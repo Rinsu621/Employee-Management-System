@@ -1,30 +1,36 @@
-﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+﻿using Ardalis.GuardClauses;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Queries
 {
-    public record GetEmployeeByIdQuery(Guid Id) : IRequest<EmployeeResponseDto>;
-
-    public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponseDto>
+    public record GetEmployeeByEmail(string Email) : IRequest<EmployeeResponseDto>;
+  public class GetEmployeeByEmailHandler : IRequestHandler<GetEmployeeByEmail, EmployeeResponseDto>
     {
         private readonly IAppDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public GetEmployeeByIdHandler(IAppDbContext _dbContext, UserManager<ApplicationUser> _userManager)
+        public GetEmployeeByEmailHandler(IAppDbContext _dbContext, UserManager<ApplicationUser> _userManager)
         {
             dbContext = _dbContext;
             userManager = _userManager;
         }
 
-        public async Task<EmployeeResponseDto> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
+        public async Task<EmployeeResponseDto> Handle(GetEmployeeByEmail request, CancellationToken cancellationToken)
         {
+            // Get employee by email
             var employee = await dbContext.Employees
                 .Include(e => e.Department)
-                .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
+                .FirstOrDefaultAsync(e => e.Email == request.Email, cancellationToken);
 
             if (employee == null)
                 return null;

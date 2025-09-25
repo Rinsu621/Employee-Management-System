@@ -2,11 +2,21 @@
   <div>
     <Navbar />
     <div class="container mt-4">
-      <h2>User List</h2>
+      <h2>Employee List</h2>
 
+       <!--Filter & Sort--> 
       <div class="mb-3 d-flex align-items-center justify-content-between">
-        <!-- Left side: Sorting Dropdowns -->
         <div class="d-flex align-items-center">
+           <!--Filter by Role 
+          <label class="me-2">Filter by Role:</label>
+          <select v-model="selectedRole" class="form-select w-auto me-3">
+            <option value="Employee">Employee</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="">All</option>
+          </select>-->
+
+          <!-- Sort -->
           <label class="me-2">Sort by:</label>
           <select v-model="sortKey" class="form-select w-auto me-2">
             <option value="id">S.No</option>
@@ -15,14 +25,13 @@
             <option value="role">Role</option>
             <option value="createdAt">Created At</option>
           </select>
-
           <select v-model="sortAsc" class="form-select w-auto">
             <option :value="true">Ascending</option>
             <option :value="false">Descending</option>
           </select>
         </div>
 
-        <!-- Right side: Create Button -->
+        <!-- Create Button -->
         <div>
           <button class="btn btn-success" @click="openCreateModal">Add User</button>
         </div>
@@ -61,7 +70,7 @@
             </td>
           </tr>
           <tr v-if="paginatedEmployees.length === 0">
-            <td colspan="7" class="text-center">No employees found</td>
+            <td colspan="8" class="text-center">No employees found</td>
           </tr>
         </tbody>
       </table>
@@ -170,150 +179,151 @@
             </div>
           </div>
         </div>
-
-
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup>
   import Navbar from "../components/Navbar.vue"
   import { ref, computed, onMounted, watch } from "vue"
-  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById , getDepartments} from "../services/employeeService"
-  import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
-  import jwtDecode from "jwt-decode";
+  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments } from "../services/employeeService"
+  import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'
+  import jwtDecode from "jwt-decode"
 
-  const employees = ref([]);
-  const sortKey = ref("id");
-  const sortAsc = ref(true);
-  const currentPage = ref(1);
-  const pageSize = 5;
-  const roles = ref([]);
-  const errors = ref({});
-  //const currentAdminEmail = ref(localStorage.getItem("userEmail"));
-  const token = localStorage.getItem("token"); // your JWT
-const decoded = jwtDecode(token);
-const currentAdminEmail = ref(decoded.email);
+  const employees = ref([])
+  const sortKey = ref("id")
+  const sortAsc = ref(true)
+  const currentPage = ref(1)
+  const pageSize = 5
+  const roles = ref([])
+  const errors = ref({})
+  const token = localStorage.getItem("token")
+  const decoded = jwtDecode(token)
+  const currentAdminEmail = ref(decoded.email)
 
-  const createModal = ref(null);
-  const createModalInstance = ref(null);
-  const newEmployee = ref({ empName: '', email: '', phone: '', role: '' });
+  const createModal = ref(null)
+  const createModalInstance = ref(null)
+  const newEmployee = ref({ empName: '', email: '', phone: '', role: '' })
 
-  const editModal = ref(null);
-  const editModalInstance = ref(null);
-  const editingEmployee = ref({});
-  const departments = ref([]);
+  const editModal = ref(null)
+  const editModalInstance = ref(null)
+  const editingEmployee = ref({})
+  const departments = ref([])
+
+
+  const employeeUsers = computed(() =>
+    employees.value.filter(u => u.role && u.role.toLowerCase() === "employee")
+  )
 
   const sortedEmployees = computed(() => {
-    return [...employees.value].sort((a, b) => {
-      const aVal = a[sortKey.value] || "";
-      const bVal = b[sortKey.value] || "";
-      if (aVal < bVal) return sortAsc.value ? -1 : 1;
-      if (aVal > bVal) return sortAsc.value ? 1 : -1;
-      return 0;
-    });
-  });
+    return [...employeeUsers.value].sort((a, b) => {
+      const aVal = a[sortKey.value] || ""
+      const bVal = b[sortKey.value] || ""
+      if (aVal < bVal) return sortAsc.value ? -1 : 1
+      if (aVal > bVal) return sortAsc.value ? 1 : -1
+      return 0
+    })
+  })
 
-  const totalPages = computed(() => Math.ceil(sortedEmployees.value.length / pageSize));
+  const totalPages = computed(() => Math.ceil(sortedEmployees.value.length / pageSize))
 
   const paginatedEmployees = computed(() => {
-    const start = (currentPage.value - 1) * pageSize;
-    return sortedEmployees.value.slice(start, start + pageSize);
-  });
+    const start = (currentPage.value - 1) * pageSize
+    return sortedEmployees.value.slice(start, start + pageSize)
+  })
 
-  function nextPage() { if (currentPage.value < totalPages.value) currentPage.value++; }
-  function prevPage() { if (currentPage.value > 1) currentPage.value--; }
-  function goToPage(page) { currentPage.value = page; }
+  function nextPage() { if (currentPage.value < totalPages.value) currentPage.value++ }
+  function prevPage() { if (currentPage.value > 1) currentPage.value-- }
+  function goToPage(page) { currentPage.value = page }
 
-  function openCreateModal() { createModalInstance.value?.show(); }
-  function closeCreateModal() { createModalInstance.value?.hide(); }
+  function openCreateModal() { createModalInstance.value?.show() }
+  function closeCreateModal() { createModalInstance.value?.hide() }
 
   function openEditModal(employee) {
-    editingEmployee.value = { ...employee,  departmentId: employee.departmentId ? employee.departmentId.toString() : ''  };
-    editModalInstance.value?.show();
+    editingEmployee.value = { ...employee, departmentId: employee.departmentId ? employee.departmentId.toString() : '' }
+    editModalInstance.value?.show()
   }
 
   async function createEmployeeHandler() {
-    errors.value = {};
+    errors.value = {}
     try {
-      await createEmployee(newEmployee.value);
-      await fetchEmployees();
-      closeCreateModal();
+      await createEmployee(newEmployee.value)
+      await fetchEmployees()
+      closeCreateModal()
     } catch (err) {
       if (err.response?.status === 400 && err.response.data.errors) {
-        const backendErrors = err.response.data.errors;
+        const backendErrors = err.response.data.errors
         for (const key in backendErrors) {
-          const field = key.split(".").pop();
-          errors.value[field] = backendErrors[key][0];
+          const field = key.split(".").pop()
+          errors.value[field] = backendErrors[key][0]
         }
       } else {
-        console.error(err);
+        console.error(err)
       }
     }
   }
 
   async function editEmployeeHandler() {
     try {
-      await updateEmployee(editingEmployee.value);
-      await fetchEmployees();
-      editModalInstance.value?.hide();
+      await updateEmployee(editingEmployee.value)
+      await fetchEmployees()
+      editModalInstance.value?.hide()
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
   }
 
   async function deleteEmployee(employee) {
     if (employee.email === currentAdminEmail.value) {
-      alert("You cannot delete yourself!");
-      return;
+      alert("You cannot delete yourself!")
+      return
     }
     if (confirm(`Are you sure you want to delete ${employee.empName}?`)) {
       try {
-        await deleteEmployeeById(employee.id);
-        await fetchEmployees();
+        await deleteEmployeeById(employee.id)
+        await fetchEmployees()
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
     }
   }
 
   async function fetchEmployees() {
     try {
-      const res = await getAllEmployees();
-      employees.value = res.data;
-    } catch (err) { console.error(err); }
+      const res = await getAllEmployees()
+      employees.value = res.data
+    } catch (err) { console.error(err) }
   }
 
   async function fetchRoles() {
     try {
-      const res = await getRoles();
-      roles.value = res.data;
-    } catch (err) { console.error(err); }
+      const res = await getRoles()
+      roles.value = res.data
+    } catch (err) { console.error(err) }
   }
-  async function fetchDepartments() {
-  try {
-    const response = await getDepartments(); // Axios call returning response.data
-    departments.value = response.data.map(d => ({
-      id: d.id.toString(),   // make sure this matches the type of editingEmployee.departmentId
-      name: d.name
-    }));
-  } catch (err) {
-    console.error("Error fetching departments:", err);
-  }
-}
 
+  async function fetchDepartments() {
+    try {
+      const response = await getDepartments()
+      departments.value = response.data.map(d => ({
+        id: d.id.toString(),
+        name: d.name
+      }))
+    } catch (err) {
+      console.error("Error fetching departments:", err)
+    }
+  }
 
   onMounted(() => {
-    fetchEmployees();
-    fetchRoles();
-      fetchDepartments();
-    if (createModal.value) createModalInstance.value = new bootstrap.Modal(createModal.value);
-    if (editModal.value) editModalInstance.value = new bootstrap.Modal(editModal.value);
+    fetchEmployees()
+    fetchRoles()
+    fetchDepartments()
+    if (createModal.value) createModalInstance.value = new bootstrap.Modal(createModal.value)
+    if (editModal.value) editModalInstance.value = new bootstrap.Modal(editModal.value)
+  })
 
-  });
-
-  watch([sortKey, sortAsc], () => { currentPage.value = 1; });
-
+  watch([sortKey, sortAsc], () => { currentPage.value = 1 })
 </script>
 

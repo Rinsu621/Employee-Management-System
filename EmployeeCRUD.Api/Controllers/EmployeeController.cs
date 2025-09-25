@@ -19,11 +19,23 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
+        //[HttpGet("getallemployee")]
+        //public async Task<IActionResult> GetAllEmployeesAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 5)
+        //{
+        //    var result = await sender.Send(new GetAllEmployeesQuery(pageNumber, pageSize));
+        //    return Ok(result);
+        //}
 
         [HttpGet("getallemployee")]
         public async Task<IActionResult> GetAllEmployeesAsync()
         {
             var result = await sender.Send(new GetAllEmployeesQuery());
+            return Ok(result);
+        }
+        [HttpPost("get-by-email")]
+        public async Task<IActionResult> GetEmployeeByEmailAsync(GetEmployeeByEmail query)
+        {
+            var result = await sender.Send(query);
             return Ok(result);
         }
 
@@ -127,6 +139,13 @@ namespace EmployeeCRUD.Api.Controllers
         public async Task<IActionResult> GetEmployeeByIdUsingDapper(Guid id)
         {
             var result = await sender.Send(new GetEmployeeByIdDapperQuery(id));
+            return Ok(result);
+        }
+
+        [HttpPut("update-using-dapper")]
+        public async Task<IActionResult> UpdateEmployeeDapper(UpdateEmployeeWithDapperCommand command)
+        {
+            var result = await sender.Send(command);
             return Ok(result);
         }
     }
