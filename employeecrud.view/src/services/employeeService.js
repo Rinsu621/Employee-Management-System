@@ -2,7 +2,11 @@
 import api from './axios.js';
 
 
-export const getAllEmployees = () => api.get('/employee/getallemployee')
+export const getAllEmployees = (page, pageSize) => {
+  return api.get('/employee/getallemployee', {
+    params: { page, pageSize }
+  });
+};
 
 export const createEmployee = (employee) => {
   return api.post('/employee', {

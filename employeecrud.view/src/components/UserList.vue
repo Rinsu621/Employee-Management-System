@@ -43,7 +43,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in paginatedEmployees"
+          <tr v-for="(user, index) in sortedEmployees"
               :key="user.id"
               :class="{ 'table-info': user.email === currentAdminEmail }">
             <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
@@ -60,31 +60,40 @@
               </template>
             </td>
           </tr>
-          <tr v-if="paginatedEmployees.length === 0">
-            <td colspan="7" class="text-center">No employees found</td>
+          <tr v-if="sortedEmployees.length === 0">
+            <td colspan="8" class="text-center">No employees found</td>
           </tr>
         </tbody>
       </table>
 
-      <!-- Pagination -->
-      <nav class="mt-3">
-        <ul class="pagination">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <button class="page-link" @click="prevPage">Previous</button>
-          </li>
-          <li class="page-item"
-              v-for="page in totalPages"
-              :key="page"
-              :class="{ active: currentPage === page }">
-            <button class="page-link" @click="goToPage(page)">
-              {{ page }}
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-            <button class="page-link" @click="nextPage">Next</button>
-          </li>
-        </ul>
-      </nav>
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <!-- Left side -->
+        <div>
+          Showing {{ employees.length }} out of {{ totalEmployees }}
+        </div>
+
+        <!-- Middle: Pagination buttons -->
+        <div>
+          <button class="btn btn-sm btn-secondary me-1" @click="prevPage">Previous</button>
+          <button class="btn btn-sm me-1"
+                  v-for="page in totalPages"
+                  :key="page"
+                  @click="goToPage(page)"
+                  :class="currentPage=== page ? 'btn-secondary' : 'btn-outline-secondary'">
+            {{ page }}
+          </button>
+          <button class="btn btn-sm btn-secondary" @click="nextPage">Next</button>
+        </div>
+
+        <!-- Right side: Rows per page -->
+        <div>
+          <label>Rows per page:</label>
+          <select v-model="pageSize" class="form-select d-inline w-auto ms-1">
+            <option v-for="size in [5,10,20,50]" :key="size" :value="size">{{ size }}</option>
+          </select>
+        </div>
+      </div>
+
 
       <!-- Create User Modal -->
       <div class="modal fade" tabindex="-1" ref="createModal">
@@ -126,8 +135,8 @@
           </div>
         </div>
       </div>
-      <!--End of modal-->
-      <!--Edit Modal-->
+
+      <!-- Edit Employee Modal -->
       <div class="modal fade" tabindex="-1" ref="editModal">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -170,9 +179,8 @@
             </div>
           </div>
         </div>
-
-
       </div>
+
     </div>
   </div>
 </template>
@@ -180,21 +188,18 @@
 <script setup>
   import Navbar from "../components/Navbar.vue"
   import { ref, computed, onMounted, watch } from "vue"
-  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById , getDepartments} from "../services/employeeService"
+  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
   import jwtDecode from "jwt-decode";
 
   const employees = ref([]);
   const sortKey = ref("id");
   const sortAsc = ref(true);
-  const currentPage = ref(1);
-  const pageSize = 5;
   const roles = ref([]);
   const errors = ref({});
-  //const currentAdminEmail = ref(localStorage.getItem("userEmail"));
-  const token = localStorage.getItem("token"); // your JWT
-const decoded = jwtDecode(token);
-const currentAdminEmail = ref(decoded.email);
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const currentAdminEmail = ref(decoded.email);
 
   const createModal = ref(null);
   const createModalInstance = ref(null);
@@ -204,6 +209,11 @@ const currentAdminEmail = ref(decoded.email);
   const editModalInstance = ref(null);
   const editingEmployee = ref({});
   const departments = ref([]);
+  const totalEmployees = ref(0);
+  const currentPage = ref(1);
+  const pageSize = ref(5);
+  const totalPages = computed(() => Math.ceil(totalEmployees.value / pageSize.value));
+
 
   const sortedEmployees = computed(() => {
     return [...employees.value].sort((a, b) => {
@@ -215,23 +225,12 @@ const currentAdminEmail = ref(decoded.email);
     });
   });
 
-  const totalPages = computed(() => Math.ceil(sortedEmployees.value.length / pageSize));
-
-  const paginatedEmployees = computed(() => {
-    const start = (currentPage.value - 1) * pageSize;
-    return sortedEmployees.value.slice(start, start + pageSize);
-  });
-
-  function nextPage() { if (currentPage.value < totalPages.value) currentPage.value++; }
-  function prevPage() { if (currentPage.value > 1) currentPage.value--; }
-  function goToPage(page) { currentPage.value = page; }
-
   function openCreateModal() { createModalInstance.value?.show(); }
   function closeCreateModal() { createModalInstance.value?.hide(); }
 
   function openEditModal(employee) {
     const dept = departments.value.find(d => d.name === employee.departmentName);
-    editingEmployee.value = { ...employee,  departmentId: dept? dept.id.toString() : ""  };
+    editingEmployee.value = { ...employee, departmentId: dept ? dept.id.toString() : "" };
     editModalInstance.value?.show();
   }
 
@@ -281,40 +280,58 @@ const currentAdminEmail = ref(decoded.email);
 
   async function fetchEmployees() {
     try {
-      const res = await getAllEmployees();
-      employees.value = res.data;
-    } catch (err) { console.error(err); }
+      const res = await getAllEmployees(currentPage.value, pageSize.value);
+      employees.value = res.data.employees;
+      totalEmployees.value = res.data.totalCount;
+
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async function fetchRoles() {
     try {
       const res = await getRoles();
       roles.value = res.data;
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error(err);
+    }
   }
-  async function fetchDepartments() {
-  try {
-    const response = await getDepartments(); // Axios call returning response.data
-    departments.value = response.data.map(d => ({
-      id: d.id.toString(),   // make sure this matches the type of editingEmployee.departmentId
-      name: d.name
-    }));
-  } catch (err) {
-    console.error("Error fetching departments:", err);
-  }
-}
 
+  async function fetchDepartments() {
+    try {
+      const response = await getDepartments();
+      departments.value = response.data.map(d => ({
+        id: d.id.toString(),
+        name: d.name
+      }));
+    } catch (err) {
+      console.error("Error fetching departments:", err);
+    }
+  }
+  function prevPage() {
+    if (currentPage.value > 1) currentPage.value--;
+  }
+
+  function nextPage() {
+    if (currentPage.value < totalPages.value) currentPage.value++;
+  }
+
+  function goToPage(page) {
+    currentPage.value = page;
+  }
 
   onMounted(() => {
     fetchEmployees();
     fetchRoles();
-      fetchDepartments();
+    fetchDepartments();
     if (createModal.value) createModalInstance.value = new bootstrap.Modal(createModal.value);
     if (editModal.value) editModalInstance.value = new bootstrap.Modal(editModal.value);
-
   });
 
-  watch([sortKey, sortAsc], () => { currentPage.value = 1; });
+  watch([sortKey, sortAsc], () => { });
+  watch([currentPage, pageSize, sortKey, sortAsc], () => {
+    fetchEmployees();
+  });
 
 </script>
-

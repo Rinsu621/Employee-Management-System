@@ -8,7 +8,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Dtos
 {
     public class EmployeePagedResponseDto
     {
-        public IEnumerable<EmployeeResponseDto> Items { get; set; }
         public int TotalCount { get; set; }
+        public IEnumerable<EmployeeResponseDto> Employees { get; set; }
+        
     }
 }

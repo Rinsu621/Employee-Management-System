@@ -27,9 +27,16 @@ namespace EmployeeCRUD.Api.Controllers
         //}
 
         [HttpGet("getallemployee")]
-        public async Task<IActionResult> GetAllEmployeesAsync()
+        public async Task<IActionResult> GetAllEmployees(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? role = null,
+        [FromQuery] Guid? departmentId = null,
+        [FromQuery] DateTime? fromDate = null,
+        [FromQuery] DateTime? toDate = null)
         {
-            var result = await sender.Send(new GetAllEmployeesQuery());
+            var query = new GetAllEmployeesQuery(page, pageSize, role, departmentId, fromDate, toDate);
+            var result = await sender.Send(query);
             return Ok(result);
         }
         [HttpPost("get-by-email")]
