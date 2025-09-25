@@ -153,7 +153,7 @@
                   <label class="form-label">Department</label>
                   <select v-model="editingEmployee.departmentId" class="form-select">
                     <option value="" disabled>Select department</option>
-                    <option v-for="dept in departments" :key="dept.id" :value="dept.id">
+                    <option v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">
                       {{ dept.name }}
                     </option>
                   </select>
@@ -230,7 +230,8 @@ const currentAdminEmail = ref(decoded.email);
   function closeCreateModal() { createModalInstance.value?.hide(); }
 
   function openEditModal(employee) {
-    editingEmployee.value = { ...employee,  departmentId: employee.departmentId ? employee.departmentId.toString() : ''  };
+    const dept = departments.value.find(d => d.name === employee.departmentName);
+    editingEmployee.value = { ...employee,  departmentId: dept? dept.id.toString() : ""  };
     editModalInstance.value?.show();
   }
 
