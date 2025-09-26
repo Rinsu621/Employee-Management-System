@@ -27,10 +27,16 @@
             <option :value="true">Ascending</option>
             <option :value="false">Descending</option>
           </select>
+
+          <label class="ms-2 me-1">Department:</label>
+          <select v-model="selectedDepartment" class="form-select w-auto">
+            <option value="">All</option>
+            <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{dept.name}}</option>
+          </select>
         </div>
 
         <!-- Create Button -->
-        <div>
+        <div v-if="currentUserRole==='Admin'|| currentUserRole==='Manager'">
           <button class="btn btn-success shadow-sm px-4 py-2 d-flex align-items-center" @click="openCreateModal">
             <i class="bi bi-person-plus-fill me-2 fs-5"></i>
             <span class="fw-semibold">Add User</span>
@@ -50,11 +56,11 @@
               <th>Department</th>
               <th>Role</th>
               <th>Created At</th>
-              <th>Action</th>
+              <th v-if="currentUserRole === 'Admin' || currentUserRole === 'Manager'">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, index) in paginatedEmployees" :key="user.id"
+            <tr v-for="(user, index) in employees" :key="user.id"
                 :class="{ 'table-info': user.email === currentAdminEmail }">
               <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
               <td>{{ user.empName }}</td>
@@ -63,7 +69,7 @@
               <td>{{ user.departmentName || 'N/A' }}</td>
               <td>{{ user.role }}</td>
               <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
-              <td>
+              <td v-if="currentUserRole === 'Admin' || currentUserRole === 'Manager'">
                 <template v-if="user.email !== currentAdminEmail">
                   <div class="btn-group" role="group">
                     <button class="btn btn-outline-secondary" @click="openEditModal(user)" title="Edit">
@@ -76,7 +82,7 @@
                 </template>
               </td>
             </tr>
-            <tr v-if="paginatedEmployees.length === 0">
+            <tr v-if="employees.length === 0">
               <td colspan="8" class="text-center">No employees found</td>
             </tr>
           </tbody>
@@ -85,7 +91,9 @@
         <!-- Pagination -->
         <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
           <div>
-            Showing {{ employees.length }} out of {{ totalEmployees }}
+            Showing {{ (currentPage - 1) * pageSize + 1 }} -
+            {{ Math.min(currentPage * pageSize, totalEmployees) }}
+            out of {{ totalEmployees }}
           </div>
 
           <!-- Middle: Pagination buttons -->
@@ -109,92 +117,94 @@
             </select>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Create User Modal -->
-        <div class="modal fade" tabindex="-1" ref="createModal">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Add New Employee</h5>
-                <button type="button" class="btn-close" @click="closeCreateModal"></button>
-              </div>
-              <div class="modal-body">
-                <form @submit.prevent="createEmployeeHandler">
-                  <div class="mb-3">
-                    <label class="form-label">Name</label>
-                    <input type="text" v-model="newEmployee.empName" class="form-control" required />
-                    <small class="text-danger">{{ errors.EmpName }}</small>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" v-model="newEmployee.email" class="form-control" required />
-                    <small class="text-danger">{{ errors.Email }}</small>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Phone</label>
-                    <input type="text" v-model="newEmployee.phone" class="form-control" />
-                    <small class="text-danger">{{ errors.Phone }}</small>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Role</label>
-                    <select v-model="newEmployee.role" class="form-select" required>
-                      <option value="" disabled>Select role</option>
-                      <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-                    </select>
-                  </div>
-                  <button type="submit" class="btn btn-success">Create</button>
-                  <button type="button" class="btn btn-secondary ms-2" @click="closeCreateModal">Cancel</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Edit Employee Modal -->
-        <div class="modal fade" tabindex="-1" ref="editModal">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Edit Employee</h5>
-                <button type="button" class="btn-close" @click="editModalInstance.hide()"></button>
-              </div>
-              <div class="modal-body">
-                <form @submit.prevent="editEmployeeHandler">
-                  <div class="mb-3">
-                    <label class="form-label">Name</label>
-                    <input type="text" v-model="editingEmployee.empName" class="form-control" required />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" v-model="editingEmployee.email" class="form-control" required />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Phone</label>
-                    <input type="text" v-model="editingEmployee.phone" class="form-control" />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Department</label>
-                    <select v-model="editingEmployee.departmentId" class="form-select">
-                      <option value="" disabled>Select department</option>
-                      <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
-                    </select>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Role</label>
-                    <select v-model="editingEmployee.role" class="form-select">
-                      <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-                    </select>
-                  </div>
-                  <button type="submit" class="btn btn-primary">Update</button>
-                  <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
-                </form>
-              </div>
-            </div>
+    <!-- Create User Modal -->
+    <div class="modal fade" tabindex="-1" ref="createModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Employee</h5>
+            <button type="button" class="btn-close" @click="closeCreateModal"></button>
           </div>
-        </div>
+          <div class="modal-body">
+            <form @submit.prevent="createEmployeeHandler">
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" v-model="newEmployee.empName" class="form-control" required />
+                <small class="text-danger">{{ errors.EmpName }}</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" v-model="newEmployee.email" class="form-control" required />
+                <small class="text-danger">{{ errors.Email }}</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="text" v-model="newEmployee.phone" class="form-control" />
+                <small class="text-danger">{{ errors.Phone }}</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Role</label>
+                <select v-model="newEmployee.role" class="form-select" required>
+                  <option value="" disabled>Select role</option>
+                  <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-success">Create</button>
+              <button type="button" class="btn btn-secondary ms-2" @click="closeCreateModal">Cancel</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Edit Employee Modal -->
+    <div class="modal fade" tabindex="-1" ref="editModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Employee</h5>
+            <button type="button" class="btn-close" @click="editModalInstance.value.hide()"></button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="editEmployeeHandler">
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" v-model="editingEmployee.empName" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" v-model="editingEmployee.email" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="text" v-model="editingEmployee.phone" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Department</label>
+                <select v-model="editingEmployee.departmentId" class="form-select">
+                  <option value="" disabled>Select department</option>
+                  <option v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">{{ dept.name }}</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Role</label>
+                <select v-model="editingEmployee.role" class="form-select">
+                  <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Update</button>
+              <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -203,6 +213,7 @@
   import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js'
   import jwtDecode from "jwt-decode"
+  import { logout } from '../services/authService'
 
   const employees = ref([])
   const sortKey = ref("id")
@@ -210,8 +221,17 @@
   const roles = ref([])
   const errors = ref({})
   const token = localStorage.getItem("token")
+  if (!token) {
+    logout();
+  }
   const decoded = jwtDecode(token)
+  console.log(decoded)
+
   const currentAdminEmail = ref(decoded.email)
+  const currentUserRole = ref(
+    decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || ""
+  );
+
 
   const createModal = ref(null)
   const createModalInstance = ref(null)
@@ -225,6 +245,7 @@
   const currentPage = ref(1);
   const pageSize = ref(5);
   const totalPages = computed(() => Math.ceil(totalEmployees.value / pageSize.value));
+  const selectedDepartment = ref("");
 
 
   // Sort employees dynamically
@@ -238,21 +259,15 @@
     })
   })
 
-  
-
-  const paginatedEmployees = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value
-    return sortedEmployees.value.slice(start, start + pageSize.value)
-  })
-
-  
 
   function openCreateModal() { createModalInstance.value?.show() }
   function closeCreateModal() { createModalInstance.value?.hide() }
 
   function openEditModal(employee) {
-    editingEmployee.value = { ...employee, departmentId: employee.departmentId ? employee.departmentId.toString() : '' }
-    editModalInstance.value?.show()
+    const dept = departments.value.find(d => d.name === employee.departmentName);
+    editingEmployee.value = { ...employee, departmentId: dept ? dept.id.toString() : "" };
+    editModalInstance.value?.show();
+
   }
 
   async function createEmployeeHandler() {
@@ -274,6 +289,7 @@
 
   async function editEmployeeHandler() {
     try {
+      console.log("Updating employee with data:", editingEmployee.value)
       await updateEmployee(editingEmployee.value)
       await fetchEmployees()
       editModalInstance.value?.hide()
@@ -296,9 +312,11 @@
       const res = await getAllEmployees(
         currentPage.value,
         pageSize.value,
-       "Employee", null, null, null
-      )
-      employees.value = res.data.employees || res.data // adjust based on API
+        "Employee", selectedDepartment.value || null, null, null
+      );
+      employees.value = res.data.employees // adjust based on API
+      totalEmployees.value = res.data.totalCount;
+
     } catch (err) { console.error(err) }
   }
 
@@ -333,10 +351,110 @@
     if (editModal.value) editModalInstance.value = new bootstrap.Modal(editModal.value)
   })
 
-  watch([sortKey, sortAsc], () => { })
   watch([currentPage, pageSize, sortKey, sortAsc], () => {
     fetchEmployees();
   });
+  watch([selectedDepartment], () => { currentPage.value = 1; fetchEmployees(); });
 
- 
 </script>
+
+<style scoped>
+  .container {
+    position: relative;
+    z-index: 1; /* Keep content above circles */
+  }
+
+  .background-circles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Behind content */
+  }
+
+    .background-circles .circle {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(13, 110, 253, 0.3);
+      animation: float 15s infinite ease-in-out;
+    }
+
+  /* Different sizes and positions */
+  .c1 {
+    width: 150px;
+    height: 150px;
+    top: 10%;
+    left: 5%;
+    animation-duration: 20s;
+  }
+
+  .c2 {
+    width: 100px;
+    height: 100px;
+    top: 40%;
+    left: 80%;
+    animation-duration: 18s;
+  }
+
+  .c3 {
+    width: 120px;
+    height: 120px;
+    top: 70%;
+    left: 20%;
+    animation-duration: 22s;
+  }
+
+  .c4 {
+    width: 80px;
+    height: 80px;
+    top: 60%;
+    left: 50%;
+    animation-duration: 16s;
+  }
+
+  .c5 {
+    width: 180px;
+    height: 180px;
+    top: 20%;
+    left: 60%;
+    animation-duration: 25s;
+  }
+
+  .page-wrapper {
+    position: relative;
+    min-height: 100vh; /* Full viewport height */
+    overflow: hidden;
+    background-color: #f8f9fa; /* Optional: light background */
+  }
+
+  .background-circles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0; /* Behind everything */
+  }
+
+
+  @keyframes float {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.15;
+    }
+
+    50% {
+      transform: translateY(-20px) translateX(20px);
+      opacity: 0.25;
+    }
+
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.15;
+    }
+  }
+</style>
+

@@ -15,3 +15,10 @@ export const login = async (email, password) => {
     throw error;
   }
 };
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('name');
+  window.location.href = '/login'; 
+};

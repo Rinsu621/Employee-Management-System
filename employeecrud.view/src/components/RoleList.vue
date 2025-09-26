@@ -28,7 +28,7 @@
 import { ref, onMounted } from "vue";
   import Navbar from "./Navbar.vue";
   import { getRoles } from "../services/employeeService";
-
+  import { logout } from '../services/authService'
 const roles = ref([]);
 
 async function fetchRoles() {

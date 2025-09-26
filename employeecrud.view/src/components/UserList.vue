@@ -111,7 +111,9 @@
       <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
         <!-- Left side -->
         <div>
-          Showing {{ employees.length }} out of {{ totalEmployees }}
+          Showing {{ (currentPage - 1) * pageSize + 1 }} -
+          {{ Math.min(currentPage * pageSize, totalEmployees) }}
+          out of {{ totalEmployees }}
         </div>
 
         <!-- Middle: Pagination buttons -->
@@ -136,100 +138,102 @@
         </div>
       </div>
 
-
-      <!-- Create User Modal -->
-      <div class="modal fade" tabindex="-1" ref="createModal">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Add New Employee</h5>
-              <button type="button" class="btn-close" @click="closeCreateModal"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="createEmployeeHandler">
-                <div class="mb-3">
-                  <label class="form-label">Name</label>
-                  <input type="text" v-model="newEmployee.empName" class="form-control" required />
-                  <small class="text-danger">{{ errors.EmpName }}</small>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input type="email" v-model="newEmployee.email" class="form-control" required />
-                  <small class="text-danger">{{ errors.Email }}</small>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Phone</label>
-                  <input type="text" v-model="newEmployee.phone" class="form-control" />
-                  <small class="text-danger">{{ errors.Phone }}</small>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Role</label>
-                  <select v-model="newEmployee.role" class="form-select" required>
-                    <option value="" disabled>Select role</option>
-                    <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-                  </select>
-                </div>
-
-                <button type="submit" class="btn btn-success">Create</button>
-                <button type="button" class="btn btn-secondary ms-2" @click="closeCreateModal">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Edit Employee Modal -->
-      <div class="modal fade" tabindex="-1" ref="editModal">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Edit Employee</h5>
-              <button type="button" class="btn-close" @click="editModalInstance.hide()"></button>
-            </div>
-            <div class="modal-body">
-              <form @submit.prevent="editEmployeeHandler">
-                <div class="mb-3">
-                  <label class="form-label">Name</label>
-                  <input type="text" v-model="editingEmployee.empName" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input type="email" v-model="editingEmployee.email" class="form-control" required />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Phone</label>
-                  <input type="text" v-model="editingEmployee.phone" class="form-control" />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Department</label>
-                  <select v-model="editingEmployee.departmentId" class="form-select">
-                    <option value="" disabled>Select department</option>
-                    <option v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">
-                      {{ dept.name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Role</label>
-                  <select v-model="editingEmployee.role" class="form-select">
-                    <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Update</button>
-                <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
+
+
+  <!-- Create User Modal -->
+  <div class="modal fade" tabindex="-1" ref="createModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Employee</h5>
+          <button type="button" class="btn-close" @click="closeCreateModal"></button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="createEmployeeHandler">
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input type="text" v-model="newEmployee.empName" class="form-control" required />
+              <small class="text-danger">{{ errors.EmpName }}</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" v-model="newEmployee.email" class="form-control" required />
+              <small class="text-danger">{{ errors.Email }}</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" v-model="newEmployee.phone" class="form-control" />
+              <small class="text-danger">{{ errors.Phone }}</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Role</label>
+              <select v-model="newEmployee.role" class="form-select" required>
+                <option value="" disabled>Select role</option>
+                <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">Create</button>
+            <button type="button" class="btn btn-secondary ms-2" @click="closeCreateModal">Cancel</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Employee Modal -->
+  <div class="modal fade" tabindex="-1" ref="editModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Employee</h5>
+          <button type="button" class="btn-close" @click="editModalInstance.hide()"></button>
+        </div>
+        <div class="modal-body">
+          <form @submit.prevent="editEmployeeHandler">
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input type="text" v-model="editingEmployee.empName" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" v-model="editingEmployee.email" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="text" v-model="editingEmployee.phone" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Department</label>
+              <select v-model="editingEmployee.departmentId" class="form-select">
+                <option value="" disabled>Select department</option>
+                <option v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">
+                  {{ dept.name }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Role</label>
+              <select v-model="editingEmployee.role" class="form-select">
+                <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </template>
 
 <script setup>
   import Navbar from "../components/Navbar.vue"
-  import { ref, computed, onMounted, watch } from "vue"
+  import { ref, computed, onMounted, watch, watchEffect } from "vue"
+   import { logout } from "../services/authService.js"
   import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
   import jwtDecode from "jwt-decode";
@@ -239,7 +243,12 @@
   const sortAsc = ref(true);
   const roles = ref([]);
   const errors = ref({});
+  let decode=null;;
   const token = localStorage.getItem("token");
+  if(!token)
+
+  {logout();
+    }
   const decoded = jwtDecode(token);
   const currentAdminEmail = ref(decoded.email);
 
@@ -379,7 +388,7 @@
     if (editModal.value) editModalInstance.value = new bootstrap.Modal(editModal.value);
   });
 
-  watch([sortKey, sortAsc], () => { });
+
   watch([currentPage, pageSize, sortKey, sortAsc], () => {
     fetchEmployees();
   });
@@ -388,6 +397,9 @@
   currentPage.value = 1;
   fetchEmployees();
 });
+
+
+
 </script>
 
 <style scoped>

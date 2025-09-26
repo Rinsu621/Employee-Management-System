@@ -33,7 +33,7 @@
               <i class="bi bi-shield-lock-fill fs-1 mb-3"></i>
               <h5 class="card-title">Role List</h5>
               <p class="card-text mb-4">
-                Manage roles and permissions for users to control access to features.
+                See the list of roles available
               </p>
               <button class="btn btn-light mt-auto" @click="goToRoleList">
                 Go to Role List
@@ -48,8 +48,17 @@
             <div class="card-body text-center d-flex flex-column">
               <i class="bi bi-person-badge-fill fs-1 mb-3"></i>
               <h5 class="card-title">Employee List</h5>
+              <!--<p class="card-text mb-4">
+    See all employees, manage their information, and monitor their roles and departments.
+  </p>-->
               <p class="card-text mb-4">
-                See all employees, manage their information, and monitor their roles and departments.
+                {{
+              userRole === 'Admin'
+               ? 'See all employees, manage their information, and monitor their roles and departments.'
+              : userRole === 'Manager'
+               ? 'View your team members and track their roles and departments.'
+               :'View information of Employee.'
+                }}
               </p>
               <button class="btn btn-light mt-auto" @click="goToEmployeeList">
                 Go to Employee List
@@ -68,22 +77,33 @@
   import { ref, onMounted } from "vue"
   import * as jwt_decode from "jwt-decode"
   import { useRouter } from "vue-router"
+  import { logout } from "../services/authService.js"
+
 
   const router = useRouter()
   const userRole = ref("")
+  const token = localStorage.getItem("token");
 
-  onMounted(() => {
-    const token = localStorage.getItem("token")
-    if (token) {
-      try {
-        const decoded = jwt_decode.default(token)
-        userRole.value =
-          decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || ""
-      } catch {
-        userRole.value = ""
-      }
-    }
-  })
+  
+onMounted(() => {
+  const token = localStorage.getItem("token")
+  
+  // Step 1: If token does not exist, logout
+  if (!token) {
+    logout()
+    return
+  }
+
+  // Step 2: If token exists, try to decode it
+  try {
+    const decoded = jwt_decode.default(token)
+    userRole.value =
+      decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || ""
+  } catch (err) {
+    console.warn("Invalid token, logging out")
+    logout()
+  }
+})
 
   function goToUserList() {
     router.push("/userlist")
