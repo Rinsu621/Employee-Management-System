@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { getToken, isTokenValid, getUserRole, logout } from '../services/authService.js';
+
 import Login from '../components/Auth/Login.vue';  // updated path
 import Dashboard from '../components/Dashboard.vue'
 import UserList from '../components/UserList.vue'
@@ -8,11 +10,11 @@ import Profile from '../components/Profile.vue'
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
-  { path: '/dashboard', component: Dashboard },
-  { path: '/userlist', component: UserList },
-  { path: '/role-list', component: RoleList },
-  { path: '/employee-list', component: EmployeeList },
-  { path: '/profile', component: Profile }
+  { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } },
+  { path: '/userlist', component: UserList, meta: { requiresAuth: true, roles: ["Admin", "Manager"] } },
+  { path: '/role-list', component: RoleList, meta: { requiresAuth: true, roles: ["Admin", "Manager"] } },
+  { path: '/employee-list', component: EmployeeList, meta: { requiresAuth: true } },
+  { path: '/profile', component: Profile, meta: { requiresAuth: true } }
 ];
 
 const router = createRouter({
@@ -21,3 +23,22 @@ const router = createRouter({
 });
 
 export default router;
+
+router.beforeEach((to, from, next) => {
+  if (!to.meta?.requiresAuth) {
+    next();
+  } else if (!getToken() || !isTokenValid()) {
+    logout(); 
+  } else if (to.meta.roles) {
+    const role = getUserRole();
+    if (!role || !to.meta.roles.includes(role)) {
+      next('/dashboard'); 
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+

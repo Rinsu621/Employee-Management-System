@@ -43,7 +43,7 @@
         </div>
 
         <!-- Employee List Card -->
-        <div v-if="userRole === 'Admin' || userRole === 'Manager'" class="col-12 col-md-4">
+        <div class="col-12 col-md-4">
           <div class="card dashboard-card h-100">
             <div class="card-body text-center d-flex flex-column">
               <i class="bi bi-person-badge-fill fs-1 mb-3"></i>
