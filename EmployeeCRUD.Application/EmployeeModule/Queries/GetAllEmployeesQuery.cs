@@ -30,33 +30,32 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
         public async Task<EmployeePagedResponseDto> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
+            var employeeQuery = dbContext.Employees
+                .Include(e => e.Department)
+                .AsQueryable();
 
-
-            var employeeQuery =  dbContext.Employees
-             .Include(e => e.Department)
-             .AsQueryable();
-
-            if (!string.IsNullOrEmpty(request.Role))
-            {
-                employeeQuery = employeeQuery.Where(e =>
-                    userManager.Users.Any(u => u.Email == e.Email && userManager.GetRolesAsync(u).Result.Contains(request.Role))
-                );
-            }
             if (request.DepartmentId.HasValue)
-            {
                 employeeQuery = employeeQuery.Where(e => e.DepartmentId == request.DepartmentId.Value);
-            }
+
             if (request.FromDate.HasValue)
                 employeeQuery = employeeQuery.Where(e => e.CreatedAt >= request.FromDate.Value);
 
             if (request.ToDate.HasValue)
                 employeeQuery = employeeQuery.Where(e => e.CreatedAt <= request.ToDate.Value);
 
+            // Filter by role first
+            if (!string.IsNullOrEmpty(request.Role))
+            {
+                var userIdsWithRole = await userManager.GetUsersInRoleAsync(request.Role);
+                var emailsWithRole = userIdsWithRole.Select(u => u.Email).ToList();
+                employeeQuery = employeeQuery.Where(e => emailsWithRole.Contains(e.Email));
+            }
 
-            employeeQuery = employeeQuery.OrderBy(e => e.CreatedAt);
             var filteredTotal = await employeeQuery.CountAsync(cancellationToken);
 
+            // Apply pagination after filtering
             var employees = await employeeQuery
+                .OrderBy(e => e.CreatedAt)
                 .Skip((request.page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
@@ -65,11 +64,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
             foreach (var e in employees)
             {
-               
                 var user = await userManager.Users.FirstOrDefaultAsync(u => u.Email == e.Email, cancellationToken);
-
                 var roles = user != null ? (await userManager.GetRolesAsync(user)).ToList() : new List<string>();
-              
+
                 result.Add(new EmployeeResponseDto
                 {
                     Id = e.Id,

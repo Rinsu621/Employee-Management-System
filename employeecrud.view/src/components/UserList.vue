@@ -1,7 +1,15 @@
 <template>
   <div>
+    <div class="background-circles">
+      <div class="circle c1"></div>
+      <div class="circle c2"></div>
+      <div class="circle c3"></div>
+      <div class="circle c4"></div>
+      <div class="circle c5"></div>
+    </div>
     <Navbar />
     <div class="container mt-4">
+
       <h2>User List</h2>
 
       <div class="mb-3 d-flex align-items-center justify-content-between">
@@ -20,53 +28,87 @@
             <option :value="true">Ascending</option>
             <option :value="false">Descending</option>
           </select>
+
+          <!-- Role Filter -->
+          <label class="ms-2 me-1">Role:</label>
+          <select v-model="selectedRole" class="form-select w-auto">
+            <option value="">All</option>
+            <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+          </select>
+
+          <!-- Department Filter -->
+          <label class="ms-2 me-1">Department:</label>
+          <select v-model="selectedDepartment" class="form-select w-auto">
+            <option value="">All</option>
+            <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
+          </select>
         </div>
+
+        <!-- From Date Filter -->
+        <label class="ms-2 me-1">From:</label>
+        <input type="date" v-model="fromDate" class="form-control w-auto d-inline" />
+
+        <!-- To Date Filter -->
+        <label class="ms-2 me-1">To:</label>
+        <input type="date" v-model="toDate" class="form-control w-auto d-inline" />
 
         <!-- Right side: Create Button -->
         <div>
-          <button class="btn btn-success" @click="openCreateModal">Add User</button>
+          <button class="btn btn-success shadow-sm px-4 py-2 d-flex align-items-center" @click="openCreateModal">
+            <i class="bi bi-person-plus-fill me-2 fs-5"></i>
+            <span class="fw-semibold">Add User</span>
+          </button>
         </div>
       </div>
 
-      <!-- Table -->
-      <table class="table table-bordered table-striped mt-3">
-        <thead class="table-light">
-          <tr>
-            <th>S.No</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Department</th>
-            <th>Role</th>
-            <th>Created At</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(user, index) in sortedEmployees"
-              :key="user.id"
-              :class="{ 'table-info': user.email === currentAdminEmail }">
-            <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
-            <td>{{ user.empName }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.phone }}</td>
-            <td>{{ user.departmentName || 'N/A' }}</td>
-            <td>{{ user.role }}</td>
-            <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
-            <td>
-              <template v-if="user.email !== currentAdminEmail">
-                <button class="btn btn-primary btn-sm me-2" @click="openEditModal(user)">Edit</button>
-                <button class="btn btn-danger btn-sm" @click="deleteEmployee(user)">Delete</button>
-              </template>
-            </td>
-          </tr>
-          <tr v-if="sortedEmployees.length === 0">
-            <td colspan="8" class="text-center">No employees found</td>
-          </tr>
-        </tbody>
-      </table>
 
-      <div class="d-flex align-items-center justify-content-between mb-2">
+      <!-- Table -->
+      <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>S.No</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Department</th>
+              <th>Role</th>
+              <th>Created At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(user, index) in sortedEmployees"
+                :key="user.id"
+                :class="{ 'table-info': user.email === currentAdminEmail }">
+              <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+              <td>{{ user.empName }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.phone }}</td>
+              <td>{{ user.departmentName || 'N/A' }}</td>
+              <td>{{ user.role }}</td>
+              <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
+              <td>
+                <template v-if="user.email !== currentAdminEmail">
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-outline-secondary" @click="openEditModal(user)" title="Edit">
+                      <i class="bi bi-pencil-square fs-5"></i>
+                    </button>
+                    <button class="btn btn-outline-danger" @click="deleteEmployee(user)" title="Delete">
+                      <i class="bi bi-trash fs-5"></i>
+                    </button>
+                  </div>
+                </template>
+              </td>
+            </tr>
+            <tr v-if="sortedEmployees.length === 0">
+              <td colspan="8" class="text-center">No employees found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
         <!-- Left side -->
         <div>
           Showing {{ employees.length }} out of {{ totalEmployees }}
@@ -214,6 +256,12 @@
   const pageSize = ref(5);
   const totalPages = computed(() => Math.ceil(totalEmployees.value / pageSize.value));
 
+  const selectedRole = ref("");          // Role filter
+  const selectedDepartment = ref("");    // Department filter
+  const fromDate = ref(null)
+  const toDate = ref(null)
+
+
 
   const sortedEmployees = computed(() => {
     return [...employees.value].sort((a, b) => {
@@ -280,15 +328,17 @@
 
   async function fetchEmployees() {
     try {
-      const res = await getAllEmployees(currentPage.value, pageSize.value);
+      console.log("Fetching with:", currentPage.value, pageSize.value, selectedRole.value, selectedDepartment.value);
+      const res = await getAllEmployees(currentPage.value, pageSize.value, selectedRole.value || null,
+        selectedDepartment.value || null, fromDate.value || null,
+        toDate.value || null);
+      console.log("Response:", res.data);
       employees.value = res.data.employees;
       totalEmployees.value = res.data.totalCount;
-
     } catch (err) {
       console.error(err);
     }
   }
-
   async function fetchRoles() {
     try {
       const res = await getRoles();
@@ -334,4 +384,109 @@
     fetchEmployees();
   });
 
+  watch([selectedRole, selectedDepartment, fromDate, toDate], () => {
+  currentPage.value = 1;
+  fetchEmployees();
+});
 </script>
+
+<style scoped>
+  .container {
+    position: relative;
+    z-index: 1; /* Keep content above circles */
+  }
+
+  .background-circles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Behind content */
+  }
+
+    .background-circles .circle {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(13, 110, 253, 0.3);
+      animation: float 15s infinite ease-in-out;
+    }
+
+  /* Different sizes and positions */
+  .c1 {
+    width: 150px;
+    height: 150px;
+    top: 10%;
+    left: 5%;
+    animation-duration: 20s;
+  }
+
+  .c2 {
+    width: 100px;
+    height: 100px;
+    top: 40%;
+    left: 80%;
+    animation-duration: 18s;
+  }
+
+  .c3 {
+    width: 120px;
+    height: 120px;
+    top: 70%;
+    left: 20%;
+    animation-duration: 22s;
+  }
+
+  .c4 {
+    width: 80px;
+    height: 80px;
+    top: 60%;
+    left: 50%;
+    animation-duration: 16s;
+  }
+
+  .c5 {
+    width: 180px;
+    height: 180px;
+    top: 20%;
+    left: 60%;
+    animation-duration: 25s;
+  }
+
+  .page-wrapper {
+    position: relative;
+    min-height: 100vh; /* Full viewport height */
+    overflow: hidden;
+    background-color: #f8f9fa; /* Optional: light background */
+  }
+
+  .background-circles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0; /* Behind everything */
+  }
+
+
+  @keyframes float {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.15;
+    }
+
+    50% {
+      transform: translateY(-20px) translateX(20px);
+      opacity: 0.25;
+    }
+
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.15;
+    }
+  }
+
+</style>
