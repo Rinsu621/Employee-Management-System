@@ -1,36 +1,51 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Infrastructure.Data;
+using EmployeeCRUD.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Queries
 {
-   public record GetEmployeeByIdQuery(Guid Id) : IRequest<EmployeeResponseDto>;
+    public record GetEmployeeByIdQuery(Guid Id) : IRequest<EmployeeResponseDto>;
 
     public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponseDto>
     {
         private readonly IAppDbContext dbContext;
-        public GetEmployeeByIdHandler(IAppDbContext _dbContext)
+        private readonly UserManager<ApplicationUser> userManager;
+
+        public GetEmployeeByIdHandler(IAppDbContext _dbContext, UserManager<ApplicationUser> _userManager)
         {
             dbContext = _dbContext;
+            userManager = _userManager;
         }
+
         public async Task<EmployeeResponseDto> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
         {
-            var employee = await dbContext.Employees.Include(e => e.Department).FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
+            var employee = await dbContext.Employees
+                .Include(e => e.Department)
+                .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
+
+            if (employee == null)
+                return null;
+
+            var user = await userManager.Users.FirstOrDefaultAsync(u => u.Email == employee.Email, cancellationToken);
+
+            string role = null;
+            if (user != null)
+            {
+                var roles = await userManager.GetRolesAsync(user);
+                role = roles.FirstOrDefault();
+            }
+
             return new EmployeeResponseDto
             {
                 Id = employee.Id,
                 EmpName = employee.EmpName,
                 Email = employee.Email,
                 Phone = employee.Phone,
-                
+                Role = role,
+                DepartmentName = employee.Department?.DeptName,
                 CreatedAt = employee.CreatedAt
             };
         }

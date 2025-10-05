@@ -101,16 +101,27 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 //which websites can access resources on your server (API).
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowFrontend",
+//        policy =>
+//        {
+//            policy.AllowAnyOrigin()
+//                  .AllowAnyMethod()
+//                  .AllowAnyHeader();
+//        });
+//});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("http://localhost:57325")
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
 });
+
 
 
 
@@ -120,6 +131,8 @@ builder.Services.AddApiDI(builder.Configuration);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 //seeding the value of seeder
 
@@ -150,7 +163,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
-app.UseCors("AllowFrontend");
 
 
 app.MapControllers();

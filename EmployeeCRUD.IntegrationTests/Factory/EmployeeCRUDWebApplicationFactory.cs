@@ -1,14 +1,12 @@
-﻿using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Infrastructure.Data;
+using EmployeeCRUD.Infrastructure.Seeder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Data;
 
 namespace EmployeeCRUD.IntegrationTests.Factory
 {
@@ -16,7 +14,6 @@ namespace EmployeeCRUD.IntegrationTests.Factory
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            // Load appsettings.Test.json for connection strings
             builder.ConfigureAppConfiguration((context, config) =>
             {
                 config.AddJsonFile("appsettings.json")
@@ -25,27 +22,29 @@ namespace EmployeeCRUD.IntegrationTests.Factory
 
             builder.ConfigureTestServices(services =>
             {
+                // Remove existing DbContext registrations
                 services.RemoveAll(typeof(DbContextOptions<AppDbContext>));
-                services.RemoveAll<IDbConnection>();
 
+                // Get configuration
                 var sp = services.BuildServiceProvider();
                 var configuration = sp.GetRequiredService<IConfiguration>();
+                var testConnection = configuration.GetConnectionString("TestConnection");
 
-                var connectionString = configuration.GetConnectionString("TestConnection");
-
+                // Register AppDbContext with SQL Server
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseSqlServer(connectionString);
+                    options.UseSqlServer(testConnection);
                 });
 
-                services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+                // Seed roles & admin
+                using var scope = services.BuildServiceProvider().CreateScope();
+                var scopedProvider = scope.ServiceProvider;
+                var dbContext = scopedProvider.GetRequiredService<AppDbContext>();
 
-                services.AddScoped<IDbConnection>(_ => new SqlConnection(connectionString));
+                dbContext.Database.EnsureDeleted(); // Optional: start fresh
+                dbContext.Database.Migrate();
 
-                using var scope = sp.CreateScope();
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                db.Database.EnsureDeleted();
-                db.Database.Migrate();
+                IdentitySeeder.SeedRolesAndAdminAsync(scopedProvider).GetAwaiter().GetResult();
             });
         }
     }

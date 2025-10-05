@@ -2,25 +2,34 @@
 using EmployeeCRUD.Application.EmployeeModule.Commands;
 using EmployeeCRUD.Application.EmployeeModule.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeCRUD.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class EmployeeController(ISender sender) : ControllerBase
     {
+
         [HttpPost]
-        public async Task<IActionResult> AddEmployeeAsync( AddEmployeeCommand command)
+        public async Task<IActionResult> AddEmployeeAsync(AddEmployeeCommand command)
         {
             var result = await sender.Send(command);
             return Ok(result);
         }
-
-        [HttpGet("getallemployee")]
-        public async Task<IActionResult> GetAllEmployeesAsync()
+       
+        [HttpPost("getallemployee")]
+        public async Task<IActionResult> GetAllEmployees(GetAllEmployeesQuery query)
         {
-            var result = await sender.Send(new GetAllEmployeesQuery());
+            var result = await sender.Send(query);
+            return Ok(result);
+        }
+        [HttpPost("get-by-email")]
+        public async Task<IActionResult> GetEmployeeByEmailAsync(GetEmployeeByEmail query)
+        {
+            var result = await sender.Send(query);
             return Ok(result);
         }
 
@@ -30,15 +39,15 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(new GetEmployeeByIdQuery(id));  
             return Ok(result);
         }
-
-        [HttpPut("/update")]
+      
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateEmployeeAsync(UpdateEmployeeCommand command)
         {
             var result = await sender.Send(command);
             return Ok(result);
         }
 
-        [HttpPatch("/patch")]
+        [HttpPatch("patch")]
         public async Task<IActionResult> PatchEmployeeAsync(PatchEmployeeCommand command)
         {
             var result = await sender.Send(command);
@@ -124,6 +133,13 @@ namespace EmployeeCRUD.Api.Controllers
         public async Task<IActionResult> GetEmployeeByIdUsingDapper(Guid id)
         {
             var result = await sender.Send(new GetEmployeeByIdDapperQuery(id));
+            return Ok(result);
+        }
+
+        [HttpPut("update-using-dapper")]
+        public async Task<IActionResult> UpdateEmployeeDapper(UpdateEmployeeWithDapperCommand command)
+        {
+            var result = await sender.Send(command);
             return Ok(result);
         }
     }

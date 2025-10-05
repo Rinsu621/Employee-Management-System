@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Validator
 {
-    public class UpdateEmployeeSpValidator : AbstractValidator<UpdateEmployeeCommand>
+    public class UpdateEmployeeSpValidator : AbstractValidator<UpdateEmployeeSpCommand>
     {
         private readonly IAppDbContext dbContext;
         public UpdateEmployeeSpValidator(IAppDbContext _dbContext, EmployeeDtoValidator employeeValidator)

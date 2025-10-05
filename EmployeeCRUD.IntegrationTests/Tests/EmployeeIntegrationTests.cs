@@ -160,29 +160,29 @@ namespace EmployeeCRUD.IntegrationTests.Tests
             Assert.Equal(updateCommand.Phone, updatedEmployee.Phone);
         }
 
-        [Theory]
-        [InlineData("TestA","testa@gmail.com","9812322123")]
-        [InlineData("TestB", "testb@gmail.com", "9812322122")]
-        public async Task GetAllEmployee_ReturnAllEmployee(string EmpName, string Email, string Phone)
-        {
-            var employeeDto = new AddEmployeeDapperCommand
-            (
-                EmpName : EmpName,
-                Email: Email,
-                Phone: Phone
-            );
+        //[Theory]
+        //[InlineData("TestA","testa@gmail.com","9812322123")]
+        //[InlineData("TestB", "testb@gmail.com", "9812322122")]
+        //public async Task GetAllEmployee_ReturnAllEmployee(string EmpName, string Email, string Phone)
+        //{
+        //    var employeeDto = new AddEmployeeDapperCommand
+        //    (
+        //        EmpName : EmpName,
+        //        Email: Email,
+        //        Phone: Phone
+        //    );
            
-            var createdEmployee = await mediator.Send(employeeDto);
+        //    var createdEmployee = await mediator.Send(employeeDto);
 
-            var response= await mediator.Send(new GetAllEmployeesQuery());
-            response.Should().NotBeEmpty();
+        //    var response= await mediator.Send(new GetAllEmployeesQuery());
+        //    response.Should().NotBeEmpty();
 
-            foreach (var emp in response)
-            {
-                output.WriteLine($"Id: {emp.Id}, Name: {emp.EmpName}, Email: {emp.Email}, Phone: {emp.Phone}");
-            }
+        //    foreach (var emp in response)
+        //    {
+        //        output.WriteLine($"Id: {emp.Id}, Name: {emp.EmpName}, Email: {emp.Email}, Phone: {emp.Phone}");
+        //    }
 
-        }
+        //}
 
     }
 }

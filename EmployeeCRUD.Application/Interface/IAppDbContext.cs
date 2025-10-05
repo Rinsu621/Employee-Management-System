@@ -3,6 +3,7 @@ using EmployeeCRUD.Domain.keyless;
 using EmployeeCRUD.Infrastructure.Data.keyless;
 using EmployeeCRUD.Infrastructure.Data.Keyless;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace EmployeeCRUD.Application.Interface
 
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        ChangeTracker ChangeTracker { get; }
         DbSet<T> Set<T>() where T : class;
     }
 }

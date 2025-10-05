@@ -30,7 +30,7 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
         public async Task<LoginResponseDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
             var principal = jwtService.GetPrincipalFromExpiredToken(request.AccessToken);
-            var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             Guard.Against.NullOrEmpty(userId, nameof(userId),"Invalid Id");
 

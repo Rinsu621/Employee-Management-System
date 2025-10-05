@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.AuthModel.Commands;
+using EmployeeCRUD.Application.AuthModel.Queries;
 using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace EmployeeCRUD.Api.Controllers
@@ -45,6 +47,13 @@ namespace EmployeeCRUD.Api.Controllers
         {
             var result= await mediator.Send(command);
             return Ok(result);
+        }
+
+       [HttpGet("roles")]
+       public async Task<IActionResult> GetRoles()
+        {
+            var roles = await mediator.Send(new GetRolesQuery());
+            return Ok(roles);
         }
 
     }

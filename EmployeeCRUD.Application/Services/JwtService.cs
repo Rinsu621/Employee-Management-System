@@ -28,7 +28,7 @@ namespace EmployeeCRUD.Application.Services
         {
             var claims = new List<Claim>
             {
-             new Claim(JwtRegisteredClaimNames.Sub, user.Id),// subject which is user id
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),// subject which is user id
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName)
             };

@@ -5,6 +5,7 @@ using EmployeeCRUD.Application.Services;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -23,21 +24,32 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IJwtService jwtService;
+        private readonly IAppDbContext dbContext;
 
-        public LoginCommandHandler(UserManager<ApplicationUser> _userManager, IJwtService _jwtService)
+        public LoginCommandHandler(UserManager<ApplicationUser> _userManager, IJwtService _jwtService, IAppDbContext _dbContext)
         {
             userManager = _userManager;
             jwtService = _jwtService;
+            dbContext = _dbContext;
         }
         public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
            var user = await userManager.FindByEmailAsync(request.Email);
-            Guard.Against.Null(user, "Invalid Email or Password");
+            //Guard.Against.Null(user, nameof(user), message: "Invalid Email or Password");
+            if (user == null)
+                throw new InvalidOperationException("Invalid Email or Password");
+
+
+
 
             var isPasswordValid = await userManager.CheckPasswordAsync(user, request.Password);
             if (!isPasswordValid)
                 throw new InvalidOperationException("Invalid Email or Password");
 
+            var employee = await dbContext.Employees
+                               .FirstOrDefaultAsync(e => e.Id == user.EmployeeId);
+
+            string employeeName = employee != null ? employee.EmpName : user.UserName;
 
             var token = await jwtService.GenerateAccessToken(user);
             var refreshtoken = jwtService.GenerateRefreshToken();
@@ -49,7 +61,8 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
             return new LoginResponseDto
             {
                 Token = token,
-                RefreshToken = refreshtoken
+                RefreshToken = refreshtoken,
+                Name = employeeName
             };
             
 

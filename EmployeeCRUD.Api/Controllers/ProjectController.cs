@@ -20,20 +20,6 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetProjects()
-        //{
-        //    var result = await sender.Send(new GetProjectQuery());
-        //    return Ok(result);
-        //}
-        //[ServiceFilter(typeof(ProjectTeamMemberFilter))]
-        //[HttpGet]
-        //public async Task<IActionResult> GetProjects([FromQuery] Guid employeeId)
-        //{
-        //    var result = await sender.Send(new GetProjectQuery(employeeId));
-        //    return Ok(result);
-        //}
-
         //[ServiceFilter(typeof(ProjectTeamMemberFilter))]
         [HttpGet]
         public async Task<IActionResult> GetProjects()

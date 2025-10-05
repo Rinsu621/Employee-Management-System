@@ -6,6 +6,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,56 +23,61 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         private readonly IAppDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IConfiguration configuration;
         public AddEmployeeHandler(IAppDbContext _dbContext,
                               UserManager<ApplicationUser> _userManager,
-                              RoleManager<IdentityRole> _roleManager)
+                              RoleManager<IdentityRole> _roleManager,
+                              IConfiguration _configuration)
         {
             dbContext = _dbContext;
             userManager = _userManager;
             roleManager = _roleManager;
+            configuration = _configuration;
         }
-
         public async Task<EmployeeResponseDto> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
-        {  
-            var entity = new  Employee
+        {
+            using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            try
             {
-                EmpName = request.employee.EmpName,
-                Email = request.employee.Email,
-                Phone = request.employee.Phone
-            };
-            dbContext.Employees.Add(entity);
-            await dbContext.SaveChangesAsync(cancellationToken);
+                var entity = new Employee
+                {
+                    EmpName = request.employee.EmpName,
+                    Email = request.employee.Email,
+                    Phone = request.employee.Phone
+                };
+                dbContext.Employees.Add(entity);
+                await dbContext.SaveChangesAsync(cancellationToken);
+                var user = new ApplicationUser
+                {
+                    UserName = entity.EmpName,
+                    Email = entity.Email,
+                    EmployeeId = entity.Id
+                };
+                var defaultPassword = configuration["DefaultPassword:Password"];
+                var result = await userManager.CreateAsync(user, defaultPassword);
+                if (!result.Succeeded)
+                {
+                    throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+                await userManager.AddToRoleAsync(user, request.employee.Role);
+                await transaction.CommitAsync(cancellationToken);
 
-            
-            var user = new ApplicationUser
-            {
-                UserName = entity.Email,
-                Email = entity.Email,
-                EmployeeId = entity.Id
-            };
-            var defaultPassword = "Default@123";
-            var result = await userManager.CreateAsync(user, defaultPassword);
-            if (!result.Succeeded)
-            {
-                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+                return new EmployeeResponseDto
+                {
+                    Id = entity.Id,
+                    EmpName = entity.EmpName,
+                    Email = entity.Email,
+                    Phone = entity.Phone,
+                    Role = request.employee.Role,
+                    CreatedAt = entity.CreatedAt
+                };
             }
-
-            if (!await roleManager.RoleExistsAsync(request.employee.Role))
+            catch
             {
-                await roleManager.CreateAsync(new IdentityRole(request.employee.Role));
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
             }
-            await userManager.AddToRoleAsync(user, request.employee.Role);
-
-
-
-            return new EmployeeResponseDto
-            {
-                Id = entity.Id,
-                EmpName = entity.EmpName,
-                Email = entity.Email,
-                Phone = entity.Phone,
-                CreatedAt = entity.CreatedAt
-            };
         }
     }
 }
