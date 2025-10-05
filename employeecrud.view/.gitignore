@@ -29,4 +29,6 @@ coverage
 
 *.tsbuildinfo
 employeecrud.view/.vite/
+.vite/
+
 
