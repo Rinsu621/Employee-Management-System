@@ -16,7 +16,7 @@
         <div class="row">
           <!-- Left side: Edit form -->
           <div class="col-md-6">
-            <h3>Edit Profile</h3>
+            <h3 class="mb-3"> Manage Your Profile</h3>
             <form @submit.prevent="updateProfile">
               <div class="mb-3">
                 <label class="form-label">Name</label>

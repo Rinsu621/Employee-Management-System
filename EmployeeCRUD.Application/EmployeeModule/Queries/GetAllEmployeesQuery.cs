@@ -43,7 +43,6 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             if (request.ToDate.HasValue)
                 employeeQuery = employeeQuery.Where(e => e.CreatedAt <= request.ToDate.Value);
 
-            // Filter by role first
             if (!string.IsNullOrEmpty(request.Role))
             {
                 var userIdsWithRole = await userManager.GetUsersInRoleAsync(request.Role);
@@ -53,7 +52,6 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
             var filteredTotal = await employeeQuery.CountAsync(cancellationToken);
 
-            // Apply pagination after filtering
             var employees = await employeeQuery
                 .OrderBy(e => e.CreatedAt)
                 .Skip((request.page - 1) * request.PageSize)

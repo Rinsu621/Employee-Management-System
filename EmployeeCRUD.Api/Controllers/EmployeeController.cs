@@ -12,30 +12,17 @@ namespace EmployeeCRUD.Api.Controllers
 
     public class EmployeeController(ISender sender) : ControllerBase
     {
-       
+
         [HttpPost]
-        public async Task<IActionResult> AddEmployeeAsync( AddEmployeeCommand command)
+        public async Task<IActionResult> AddEmployeeAsync(AddEmployeeCommand command)
         {
             var result = await sender.Send(command);
             return Ok(result);
         }
-        //[HttpGet("getallemployee")]
-        //public async Task<IActionResult> GetAllEmployeesAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 5)
-        //{
-        //    var result = await sender.Send(new GetAllEmployeesQuery(pageNumber, pageSize));
-        //    return Ok(result);
-        //}
-
-        [HttpGet("getallemployee")]
-        public async Task<IActionResult> GetAllEmployees(
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] string? role = null,
-        [FromQuery] Guid? departmentId = null,
-        [FromQuery] DateTime? fromDate = null,
-        [FromQuery] DateTime? toDate = null)
+       
+        [HttpPost("getallemployee")]
+        public async Task<IActionResult> GetAllEmployees(GetAllEmployeesQuery query)
         {
-            var query = new GetAllEmployeesQuery(page, pageSize, role, departmentId, fromDate, toDate);
             var result = await sender.Send(query);
             return Ok(result);
         }

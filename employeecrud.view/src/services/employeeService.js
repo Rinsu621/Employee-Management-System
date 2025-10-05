@@ -3,8 +3,8 @@ import api from './axios.js';
 
 
 export const getAllEmployees = (page, pageSize, role = null, departmentId = null, fromDate=null, toDate=null) => {
-  return api.get('/employee/getallemployee', {
-    params: { page, pageSize, role, departmentId, fromDate, toDate }
+  return api.post('/employee/getallemployee', {
+  page, pageSize, role, departmentId, fromDate, toDate 
   });
 };
 

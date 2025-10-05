@@ -31,6 +31,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         {
             var existingEmployee = await dbContext.Employees.FindAsync(request.Id);
             Guard.Against.Null(existingEmployee, nameof(existingEmployee), $"Employee with Id '{request.Id}' not found.");
+
             dbContext.Employees.Remove(existingEmployee);
             await dbContext.SaveChangesAsync(cancellationToken);
 

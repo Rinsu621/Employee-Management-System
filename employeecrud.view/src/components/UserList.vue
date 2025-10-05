@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div aria-live="polite" aria-atomic="true" class="position-relative">
+      <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+    </div>
+
     <div class="background-circles">
       <div class="circle c1"></div>
       <div class="circle c2"></div>
@@ -64,6 +68,12 @@
 
       <!-- Table -->
       <div class="table-responsive shadow-sm rounded">
+        <!-- Skeleton Table -->
+        <b-skeleton-table v-if="loading"
+                          :rows="5"
+                          :columns="8"
+                          :table-props="{ bordered: true, striped: true }">
+        </b-skeleton-table>
         <table class="table table-hover align-middle">
           <thead class="table-dark">
             <tr>
@@ -191,6 +201,7 @@
           <h5 class="modal-title">Edit Employee</h5>
           <button type="button" class="btn-close" @click="editModalInstance.hide()"></button>
         </div>
+        <b-overlay :show="showOverlay" rounded="sm">
         <div class="modal-body">
           <form @submit.prevent="editEmployeeHandler">
             <div class="mb-3">
@@ -224,6 +235,7 @@
             <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
           </form>
         </div>
+        </b-overlay>
       </div>
     </div>
   </div>
@@ -265,10 +277,13 @@
   const pageSize = ref(5);
   const totalPages = computed(() => Math.ceil(totalEmployees.value / pageSize.value));
 
-  const selectedRole = ref("");          // Role filter
-  const selectedDepartment = ref("");    // Department filter
+  const selectedRole = ref("");          
+  const selectedDepartment = ref("");    
   const fromDate = ref(null)
   const toDate = ref(null)
+  const loading = ref(true);
+  const showOverlay = ref(false);
+
 
 
 
@@ -281,6 +296,33 @@
       return 0;
     });
   });
+  function showToast(message, variant = 'success') {
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) return;
+
+    const toastEl = document.createElement('div');
+    toastEl.className = `toast align-items-center text-bg-${variant} border-0`;
+    toastEl.role = 'alert';
+    toastEl.ariaLive = 'assertive';
+    toastEl.ariaAtomic = 'true';
+    toastEl.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">${message}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  `;
+
+    toastContainer.appendChild(toastEl);
+
+    const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    bsToast.show();
+
+    toastEl.addEventListener('hidden.bs.toast', () => {
+      toastEl.remove();
+    });
+  }
+
+
 
   function openCreateModal() { createModalInstance.value?.show(); }
   function closeCreateModal() { createModalInstance.value?.hide(); }
@@ -297,6 +339,7 @@
       await createEmployee(newEmployee.value);
       await fetchEmployees();
       closeCreateModal();
+      showToast('Employee added successfully!', 'success')
     } catch (err) {
       if (err.response?.status === 400 && err.response.data.errors) {
         const backendErrors = err.response.data.errors;
@@ -305,18 +348,24 @@
           errors.value[field] = backendErrors[key][0];
         }
       } else {
+        showToast('Failed to add employee. Please try again.', 'danger')
         console.error(err);
       }
     }
   }
 
   async function editEmployeeHandler() {
+    showOverlay.value = true;
     try {
       await updateEmployee(editingEmployee.value);
       await fetchEmployees();
+      showToast('Employee edited successfully!', 'success')
       editModalInstance.value?.hide();
     } catch (err) {
       console.error(err);
+    }
+    finally {
+      showOverlay.value = false; // hide overlay
     }
   }
 
@@ -330,12 +379,14 @@
         await deleteEmployeeById(employee.id);
         await fetchEmployees();
       } catch (err) {
+        showToast('Failed to edit employee. Please try again.', 'danger')
         console.error(err);
       }
     }
   }
 
   async function fetchEmployees() {
+    loading.value = true;
     try {
       console.log("Fetching with:", currentPage.value, pageSize.value, selectedRole.value, selectedDepartment.value);
       const res = await getAllEmployees(currentPage.value, pageSize.value, selectedRole.value || null,

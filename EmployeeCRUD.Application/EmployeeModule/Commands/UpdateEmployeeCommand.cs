@@ -37,59 +37,66 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         }
         public async Task<EmployeeUpdateResponse> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
         {
-            // 1. Fetch employee with department
-            var employee = await dbContext.Employees
-                .Include(e => e.Department)
-                .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
-            if (employee == null)
-                throw new Exception($"Employee with Id {request.Id} not found.");
-            employee.EmpName = request.EmpName;
-            employee.Email = request.Email;
-            employee.Phone = request.Phone;
-            employee.DepartmentId = request.DepartmentId;
-
-            dbContext.Employees.Update(employee);
-            await dbContext.SaveChangesAsync(cancellationToken);
-
-            var user = await userManager.FindByIdAsync(employee.Id.ToString());
-            if (user != null)
-            {    
-                user.Email = request.Email;
-                user.UserName = request.Email;
-                
-                var updateResult = await userManager.UpdateAsync(user);
-                if (!updateResult.Succeeded)
-                {
-                    throw new Exception($"Failed to update user: {string.Join(", ", updateResult.Errors.Select(e => e.Description))}");
-                }
-                
-                var roles = await userManager.GetRolesAsync(user);
-                var currentRole = roles.FirstOrDefault();
-
-                if (currentRole != request.Role)
-                {
-                    if (!string.IsNullOrEmpty(currentRole))
-                    {
-                        await userManager.RemoveFromRoleAsync(user, currentRole);
-                    }
-                    if (!await roleManager.RoleExistsAsync(request.Role))
-                    {
-                        await roleManager.CreateAsync(new IdentityRole(request.Role));
-                    }
-                    await userManager.AddToRoleAsync(user, request.Role);
-                }
-            }
-            return new EmployeeUpdateResponse
+            using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+            try
             {
-                Id = employee.Id,
-                Name = employee.EmpName,
-                Email = employee.Email,
-                Phone = employee.Phone,
-                DepartmentName = employee.Department?.DeptName,
-                Role = request.Role,
-                CreatedAt = employee.CreatedAt,
-                UpdatedAt = DateTime.UtcNow
-            };
+                var employee = await dbContext.Employees
+                    .Include(e => e.Department)
+                    .FirstOrDefaultAsync(e => e.Id == request.Id, cancellationToken);
+                if (employee == null)
+                    throw new Exception($"Employee with Id {request.Id} not found.");
+
+                employee.EmpName = request.EmpName;
+                employee.Email = request.Email;
+                employee.Phone = request.Phone;
+                employee.DepartmentId = request.DepartmentId;
+
+                dbContext.Employees.Update(employee);
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                var user = await userManager.FindByIdAsync(employee.Id.ToString());
+                if (user != null)
+                {
+                    user.UserName = request.EmpName;
+                    user.Email = request.Email;
+
+                    var updateResult = await userManager.UpdateAsync(user);
+                    if (!updateResult.Succeeded)
+                    {
+                        throw new Exception($"Failed to update user: {string.Join(", ", updateResult.Errors.Select(e => e.Description))}");
+                    }
+
+                    var roles = await userManager.GetRolesAsync(user);
+                    var currentRole = roles.FirstOrDefault();
+
+                    if (currentRole != request.Role)
+                    {
+                        if (!string.IsNullOrEmpty(currentRole))
+                        {
+                            await userManager.RemoveFromRoleAsync(user, currentRole);
+                        }
+                        await userManager.AddToRoleAsync(user, request.Role);
+                    }
+                }
+                await transaction.CommitAsync(cancellationToken);
+                return new EmployeeUpdateResponse
+                {
+                    Id = employee.Id,
+                    Name = employee.EmpName,
+                    Email = employee.Email,
+                    Phone = employee.Phone,
+                    DepartmentName = employee.Department?.DeptName,
+                    Role = request.Role,
+                    CreatedAt = employee.CreatedAt,
+                    UpdatedAt = DateTime.UtcNow
+                };
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+
         }
     }
 }

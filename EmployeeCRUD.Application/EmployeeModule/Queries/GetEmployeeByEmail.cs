@@ -27,7 +27,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
         public async Task<EmployeeResponseDto> Handle(GetEmployeeByEmail request, CancellationToken cancellationToken)
         {
-            // Get employee by email
+
             var employee = await dbContext.Employees
                 .Include(e => e.Department)
                 .FirstOrDefaultAsync(e => e.Email == request.Email, cancellationToken);
@@ -37,7 +37,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
             var user = await userManager.Users.FirstOrDefaultAsync(u => u.Email == employee.Email, cancellationToken);
 
-            string role = null;
+            string? role = null;
             if (user != null)
             {
                 var roles = await userManager.GetRolesAsync(user);
