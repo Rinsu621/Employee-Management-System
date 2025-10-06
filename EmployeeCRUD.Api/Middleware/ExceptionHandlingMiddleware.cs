@@ -8,8 +8,9 @@ namespace EmployeeCRUD.Api.Middleware
 {
     public class ExceptionHandlingMiddleware
     {
-        private readonly RequestDelegate _next; // represent next component in the pipeline
+        private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+
         public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
@@ -20,68 +21,35 @@ namespace EmployeeCRUD.Api.Middleware
         {
             try
             {
-                await _next(context); //to invoke the next middleware or endpoints
+                await _next(context);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unhandled exception occurred.");
-                var statusCode = ex switch
-                {
-                    CustomValidationException => StatusCodes.Status400BadRequest,
-                    ArgumentException => StatusCodes.Status400BadRequest, // handle GuardClauses
-                    InvalidOperationException => StatusCodes.Status400BadRequest,
-                    KeyNotFoundException => StatusCodes.Status404NotFound,
-                    UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
-                    DbUpdateException dbEx when dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 2627 => StatusCodes.Status409Conflict,
-                    AlreadyExistsException => StatusCodes.Status409Conflict,
-                    _ => StatusCodes.Status500InternalServerError
 
+                var (statusCode, userMessage) = ex switch
+                {
+                    CustomValidationException cvEx => (StatusCodes.Status400BadRequest, "Validation failed. Please correct the input."),
+                    ArgumentException => (StatusCodes.Status400BadRequest, "Invalid argument provided."),
+                    InvalidOperationException => (StatusCodes.Status400BadRequest, "Operation cannot be performed."),
+                    KeyNotFoundException => (StatusCodes.Status404NotFound, "Requested resource not found."),
+                    UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "You are not authorized to perform this action."),
+                    AlreadyExistsException => (StatusCodes.Status409Conflict, "Resource already exists."),
+                    DbUpdateException dbEx when dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 2627 => (StatusCodes.Status409Conflict, "Duplicate entry detected."),
+                    _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred. Please try again later.")
                 };
 
                 context.Response.StatusCode = statusCode;
                 context.Response.ContentType = "application/json";
 
-                var response = ex switch
+                var response = new
                 {
-                    CustomValidationException validationEx => JsonSerializer.Serialize(new
-                    {
-                        errors = validationEx.Errors,
-                        statusCode = context.Response.StatusCode
-                    }),
-                    ArgumentException argEx => JsonSerializer.Serialize(new
-                    {
-                        error = argEx.Message, // this will show the GuardClause message
-                        statusCode
-                    }),
-                    InvalidOperationException invOpEx => JsonSerializer.Serialize(new
-                    {
-                        error = invOpEx.Message,
-                        statusCode
-                    }),
-                    AlreadyExistsException existsEx => JsonSerializer.Serialize(new
-                    {
-                        error = existsEx.Message,
-                        statusCode = context.Response.StatusCode
-                    }),
-                    UnauthorizedAccessException uaEx => JsonSerializer.Serialize(new
-                    {
-                        error = uaEx.Message,
-                        statusCode = context.Response.StatusCode
-                    }),
-                    KeyNotFoundException knfEx=>JsonSerializer.Serialize(new
-                    {
-                        errors=knfEx.Message,
-                        statusCode=context.Response.StatusCode
-                    }),
-                    _ => JsonSerializer.Serialize(new
-                    {
-                        error = "Internal Server Error",
-                        statusCode = context.Response.StatusCode
-                    })
+                    error = userMessage,
+                    details = ex is CustomValidationException cvExDetails ? cvExDetails.Errors : null,
+                    statusCode
                 };
 
-                await context.Response.WriteAsync(response);
-
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
         }
     }
