@@ -6,9 +6,11 @@ using EmployeeCRUD.Application.Services;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Seeder;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -17,7 +19,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container like Issuer, Audience, SecretKey from appsetting.json
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+builder.Services.AddHangfire(config=>
+{ 
+config.UseSimpleAssemblyNameTypeSerializer()
+.UseRecommendedSerializerSettings()
+.UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"));
+});
 
+builder.Services.AddHangfireServer();
 builder.Services.AddControllers();
 //it allow access to HttpContext inside services
 builder.Services.AddHttpContextAccessor();
@@ -163,6 +172,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseHangfireDashboard();
 
 
 app.MapControllers();
