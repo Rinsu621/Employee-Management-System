@@ -15,11 +15,12 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
         Guid? DepartmentId = null,
         DateTime? FromDate = null,
         DateTime? ToDate = null,
+        string? SearchTerm = null,
         string? SortKey = "CreatedAt",
         bool SortAsc = true
-    ) : IRequest<IEnumerable<EmployeeResponseDto>>;
+    ) : IRequest<EmployeePagedResponseDto>;
 
-    public class GetAllEmployeeDapperHandler : IRequestHandler<GetAllEmployeeDapperQuery, IEnumerable<EmployeeResponseDto>>
+    public class GetAllEmployeeDapperHandler : IRequestHandler<GetAllEmployeeDapperQuery, EmployeePagedResponseDto>
     {
         private readonly IDbConnection connection;
 
@@ -28,7 +29,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             connection = _connection;
         }
 
-        public async Task<IEnumerable<EmployeeResponseDto>> Handle(GetAllEmployeeDapperQuery request, CancellationToken cancellationToken)
+        public async Task<EmployeePagedResponseDto> Handle(GetAllEmployeeDapperQuery request, CancellationToken cancellationToken)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@Page", request.Page);
@@ -37,16 +38,24 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             parameters.Add("@DepartmentId", request.DepartmentId);
             parameters.Add("@FromDate", request.FromDate);
             parameters.Add("@ToDate", request.ToDate);
+            parameters.Add("@SearchTerm", request.SearchTerm);
             parameters.Add("@SortKey", request.SortKey);
             parameters.Add("@SortAsc", request.SortAsc);
 
-            var result = await connection.QueryAsync<EmployeeResponseDto>(
-                "GetAllEmployees",
-                parameters,
+            using var multi = await connection.QueryMultipleAsync(
+             "GetAllEmployees",
+             parameters,
                 commandType: CommandType.StoredProcedure
-            );
+                );
 
-            return result;
+            var employees = multi.Read<EmployeeResponseDto>().ToList();
+            var totalCount = multi.ReadFirst<int>();
+
+            return new EmployeePagedResponseDto
+            {
+                Employees = employees,
+                TotalCount = totalCount
+            };
         }
     }
 }
