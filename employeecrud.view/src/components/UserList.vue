@@ -64,6 +64,14 @@
           </button>
         </div>
       </div>
+      <!--Search Bar-->
+      <div class="mb-3 d-flex align-items-center">
+        <label class="me-2">Search:</label>
+        <input type="text"
+               v-model="searchTerm"
+               class="form-control w-auto"
+               placeholder="Search" />
+      </div>
 
 
       <!-- Table -->
@@ -88,7 +96,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, index) in sortedEmployees"
+            <tr v-for="(user, index) in employees"
                 :key="user.id"
                 :class="{ 'table-info': user.email === currentAdminEmail }">
               <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
@@ -111,7 +119,7 @@
                 </template>
               </td>
             </tr>
-            <tr v-if="sortedEmployees.length === 0">
+            <tr v-if="employees.length === 0">
               <td colspan="8" class="text-center">No employees found</td>
             </tr>
           </tbody>
@@ -281,21 +289,23 @@
   const selectedDepartment = ref("");    
   const fromDate = ref(null)
   const toDate = ref(null)
+  const searchTerm = ref("")
   const loading = ref(true);
   const showOverlay = ref(false);
 
 
 
 
-  const sortedEmployees = computed(() => {
-    return [...employees.value].sort((a, b) => {
-      const aVal = a[sortKey.value] || "";
-      const bVal = b[sortKey.value] || "";
-      if (aVal < bVal) return sortAsc.value ? -1 : 1;
-      if (aVal > bVal) return sortAsc.value ? 1 : -1;
-      return 0;
-    });
-  });
+  //const sortedEmployees = computed(() => {
+  //  return [...employees.value].sort((a, b) => {
+  //    const aVal = a[sortKey.value] || "";
+  //    const bVal = b[sortKey.value] || "";
+  //    if (aVal < bVal) return sortAsc.value ? -1 : 1;
+  //    if (aVal > bVal) return sortAsc.value ? 1 : -1;
+  //    return 0;
+  //  });
+  //});
+
   function showToast(message, variant = 'success') {
     const toastContainer = document.getElementById('toastContainer');
     if (!toastContainer) return;
@@ -391,7 +401,7 @@
       console.log("Fetching with:", currentPage.value, pageSize.value, selectedRole.value, selectedDepartment.value);
       const res = await getAllEmployees(currentPage.value, pageSize.value, selectedRole.value || null,
         selectedDepartment.value || null, fromDate.value || null,
-        toDate.value || null);
+        toDate.value || null, searchTerm.value||null, sortKey.value|| "createdAt", sortAsc.value);
       console.log("Response:", res.data);
       employees.value = res.data.employees;
       totalEmployees.value = res.data.totalCount;
@@ -444,19 +454,17 @@
     fetchEmployees();
   });
 
-  watch([selectedRole, selectedDepartment, fromDate, toDate], () => {
+  watch([selectedRole, selectedDepartment, fromDate, toDate, searchTerm], () => {
   currentPage.value = 1;
   fetchEmployees();
 });
-
-
 
 </script>
 
 <style scoped>
   .container {
     position: relative;
-    z-index: 1; /* Keep content above circles */
+    z-index: 1; 
   }
 
   .background-circles {
@@ -466,7 +474,7 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    z-index: -1; /* Behind content */
+    z-index: -1; 
   }
 
     .background-circles .circle {
@@ -476,7 +484,7 @@
       animation: float 15s infinite ease-in-out;
     }
 
-  /* Different sizes and positions */
+
   .c1 {
     width: 150px;
     height: 150px;

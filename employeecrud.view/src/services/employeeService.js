@@ -2,9 +2,9 @@
 import api from './axios.js';
 
 
-export const getAllEmployees = (page, pageSize, role = null, departmentId = null, fromDate=null, toDate=null) => {
+export const getAllEmployees = (page, pageSize, role = null, departmentId = null, fromDate = null, toDate = null, searchTerm = null, sortKey = "createdAt", sortAsc = true) => {
   return api.post('/employee/getallemployee', {
-  page, pageSize, role, departmentId, fromDate, toDate 
+    page, pageSize, role, departmentId, fromDate, toDate, searchTerm, sortKey, sortAsc
   });
 };
 
