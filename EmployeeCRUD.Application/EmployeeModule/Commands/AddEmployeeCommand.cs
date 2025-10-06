@@ -3,6 +3,7 @@ using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
@@ -24,15 +26,19 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration configuration;
+        private readonly IEmailService emailService;
+
         public AddEmployeeHandler(IAppDbContext _dbContext,
                               UserManager<ApplicationUser> _userManager,
                               RoleManager<IdentityRole> _roleManager,
-                              IConfiguration _configuration)
+                              IConfiguration _configuration,
+                              IEmailService _emailService)
         {
             dbContext = _dbContext;
             userManager = _userManager;
             roleManager = _roleManager;
             configuration = _configuration;
+            emailService = _emailService;
         }
         public async Task<EmployeeResponseDto> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
         {
@@ -49,7 +55,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 await dbContext.SaveChangesAsync(cancellationToken);
                 var user = new ApplicationUser
                 {
-                    UserName = entity.EmpName,
+                    UserName = entity.Email,
                     Email = entity.Email,
                     EmployeeId = entity.Id
                 };
@@ -60,6 +66,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                     throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
                 await userManager.AddToRoleAsync(user, request.employee.Role);
+                BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(user.Email, defaultPassword));
                 await transaction.CommitAsync(cancellationToken);
 
 
