@@ -5,11 +5,12 @@ using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record AddEmployeeCommand(EmployeeDto employee) : IRequest<EmployeeResponseDto>;
+    public record AddEmployeeCommand(string EmpName, string Email, string Phone, Guid?DepartmentId, string Role) : IRequest<EmployeeResponseDto>;
 
     public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommand, EmployeeResponseDto>
     {
@@ -39,9 +40,10 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
             {
                 var entity = new Employee
                 {
-                    EmpName = request.employee.EmpName,
-                    Email = request.employee.Email,
-                    Phone = request.employee.Phone
+                    EmpName = request.EmpName,
+                    Email = request.Email,
+                    Phone = request.Phone,
+                    DepartmentId= request.DepartmentId
                 };
                 dbContext.Employees.Add(entity);
                 await dbContext.SaveChangesAsync(cancellationToken);
@@ -59,16 +61,22 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                     throw new InvalidOperationException($"Failed to create user");
                 }
                 //Add in AspNetUserRoles table i.e user id and role id
-                await userManager.AddToRoleAsync(user, request.employee.Role);
+                await userManager.AddToRoleAsync(user, request.Role);
                 await transaction.CommitAsync(cancellationToken);
                 BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(user.Email, defaultPassword));
+
+                var departmentName = await dbContext.Departments
+                   .Where(d => d.Id == request.DepartmentId)
+                   .Select(d => d.DeptName)
+                   .FirstOrDefaultAsync(cancellationToken);
                 return new EmployeeResponseDto
                 {
                     Id = entity.Id,
                     EmpName = entity.EmpName,
                     Email = entity.Email,
                     Phone = entity.Phone,
-                    Role = request.employee.Role,
+                    DepartmentName = departmentName,
+                    Role = request.Role,
                     CreatedAt = entity.CreatedAt
                 };
             }

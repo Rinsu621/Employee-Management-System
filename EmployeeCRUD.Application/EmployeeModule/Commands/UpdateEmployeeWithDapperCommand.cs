@@ -38,21 +38,19 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
             parameters.Add("@DepartmentId", request.DepartmentId, DbType.Guid);
             parameters.Add("@Role", request.Role, DbType.String);
 
-            await db.ExecuteAsync("UpdateEmployee", parameters, commandType: CommandType.StoredProcedure);
 
-            // Optionally, return updated employee info
+
+
             var employee = await db.QueryFirstOrDefaultAsync<EmployeeUpdateResponse>(
-                "SELECT e.Id, e.EmpName AS Name, e.Email, e.Phone, d.DeptName AS DepartmentName " +
-                "FROM Employees e " +
-                "LEFT JOIN Departments d ON e.DepartmentId = d.Id " +
-                "WHERE e.Id = @Id",
-                new { Id = request.Id }
-            );
+               "UpdateEmployee",
+               parameters,
+               commandType: CommandType.StoredProcedure
+           );
 
-            employee.Role = request.Role;
-            employee.UpdatedAt = DateTime.UtcNow;
+            if (employee != null)
+                employee.UpdatedAt = DateTime.UtcNow;
 
-            return employee;
+            return employee!;
         }
     }
 }

@@ -53,7 +53,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 var user = await userManager.FindByIdAsync(employee.Id.ToString());
                 if (user != null)
                 {
-                    user.UserName = request.EmpName;
+                    user.UserName = request.Email;
                     user.Email = request.Email;
 
                     var updateResult = await userManager.UpdateAsync(user);

@@ -185,6 +185,14 @@
               <input type="text" v-model="newEmployee.phone" class="form-control" />
               <small class="text-danger">{{ errors.Phone }}</small>
             </div>
+
+            <div class="mb-3">
+              <label class="form-label">Department</label>
+              <select v-model="newEmployee.departmentId" class="form-select" required>
+                <option value="" disabled>Select Department</option>
+                <option v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">{{dept.name}}</option>
+              </select>
+            </div>
             <div class="mb-3">
               <label class="form-label">Role</label>
               <select v-model="newEmployee.role" class="form-select" required>
@@ -274,7 +282,7 @@
 
   const createModal = ref(null);
   const createModalInstance = ref(null);
-  const newEmployee = ref({ empName: '', email: '', phone: '', role: '' });
+  const newEmployee = ref({ empName: '', email: '', phone: '', departmentId: '', role: '' });
 
   const editModal = ref(null);
   const editModalInstance = ref(null);
@@ -348,6 +356,7 @@
     try {
       await createEmployee(newEmployee.value);
       await fetchEmployees();
+      newEmployee.value = { empName: '', email: '', phone: '', departmentId: '', role: '' };
       closeCreateModal();
       showToast('Employee added successfully!', 'success')
     } catch (err) {

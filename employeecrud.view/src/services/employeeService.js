@@ -16,12 +16,12 @@ export const getAllEmployees = (page, pageSize, role = null, departmentId = null
 
 export const createEmployee = (employee) => {
   return api.post('/employee', {
-    employee: {
+
       EmpName: employee.empName,
       Email: employee.email,
-      Phone: employee.phone,
+     Phone: employee.phone,
+     DepartmentId: employee.departmentId,
       Role: employee.role
-    }
   });
 };
 // Update an existing employee
