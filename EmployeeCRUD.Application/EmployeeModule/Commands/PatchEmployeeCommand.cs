@@ -1,16 +1,8 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
-using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {

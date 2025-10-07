@@ -1,20 +1,11 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Infrastructure.Data;
-using FluentValidation;
 using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using static Dapper.SqlMapper;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
@@ -42,6 +33,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         }
         public async Task<EmployeeResponseDto> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
         {
+            var defaultPassword = configuration["DefaultPassword:Password"];
             using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
             try
             {
@@ -59,17 +51,17 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                     Email = entity.Email,
                     EmployeeId = entity.Id
                 };
-                var defaultPassword = configuration["DefaultPassword:Password"];
+              
+                //creates an entry in AspNetUsers table
                 var result = await userManager.CreateAsync(user, defaultPassword);
                 if (!result.Succeeded)
                 {
-                    throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+                    throw new InvalidOperationException($"Failed to create user");
                 }
+                //Add in AspNetUserRoles table i.e user id and role id
                 await userManager.AddToRoleAsync(user, request.employee.Role);
-                BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(user.Email, defaultPassword));
                 await transaction.CommitAsync(cancellationToken);
-
-
+                BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(user.Email, defaultPassword));
                 return new EmployeeResponseDto
                 {
                     Id = entity.Id,

@@ -1,9 +1,6 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using MediatR;
-using System;
 using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;

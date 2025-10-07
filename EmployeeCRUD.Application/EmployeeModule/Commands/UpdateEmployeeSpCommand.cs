@@ -1,17 +1,8 @@
-﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
-using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Infrastructure.Data;
+﻿using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data.keyless;
-using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
