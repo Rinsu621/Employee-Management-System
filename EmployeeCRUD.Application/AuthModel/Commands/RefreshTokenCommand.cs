@@ -47,7 +47,7 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             await userManager.UpdateAsync(user);
 
-            return new LoginResponseDto { Token = newToken, RefreshToken = newRefreshToken };
+            return new LoginResponseDto { Token = newToken, RefreshToken = newRefreshToken, Name = user.UserName };
         }
 
     }

@@ -121,7 +121,7 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
-
+        [Authorize]
         [HttpPost("get-all-employees-using-dapper")]
         public async Task<IActionResult> GetAllEmployeesUsingDapper(GetAllEmployeeDapperQuery query)
         {

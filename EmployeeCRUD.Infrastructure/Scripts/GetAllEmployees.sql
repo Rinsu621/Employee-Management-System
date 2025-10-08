@@ -80,7 +80,6 @@ BEGIN
         OFFSET ' + CAST((@Page - 1) * @PageSize AS NVARCHAR(10)) + ' ROWS
         FETCH NEXT ' + CAST(@PageSize AS NVARCHAR(10)) + ' ROWS ONLY;
     ';
-
     EXEC sp_executesql @sql;
 
     SELECT COUNT(*) AS TotalCount

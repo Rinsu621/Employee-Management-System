@@ -41,6 +41,7 @@ namespace EmployeeCRUD.Api.Controllers
 
             return Ok(result);
         }
+
         [HttpPost("refresh-token")]
 
         public async Task<IActionResult> RefreshToken(RefreshTokenCommand command)
@@ -48,8 +49,8 @@ namespace EmployeeCRUD.Api.Controllers
             var result= await mediator.Send(command);
             return Ok(result);
         }
-
-       [HttpGet("roles")]
+        [Authorize]
+        [HttpGet("roles")]
        public async Task<IActionResult> GetRoles()
         {
             var roles = await mediator.Send(new GetRolesQuery());

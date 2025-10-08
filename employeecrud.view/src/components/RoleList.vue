@@ -1,6 +1,6 @@
 <template>
+  <Layout>
   <div>
-    <Navbar />
     <div class="container mt-4">
       <h2 class="mb-4">Role List</h2>
       <table class="table table-bordered table-hover">
@@ -22,10 +22,12 @@
       </table>
     </div>
   </div>
+  </Layout>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+  import { ref, onMounted } from "vue";
+  import Layout from "../components/Layout.vue"
   import Navbar from "./Navbar.vue";
   import { getRoles } from "../services/employeeService";
   import { logout } from '../services/authService'

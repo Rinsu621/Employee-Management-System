@@ -2,11 +2,7 @@
 import api from './axios.js';
 
 
-//export const getAllEmployees = (page, pageSize, role = null, departmentId = null, fromDate = null, toDate = null, searchTerm = null, sortKey = "createdAt", sortAsc = true) => {
-//  return api.post('/employee/getallemployee', {
-//    page, pageSize, role, departmentId, fromDate, toDate, searchTerm, sortKey, sortAsc
-//  });
-//};
+
 
 export const getAllEmployees = (page, pageSize, role = null, departmentId = null, fromDate = null, toDate = null, searchTerm = null, sortKey = "createdAt", sortAsc = true) => {
   return api.post('/employee/get-all-employees-using-dapper', {
@@ -15,7 +11,7 @@ export const getAllEmployees = (page, pageSize, role = null, departmentId = null
 };
 
 export const createEmployee = (employee) => {
-  return api.post('/employee', {
+  return api.post('/employee/add-employee-using-dapper', {
 
       EmpName: employee.empName,
       Email: employee.email,
@@ -38,7 +34,7 @@ export const updateEmployee = (employee) =>
 export const getDepartments = () => api.get('/department');
 
 export const deleteEmployeeById = (id) =>
-  api.delete(`/employee/${id}`);
+  api.delete(`/employee/delete-employee-using-dapper/${id}`);
 
 
 export const getRoles = () => api.get('/auth/roles'); 

@@ -11,152 +11,153 @@
       <div class="circle c4"></div>
       <div class="circle c5"></div>
     </div>
-    <Navbar />
-    <div class="container mt-4">
+    <Layout>
+      <div class="container mt-4">
 
-      <h2>User List</h2>
+        <h2>User List</h2>
 
-      <div class="mb-3 d-flex align-items-center justify-content-between">
-        <!-- Left side: Sorting Dropdowns -->
-        <div class="d-flex align-items-center">
-          <label class="me-2">Sort by:</label>
-          <select v-model="sortKey" class="form-select w-auto me-2">
-            <option value="id">S.No</option>
-            <option value="empName">Name</option>
-            <option value="email">Email</option>
-            <option value="role">Role</option>
-            <option value="createdAt">Created At</option>
-          </select>
+        <div class="mb-3 d-flex align-items-center justify-content-between">
+          <!-- Left side: Sorting Dropdowns -->
+          <div class="d-flex align-items-center">
+            <label class="me-2">Sort by:</label>
+            <select v-model="sortKey" class="form-select w-auto me-2">
+              <option value="id">S.No</option>
+              <option value="empName">Name</option>
+              <option value="email">Email</option>
+              <option value="role">Role</option>
+              <option value="createdAt">Created At</option>
+            </select>
 
-          <select v-model="sortAsc" class="form-select w-auto">
-            <option :value="true">Ascending</option>
-            <option :value="false">Descending</option>
-          </select>
+            <select v-model="sortAsc" class="form-select w-auto">
+              <option :value="true">Ascending</option>
+              <option :value="false">Descending</option>
+            </select>
 
-          <!-- Role Filter -->
-          <label class="ms-2 me-1">Role:</label>
-          <select v-model="selectedRole" class="form-select w-auto">
-            <option value="">All</option>
-            <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-          </select>
+            <!-- Role Filter -->
+            <label class="ms-2 me-1">Role:</label>
+            <select v-model="selectedRole" class="form-select w-auto">
+              <option value="">All</option>
+              <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+            </select>
 
-          <!-- Department Filter -->
-          <label class="ms-2 me-1">Department:</label>
-          <select v-model="selectedDepartment" class="form-select w-auto">
-            <option value="">All</option>
-            <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
-          </select>
+            <!-- Department Filter -->
+            <label class="ms-2 me-1">Department:</label>
+            <select v-model="selectedDepartment" class="form-select w-auto">
+              <option value="">All</option>
+              <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
+            </select>
+          </div>
+
+          <!-- From Date Filter -->
+          <label class="ms-2 me-1">From:</label>
+          <input type="date" v-model="fromDate" class="form-control w-auto d-inline" />
+
+          <!-- To Date Filter -->
+          <label class="ms-2 me-1">To:</label>
+          <input type="date" v-model="toDate" class="form-control w-auto d-inline" />
+
+          <!-- Right side: Create Button -->
+          <div>
+            <button class="btn btn-success shadow-sm px-4 py-2 d-flex align-items-center" @click="openCreateModal">
+              <i class="bi bi-person-plus-fill me-2 fs-5"></i>
+              <span class="fw-semibold">Add User</span>
+            </button>
+          </div>
+        </div>
+        <!--Search Bar-->
+        <div class="mb-3 d-flex align-items-center">
+          <label class="me-2">Search:</label>
+          <input type="text"
+                 v-model="searchTerm"
+                 class="form-control w-auto"
+                 placeholder="Search" />
         </div>
 
-        <!-- From Date Filter -->
-        <label class="ms-2 me-1">From:</label>
-        <input type="date" v-model="fromDate" class="form-control w-auto d-inline" />
 
-        <!-- To Date Filter -->
-        <label class="ms-2 me-1">To:</label>
-        <input type="date" v-model="toDate" class="form-control w-auto d-inline" />
-
-        <!-- Right side: Create Button -->
-        <div>
-          <button class="btn btn-success shadow-sm px-4 py-2 d-flex align-items-center" @click="openCreateModal">
-            <i class="bi bi-person-plus-fill me-2 fs-5"></i>
-            <span class="fw-semibold">Add User</span>
-          </button>
+        <!-- Table -->
+        <div class="table-responsive shadow-sm rounded">
+          <!-- Skeleton Table -->
+          <b-skeleton-table v-if="loading"
+                            :rows="5"
+                            :columns="8"
+                            :table-props="{ bordered: true, striped: true }">
+          </b-skeleton-table>
+          <table class="table table-hover align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>S.No</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Created At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(user, index) in employees"
+                  :key="user.id"
+                  :class="{ 'table-info': user.email === currentAdminEmail }">
+                <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+                <td>{{ user.empName }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.departmentName || 'N/A' }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
+                <td>
+                  <template v-if="user.email !== currentAdminEmail">
+                    <div class="btn-group" role="group">
+                      <button class="btn btn-outline-secondary" @click="openEditModal(user)" title="Edit">
+                        <i class="bi bi-pencil-square fs-5"></i>
+                      </button>
+                      <button class="btn btn-outline-danger" @click="deleteEmployee(user)" title="Delete">
+                        <i class="bi bi-trash fs-5"></i>
+                      </button>
+                    </div>
+                  </template>
+                </td>
+              </tr>
+              <tr v-if="employees.length === 0">
+                <td colspan="8" class="text-center">No employees found</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+
+        <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
+          <!-- Left side -->
+          <div>
+            Showing {{ (currentPage - 1) * pageSize + 1 }} -
+            {{ Math.min(currentPage * pageSize, totalEmployees) }}
+            out of {{ totalEmployees }}
+          </div>
+
+          <!-- Middle: Pagination buttons -->
+          <div>
+            <button class="btn btn-sm btn-secondary me-1" @click="prevPage">Previous</button>
+            <button class="btn btn-sm me-1"
+                    v-for="page in totalPages"
+                    :key="page"
+                    @click="goToPage(page)"
+                    :class="currentPage=== page ? 'btn-secondary' : 'btn-outline-secondary'">
+              {{ page }}
+            </button>
+            <button class="btn btn-sm btn-secondary" @click="nextPage">Next</button>
+          </div>
+
+          <!-- Right side: Rows per page -->
+          <div>
+            <label>Rows per page:</label>
+            <select v-model="pageSize" class="form-select d-inline w-auto ms-1">
+              <option v-for="size in [5,10,20,50]" :key="size" :value="size">{{ size }}</option>
+            </select>
+          </div>
+        </div>
+
       </div>
-      <!--Search Bar-->
-      <div class="mb-3 d-flex align-items-center">
-        <label class="me-2">Search:</label>
-        <input type="text"
-               v-model="searchTerm"
-               class="form-control w-auto"
-               placeholder="Search" />
-      </div>
-
-
-      <!-- Table -->
-      <div class="table-responsive shadow-sm rounded">
-        <!-- Skeleton Table -->
-        <b-skeleton-table v-if="loading"
-                          :rows="5"
-                          :columns="8"
-                          :table-props="{ bordered: true, striped: true }">
-        </b-skeleton-table>
-        <table class="table table-hover align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>S.No</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Department</th>
-              <th>Role</th>
-              <th>Created At</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(user, index) in employees"
-                :key="user.id"
-                :class="{ 'table-info': user.email === currentAdminEmail }">
-              <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
-              <td>{{ user.empName }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.phone }}</td>
-              <td>{{ user.departmentName || 'N/A' }}</td>
-              <td>{{ user.role }}</td>
-              <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
-              <td>
-                <template v-if="user.email !== currentAdminEmail">
-                  <div class="btn-group" role="group">
-                    <button class="btn btn-outline-secondary" @click="openEditModal(user)" title="Edit">
-                      <i class="bi bi-pencil-square fs-5"></i>
-                    </button>
-                    <button class="btn btn-outline-danger" @click="deleteEmployee(user)" title="Delete">
-                      <i class="bi bi-trash fs-5"></i>
-                    </button>
-                  </div>
-                </template>
-              </td>
-            </tr>
-            <tr v-if="employees.length === 0">
-              <td colspan="8" class="text-center">No employees found</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
-        <!-- Left side -->
-        <div>
-          Showing {{ (currentPage - 1) * pageSize + 1 }} -
-          {{ Math.min(currentPage * pageSize, totalEmployees) }}
-          out of {{ totalEmployees }}
-        </div>
-
-        <!-- Middle: Pagination buttons -->
-        <div>
-          <button class="btn btn-sm btn-secondary me-1" @click="prevPage">Previous</button>
-          <button class="btn btn-sm me-1"
-                  v-for="page in totalPages"
-                  :key="page"
-                  @click="goToPage(page)"
-                  :class="currentPage=== page ? 'btn-secondary' : 'btn-outline-secondary'">
-            {{ page }}
-          </button>
-          <button class="btn btn-sm btn-secondary" @click="nextPage">Next</button>
-        </div>
-
-        <!-- Right side: Rows per page -->
-        <div>
-          <label>Rows per page:</label>
-          <select v-model="pageSize" class="form-select d-inline w-auto ms-1">
-            <option v-for="size in [5,10,20,50]" :key="size" :value="size">{{ size }}</option>
-          </select>
-        </div>
-      </div>
-
-    </div>
+      </Layout>
   </div>
 
 
@@ -218,48 +219,48 @@
           <button type="button" class="btn-close" @click="editModalInstance.hide()"></button>
         </div>
         <b-overlay :show="showOverlay" rounded="sm">
-        <div class="modal-body">
-          <form @submit.prevent="editEmployeeHandler">
-            <div class="mb-3">
-              <label class="form-label">Name</label>
-              <input type="text" v-model="editingEmployee.empName" class="form-control" required />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input type="email" v-model="editingEmployee.email" class="form-control" required />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Phone</label>
-              <input type="text" v-model="editingEmployee.phone" class="form-control" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Department</label>
-              <select v-model="editingEmployee.departmentId" class="form-select">
-                <option value="" disabled>Select department</option>
-                <option v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">
-                  {{ dept.name }}
-                </option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Role</label>
-              <select v-model="editingEmployee.role" class="form-select">
-                <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Update</button>
-            <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
-          </form>
-        </div>
+          <div class="modal-body">
+            <form @submit.prevent="editEmployeeHandler">
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text" v-model="editingEmployee.empName" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" v-model="editingEmployee.email" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="text" v-model="editingEmployee.phone" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Department</label>
+                <select v-model="editingEmployee.departmentId" class="form-select">
+                  <option value="" disabled>Select department</option>
+                  <option v-for="dept in departments" :key="dept.id" :value="dept.id.toString()">
+                    {{ dept.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Role</label>
+                <select v-model="editingEmployee.role" class="form-select">
+                  <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Update</button>
+              <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
+            </form>
+          </div>
         </b-overlay>
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
   import Navbar from "../components/Navbar.vue"
+  import Layout from "../components/Layout.vue"
   import { ref, computed, onMounted, watch, watchEffect } from "vue"
    import { logout } from "../services/authService.js"
   import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments } from "../services/employeeService"
@@ -304,15 +305,7 @@
 
 
 
-  //const sortedEmployees = computed(() => {
-  //  return [...employees.value].sort((a, b) => {
-  //    const aVal = a[sortKey.value] || "";
-  //    const bVal = b[sortKey.value] || "";
-  //    if (aVal < bVal) return sortAsc.value ? -1 : 1;
-  //    if (aVal > bVal) return sortAsc.value ? 1 : -1;
-  //    return 0;
-  //  });
-  //});
+
 
   function showToast(message, variant = 'success') {
     const toastContainer = document.getElementById('toastContainer');

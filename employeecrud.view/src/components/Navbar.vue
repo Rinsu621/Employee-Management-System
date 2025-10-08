@@ -1,9 +1,6 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-gradient shadow-sm py-2 mb-4">
+  <nav class="navbar navbar-expand-lg navbar-light bg-gradient shadow-sm py-2 ">
     <div class="container-fluid">
-      <router-link class="navbar-brand fw-bold text-primary" to="/dashboard">
-        Employee CRUD
-      </router-link>
 
       <div class="d-flex ms-auto align-items-center">
         <router-link to="/profile" class="d-flex align-items-center text-decoration-none me-3 profile-link">

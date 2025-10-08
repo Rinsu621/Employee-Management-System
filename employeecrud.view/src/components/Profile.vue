@@ -1,81 +1,83 @@
 
 <template>
-  <div>
-    <Navbar />
-    <div class="container position-relative mt-5 mb-5">
-      <div class="background-circle one"></div>
-      <div class="background-circle two"></div>
-      <div class="background-circle three"></div>
+  <Layout>
+    <div>
+      <div class="container position-relative mt-5 mb-5">
+        <div class="background-circle one"></div>
+        <div class="background-circle two"></div>
+        <div class="background-circle three"></div>
 
 
-      <div class="container mt-4">
-        <!-- Success/Error Message -->
-        <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
-        <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+        <div class="container mt-4">
+          <!-- Success/Error Message -->
+          <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
+          <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
-        <div class="row">
-          <!-- Left side: Edit form -->
-          <div class="col-md-6">
-            <h3 class="mb-3"> Manage Your Profile</h3>
-            <form @submit.prevent="updateProfile">
-              <div class="mb-3">
-                <label class="form-label">Name</label>
-                <input type="text" v-model="user.empName" class="form-control" required />
+          <div class="row">
+            <!-- Left side: Edit form -->
+            <div class="col-md-6">
+              <h3 class="mb-3"> Manage Your Profile</h3>
+              <form @submit.prevent="updateProfile">
+                <div class="mb-3">
+                  <label class="form-label">Name</label>
+                  <input type="text" v-model="user.empName" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" v-model="user.email" class="form-control" disabled />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Phone</label>
+                  <input type="text" v-model="user.phone" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Department</label>
+                  <select v-model="user.departmentName" class="form-select">
+                    <option disabled value="">Select Department</option>
+                    <option v-for="dept in departments" :key="dept.id" :value="dept.name">
+                      {{ dept.name }}
+                    </option>
+                  </select>
+                </div>
+
+
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+              </form>
+            </div>
+
+            <!-- Right side: Profile Card -->
+            <div class="col-md-6 d-flex justify-content-center">
+              <div class="card text-center p-4 shadow-lg" style="width: 20rem; border-radius: 1rem; position: relative;">
+                <div class="avatar-wrapper mb-3">
+                  <div class="avatar-circle"></div>
+                  <img :src="userAvatar ? userAvatar : '/OIP.jpeg'"
+                       alt="Profile"
+                       class="rounded-circle position-absolute top-50 start-50 translate-middle"
+                       style="width: 120px; height: 120px; object-fit: cover; border: 4px solid white;" />
+                </div>
+
+                <h4 class="card-title mt-3">{{ user.empName }}</h4>
+                <p class="text-primary fw-bold">{{ user.role }}</p>
+                <p class="card-text text-muted">
+                  Department: {{ user.departmentName || 'N/A' }}<br />
+                  Joined: {{ new Date(user.createdAt).toLocaleDateString() }}
+                </p>
               </div>
-
-              <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" v-model="user.email" class="form-control" disabled />
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label">Phone</label>
-                <input type="text" v-model="user.phone" class="form-control" />
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label">Department</label>
-                <select v-model="user.departmentName" class="form-select">
-                  <option disabled value="">Select Department</option>
-                  <option v-for="dept in departments" :key="dept.id" :value="dept.name">
-                    {{ dept.name }}
-                  </option>
-                </select>
-              </div>
-
-
-
-              <button type="submit" class="btn btn-primary">Update Profile</button>
-            </form>
-          </div>
-
-          <!-- Right side: Profile Card -->
-          <div class="col-md-6 d-flex justify-content-center">
-            <div class="card text-center p-4 shadow-lg" style="width: 20rem; border-radius: 1rem; position: relative;">
-              <div class="avatar-wrapper mb-3">
-                <div class="avatar-circle"></div>
-                <img :src="userAvatar ? userAvatar : '/OIP.jpeg'"
-                     alt="Profile"
-                     class="rounded-circle position-absolute top-50 start-50 translate-middle"
-                     style="width: 120px; height: 120px; object-fit: cover; border: 4px solid white;" />
-              </div>
-
-              <h4 class="card-title mt-3">{{ user.empName }}</h4>
-              <p class="text-primary fw-bold">{{ user.role }}</p>
-              <p class="card-text text-muted">
-                Department: {{ user.departmentName || 'N/A' }}<br />
-                Joined: {{ new Date(user.createdAt).toLocaleDateString() }}
-              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
-    </div>
+  </Layout>
 </template>
 
 <script setup>
   import Navbar from "../components/Navbar.vue";
+  import Layout from "../components/Layout.vue";
   import { ref, reactive, onMounted, watch } from "vue"
   import { getDepartments, getEmployeeByEmail, updateEmployee } from "../services/employeeService";
   import jwtDecode from "jwt-decode";
