@@ -16,5 +16,7 @@ namespace EmployeeCRUD.Domain.Entities
         //Stores Refresh token for user
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+
+
     }
 }

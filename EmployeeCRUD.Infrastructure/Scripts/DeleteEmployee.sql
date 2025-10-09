@@ -1,8 +1,12 @@
 CREATE or ALTER PROCEDURE DeleteEmployee
 	@Id UNIQUEIDENTIFIER
+
 	As
 	BEGIN
 		SET NOCOUNT ON;
-		DELETE FROM Employees
-		WHERE Id = @Id;
+		DECLARE @UserId UNIQUEIDENTIFIER;
+		SELECT @UserId= Id FROM AspNetUsers Where EmployeeId=@Id;
+		DELETE FROM AspNetUserRoles WHERE UserId = @UserId;
+		DELETE FROM AspNetUsers WHERE Id=@UserId;
+		DELETE FROM Employees WHERE Id = @Id;
 	END

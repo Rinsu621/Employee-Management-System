@@ -1,43 +1,49 @@
-CREATE OR ALTER PROCEDURE AddEmployee
-    @Id UNIQUEIDENTIFIER = NULL,
-    @EmpName VARCHAR(100),
-    @Email VARCHAR(100),
-    @Phone VARCHAR(15),
-    @DepartmentId UNIQUEIDENTIFIER = NULL
+ALTER PROCEDURE AddEmployee
+@EmpName NVARCHAR(100),
+@Email NVARCHAR(100),
+@Phone NVARCHAR(15),
+@RoleName NVARCHAR(50),
+@DepartmentId UNIQUEIDENTIFIER=null,
+@DefaultPassword NVARCHAR(100)
+
 AS
 BEGIN
-    SET NOCOUNT ON;
-    BEGIN TRY
-        BEGIN TRANSACTION;
+SET NOCOUNT ON;
+BEGIN TRY
+BEGIN TRANSACTION
+DECLARE @EmployeeId UNIQUEIDENTIFIER=NEWID();
+DECLARE @Now DATETIME=GETDATE();
+--Inserting into employees
+INSERT INTO Employees(Id, EmpName, Email, Phone, DepartmentId, CreatedAt, UpdatedAt) VALUES(@EmployeeId, @EmpName, @Email, @Phone, @DepartmentId, @Now, @Now);
 
-        IF @Id IS NULL
-            SET @Id = NEWID();
+DECLARE @UserId UNIQUEIDENTIFIER=NEWID();
+DECLARE @NormalizedEmail NVARCHAR(256) = UPPER(@Email);
+DECLARE @NormalizedUserName NVARCHAR(256) = UPPER(@Email);
+--Inserting into AspNetUsers
+INSERT INTO AspNetUsers (Id, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp,PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnabled, AccessFailedCount, EmployeeId)
+        VALUES (@UserId, @Email, @NormalizedUserName, @Email, @NormalizedEmail, 0, HASHBYTES('SHA2_256', @DefaultPassword), NEWID(), NEWID(),0,0,1,0, @EmployeeId);
+--Assigning role to user
+DECLARE @RoleId NVARCHAR(450);
+SELECT @RoleId = Id FROM AspNetRoles WHERE NormalizedName = UPPER(@RoleName);
 
-        DECLARE @Now DATETIME = GETDATE();
+INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES (@UserId, @RoleId);
 
-        INSERT INTO Employees (Id, EmpName, Email, Phone, DepartmentId, CreatedAt, UpdatedAt)
-        VALUES (@Id, @EmpName, @Email, @Phone, @DepartmentId, @Now, @Now);
-
-        COMMIT TRANSACTION;
-
-        SELECT
-            e.Id, 
-            e.EmpName, 
-            e.Email, 
-            e.Phone, 
-            d.DeptName AS DepartmentName,
-            e.CreatedAt,
-            e.UpdatedAt
-        FROM Employees e
-        LEFT JOIN Departments d
-            ON e.DepartmentId = d.Id
-        WHERE e.Id = @Id;
-
-    END TRY
-    BEGIN CATCH
+COMMIT TRANSACTION;
+SELECT 
+e.Id ,
+e.EmpName,
+e.Email,
+e.Phone,
+d.DeptName AS DepartmentName,
+@RoleName AS Role,
+e.CreatedAt,
+e.UpdatedAt
+FROM Employees e
+LEFT JOIN Departments d ON e.DepartmentId = d.Id
+WHERE e.Id = @EmployeeId;
+END TRY
+BEGIN CATCH
         IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
-
-        THROW; 
     END CATCH
-END
+END;

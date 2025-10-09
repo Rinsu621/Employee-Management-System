@@ -1,80 +1,83 @@
 <template>
-  <div class="dashboard position-relative">
-    <Navbar />
+  <Layout>
+    <div class="dashboard position-relative">
 
-    <div class="background-circle one"></div>
-    <div class="background-circle two"></div>
-    <div class="background-circle three"></div>
-    <div class="container py-5 position-relative" style="z-index:1;">
+      <div class="background-circle one"></div>
+      <div class="background-circle two"></div>
+      <div class="background-circle three"></div>
+      <div class="container py-5 position-relative" style="z-index:1;">
 
-      <h2 class="mb-6 text-center text-primary">Welcome to Dashboard</h2>
+        <h2 class="mb-6 text-center text-primary">Welcome to Dashboard</h2>
 
-      <div class="row justify-content-center g-3 mt-3">
-        <!-- User List Card -->
-        <div v-if="userRole === 'Admin'" class="col-12 col-md-4">
-          <div class="card dashboard-card h-100">
-            <div class="card-body text-center d-flex flex-column">
-              <i class="bi bi-people-fill fs-1 mb-3"></i>
-              <h5 class="card-title">User List</h5>
-              <p class="card-text mb-4">
-                View and manage all users in the system. Add, edit, or remove user accounts easily.
-              </p>
-              <button class="btn btn-light mt-auto" @click="goToUserList">
-                Go to User List
-              </button>
+        <div class="row justify-content-center g-3 mt-3">
+          <!-- User List Card -->
+          <div v-if="userRole === 'Admin'" class="col-12 col-md-4">
+            <div class="card dashboard-card h-100">
+              <div class="card-body text-center d-flex flex-column">
+                <i class="bi bi-people-fill fs-1 mb-3"></i>
+                <h5 class="card-title">User List</h5>
+                <p class="card-text mb-4">
+                  View and manage all users in the system. Add, edit, or remove user accounts easily.
+                </p>
+                <button class="btn btn-light mt-auto" @click="goToUserList">
+                  Go to User List
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Role List Card -->
-        <div v-if="userRole === 'Admin'" class="col-12 col-md-4">
-          <div class="card dashboard-card h-100">
-            <div class="card-body text-center d-flex flex-column">
-              <i class="bi bi-shield-lock-fill fs-1 mb-3"></i>
-              <h5 class="card-title">Role List</h5>
-              <p class="card-text mb-4">
-                See the list of roles available
-              </p>
-              <button class="btn btn-light mt-auto" @click="goToRoleList">
-                Go to Role List
-              </button>
+          <!-- Role List Card -->
+          <div v-if="userRole === 'Admin'" class="col-12 col-md-4">
+            <div class="card dashboard-card h-100">
+              <div class="card-body text-center d-flex flex-column">
+                <i class="bi bi-shield-lock-fill fs-1 mb-3"></i>
+                <h5 class="card-title">Role List</h5>
+                <p class="card-text mb-4">
+                  See the list of roles available
+                </p>
+                <button class="btn btn-light mt-auto" @click="goToRoleList">
+                  Go to Role List
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Employee List Card -->
-        <div class="col-12 col-md-4">
-          <div class="card dashboard-card h-100">
-            <div class="card-body text-center d-flex flex-column">
-              <i class="bi bi-person-badge-fill fs-1 mb-3"></i>
-              <h5 class="card-title">Employee List</h5>
-              <!--<p class="card-text mb-4">
-    See all employees, manage their information, and monitor their roles and departments.
-  </p>-->
-              <p class="card-text mb-4">
-                {{
+          <!-- Employee List Card -->
+          <div class="col-12 col-md-4">
+            <div class="card dashboard-card h-100">
+              <div class="card-body text-center d-flex flex-column">
+                <i class="bi bi-person-badge-fill fs-1 mb-3"></i>
+                <h5 class="card-title">Employee List</h5>
+                <!--<p class="card-text mb-4">
+                See all employees, manage their information, and monitor their roles and departments.
+              </p>-->
+                <p class="card-text mb-4">
+                  {{
               userRole === 'Admin'
                ? 'See all employees, manage their information, and monitor their roles and departments.'
               : userRole === 'Manager'
                ? 'View your team members and track their roles and departments.'
                :'View information of Employee.'
-                }}
-              </p>
-              <button class="btn btn-light mt-auto" @click="goToEmployeeList">
-                Go to Employee List
-              </button>
+                  }}
+                </p>
+                <button class="btn btn-light mt-auto" @click="goToEmployeeList">
+                  Go to Employee List
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
   import Navbar from "../components/Navbar.vue"
+  import Layout from "../components/Layout.vue"
   import { ref, onMounted } from "vue"
+
   import * as jwt_decode from "jwt-decode"
   import { useRouter } from "vue-router"
   import { logout } from "../services/authService.js"
@@ -82,11 +85,11 @@
 
   const router = useRouter()
   const userRole = ref("")
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   
 onMounted(() => {
-  const token = localStorage.getItem("token")
+  const token = sessionStorage.getItem("token")
   
   // Step 1: If token does not exist, logout
   if (!token) {

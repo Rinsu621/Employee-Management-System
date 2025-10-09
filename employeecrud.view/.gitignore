@@ -28,7 +28,4 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-employeecrud.view/.vite/
 .vite/
-
-

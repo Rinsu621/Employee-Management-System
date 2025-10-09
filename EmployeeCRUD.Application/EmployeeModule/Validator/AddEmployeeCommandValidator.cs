@@ -1,5 +1,6 @@
 ﻿
 using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -14,33 +15,31 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
     public class AddEmployeeCommandValidator:AbstractValidator<AddEmployeeCommand>
 
     {
-        public AddEmployeeCommandValidator(EmployeeDtoValidator employeeValidator)
+        private readonly IAppDbContext dbContext;
+        public AddEmployeeCommandValidator(EmployeeDtoValidator employeeValidator, IAppDbContext _dbContext)
         {
-            //dbContext=_dbContext;
+            dbContext = _dbContext;
 
-            //RuleFor(e=>e.employee).NotNull().WithMessage("Employee data is required.");
+         
+                RuleFor(e => e.EmpName)
+                .NotEmpty().WithMessage("Employee name is required")
+                .MaximumLength(100).WithMessage("Employee name must not exceed 100 characters.");
 
-            //When(e => e.employee != null, () =>
-            //{
-            //    RuleFor(e => e.employee.EmpName)
-            //    .NotEmpty().WithMessage("Employee name is required")
-            //    .MaximumLength(100).WithMessage("Employee name must not exceed 100 characters.");
+                RuleFor(e => e.Email)
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Invalid email format.")
+                .MustAsync(async (email, cancellation) =>
+                !await dbContext.Employees.AnyAsync(x => x.Email == email, cancellation))
+                .WithMessage("Email already exists.");
 
-            //    RuleFor(e => e.employee.Email)
-            //    .NotEmpty().WithMessage("Email is required.")
-            //    .EmailAddress().WithMessage("Invalid email format.")
-            //    .MustAsync(async (email, cancellation) =>
-            //    !await dbContext.Employees.AnyAsync(x => x.Email == email, cancellation))
-            //    .WithMessage("Email already exists.");
+                RuleFor(e => e.Phone)
+                .NotEmpty().WithMessage("Phone number is required.")
+                .Matches(@"^98\d{8}$").WithMessage("Phone number must be 10 digits and must start with 98.");
 
-            //    RuleFor(e => e.employee.Phone)
-            //    .NotEmpty().WithMessage("Phone number is required.")
-            //    .Matches(@"^98\d{8}$").WithMessage("Phone number must be 10 digits and must start with 98.");
-            //});
 
-            RuleFor(x => x.employee)
-            .NotNull().WithMessage("Employee data is required.")
-            .SetValidator(employeeValidator);
+            //RuleFor(x => x.employee)
+            //.NotNull().WithMessage("Employee data is required.")
+            //.SetValidator(employeeValidator);
 
         }
 
