@@ -58,4 +58,20 @@ BEGIN
         INSERT INTO AspNetUserRoles(UserId, RoleId)
         VALUES (@UserId, @RoleId);
     END
+
+     SELECT 
+        e.Id,
+        e.EmpName AS Name,
+        e.Email,
+        e.Phone,
+        d.DeptName AS DepartmentName,
+        @Role AS Role,
+        e.CreatedAt,
+        e.UpdatedAt
+    FROM Employees e
+    LEFT JOIN Departments d ON e.DepartmentId = d.Id
+    WHERE e.Id = @EmployeeId;
+
+   
+
 END

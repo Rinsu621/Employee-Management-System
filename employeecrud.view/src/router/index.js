@@ -27,7 +27,7 @@ export default router;
 router.beforeEach((to, from, next) => {
   if (!to.meta?.requiresAuth) {
     next();
-  } else if (!getToken() || !isTokenValid()) {
+  } else if (!getToken()) {
     logout(); 
   } else if (to.meta.roles) {
     const role = getUserRole();

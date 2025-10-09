@@ -37,6 +37,9 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
             var user= await userManager.FindByIdAsync(userId);
             Guard.Against.Null(user, nameof(user),"Unauthorized user");
 
+            if (user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
+                throw new UnauthorizedAccessException("Refresh token is invalid or revoked");
+
             var newToken = await jwtService.GenerateAccessToken(user);
             var newRefreshToken = jwtService.GenerateRefreshToken();
 
@@ -44,7 +47,7 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             await userManager.UpdateAsync(user);
 
-            return new LoginResponseDto { Token = newToken, RefreshToken = newRefreshToken };
+            return new LoginResponseDto { Token = newToken, RefreshToken = newRefreshToken, Name = user.UserName };
         }
 
     }
