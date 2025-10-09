@@ -136,7 +136,7 @@ builder.Services.AddCors(options =>
 
 
 
-builder.Services.AddScoped<IJwtService, JwtService>();
+
 
 builder.Services.AddApiDI(builder.Configuration);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

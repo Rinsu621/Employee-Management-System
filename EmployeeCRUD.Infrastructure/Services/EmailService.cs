@@ -8,9 +8,9 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.Services
+namespace EmployeeCRUD.Infrastructure.Services
 {
-    public class EmailService:IEmailService
+    public class EmailService : IEmailService
     {
         private readonly IConfiguration configuration;
         public EmailService(IConfiguration _configuration)

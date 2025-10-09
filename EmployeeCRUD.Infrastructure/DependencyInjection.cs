@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Infrastructure.Data;
+using EmployeeCRUD.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection; // Add this line
 using System.Data;
-using Microsoft.Data.SqlClient;
-using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Domain.Entities;
-using EmployeeCRUD.Infrastructure.Data;
 
 namespace EmployeeCRUD.Infrastructure
 {
@@ -35,6 +36,10 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<IDbConnection>(sp =>
                 new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddScoped<IJobTestServices, JobTestService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IExcelExpoter, ExportEmployeesToExcelService>();
             return services;
         }
     }

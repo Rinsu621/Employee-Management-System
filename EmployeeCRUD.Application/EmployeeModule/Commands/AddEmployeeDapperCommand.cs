@@ -11,7 +11,7 @@ using System.Data;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record AddEmployeeDapperCommand(string EmpName, string Email, string Phone, string Role): IRequest<EmployeeResponseDto>;
+    public record AddEmployeeDapperCommand(string EmpName, string Email, string Phone, Guid DepartmentId,string Role): IRequest<EmployeeResponseDto>;
 
     public class AddEmployeeDapperHandler : IRequestHandler<AddEmployeeDapperCommand, EmployeeResponseDto>
     {
@@ -32,6 +32,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 EmpName = request.EmpName,
                 Email = request.Email,
                 Phone = request.Phone,
+                DepartmentId= request.DepartmentId,
                 RoleName = request.Role,
                 DefaultPassword = defaultPassword,
 

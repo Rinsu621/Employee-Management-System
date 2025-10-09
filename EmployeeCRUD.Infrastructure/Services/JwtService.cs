@@ -3,11 +3,15 @@ using EmployeeCRUD.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.Services
+namespace EmployeeCRUD.Infrastructure.Services
 {
     public class JwtService : IJwtService
     {
@@ -16,8 +20,8 @@ namespace EmployeeCRUD.Application.Services
 
         public JwtService(IConfiguration _configuration, UserManager<ApplicationUser> _userManager)
         {
-           configuration = _configuration;
-           userManager = _userManager;
+            configuration = _configuration;
+            userManager = _userManager;
         }
         public async Task<string> GenerateAccessToken(ApplicationUser user)
         {
@@ -29,7 +33,7 @@ namespace EmployeeCRUD.Application.Services
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim("SecurityStamp", user.SecurityStamp)
             };
-            var roles= await userManager.GetRolesAsync(user);
+            var roles = await userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role)); // adds a claim for each role so that JWT can carry role-based authorization 

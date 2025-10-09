@@ -43,6 +43,13 @@ export const getEmployeeByEmail = (email) => {
   return api.post('/employee/get-by-email', { email });
 };
 
+export const exportEmployeesToExcel = (filters) => {
+  return api.get('/employee/export', {
+    params: filters,
+    responseType: 'blob' // very important for Excel download
+  });
+};
+
 
     
 

@@ -1,7 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.AuthModel.Dto;
 using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Application.Services;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
