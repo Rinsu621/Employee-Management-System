@@ -4,10 +4,6 @@ using EmployeeCRUD.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
@@ -57,7 +53,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 var user = await userManager.FindByIdAsync(employee.Id.ToString());
                 if (user != null)
                 {
-                    user.UserName = request.EmpName;
+                    user.UserName = request.Email;
                     user.Email = request.Email;
 
                     var updateResult = await userManager.UpdateAsync(user);

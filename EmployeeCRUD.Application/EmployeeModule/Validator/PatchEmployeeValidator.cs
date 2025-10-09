@@ -18,25 +18,24 @@ namespace EmployeeCRUD.Application.EmployeeModule.Validator
                 {
                     return await dbContext.Employees.AnyAsync(e => e.Id == id, cancellation);
                 }).WithMessage("Employee with the specified ID does not exist.");
-            RuleFor(x => x.Employee)
-                .NotNull().WithMessage("Employee data is required.");
+            
 
-            RuleFor(x => x.Employee.EmpName)
+            RuleFor(x => x.EmpName)
              .NotEmpty().WithMessage("Employee name is required.")
              .MaximumLength(100).WithMessage("Employee name must not exceed 100 characters.")
-             .When(x => !string.IsNullOrEmpty(x.Employee.EmpName)); // Only validate if EmpName is provided
+             .When(x => !string.IsNullOrEmpty(x.EmpName)); // Only validate if EmpName is provided
 
-            RuleFor(x => x.Employee.Email)
+            RuleFor(x => x.Email)
                .EmailAddress().WithMessage("Invalid email format.")
-               .When(x => !string.IsNullOrEmpty(x.Employee.Email))
+               .When(x => !string.IsNullOrEmpty(x.Email))
                  .MustAsync(async (email, cancellation) =>
                 !await dbContext.Employees.AnyAsync(x => x.Email == email, cancellation))
                 .WithMessage("Email already exists.");
 
-            RuleFor(e => e.Employee.Phone)
+            RuleFor(e => e.Phone)
                .NotEmpty().WithMessage("Phone number is required.")
                .Matches(@"^98\d{8}$").WithMessage("Phone number must be 10 digits and must start with 98.")
-              .When(x => !string.IsNullOrEmpty(x.Employee.Phone));
+              .When(x => !string.IsNullOrEmpty(x.Phone));
 
 
         }

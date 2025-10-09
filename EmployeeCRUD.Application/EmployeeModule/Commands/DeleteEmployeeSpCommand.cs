@@ -1,15 +1,7 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Infrastructure.Data;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
     public record DeleteEmployeeSpCommand(Guid Id):IRequest<DeleteEmployeeResponse>;

@@ -37,6 +37,11 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
             if (!result.Succeeded)
                 throw new InvalidOperationException("Password change failed");
 
+            //Revoking the refresh token after password change
+            user.RefreshToken = null;
+            user.RefreshTokenExpiryTime = null;
+            await userManager.UpdateAsync(user);
+
             return result.Succeeded;
         }
     }

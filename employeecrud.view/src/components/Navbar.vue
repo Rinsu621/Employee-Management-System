@@ -1,9 +1,6 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-gradient shadow-sm py-2 mb-4">
+  <nav class="navbar navbar-expand-lg navbar-light bg-gradient shadow-sm py-2 ">
     <div class="container-fluid">
-      <router-link class="navbar-brand fw-bold text-primary" to="/dashboard">
-        Employee CRUD
-      </router-link>
 
       <div class="d-flex ms-auto align-items-center">
         <router-link to="/profile" class="d-flex align-items-center text-decoration-none me-3 profile-link">
@@ -35,12 +32,12 @@
   const userRole = ref("")
 
   onMounted(() => {
-    const token = localStorage.getItem("token")
+    const token = sessionStorage.getItem("token")
     if (token) {
       try {
         const decoded = jwt_decode.default(token)
-        userName.value = localStorage.getItem("name") || decoded["name"] || "User"
-        userAvatar.value = localStorage.getItem("avatar") || ""
+        userName.value = sessionStorage.getItem("name") || decoded["name"] || "User"
+        userAvatar.value = sessionStorage.getItem("avatar") || ""
         userRole.value = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || ""
       } catch (err) {
         console.error("Invalid token", err)
@@ -51,10 +48,10 @@
   })
 
   function logout() {
-    localStorage.removeItem("token")
-    localStorage.removeItem("refreshToken")
-    localStorage.removeItem("name")
-    localStorage.removeItem("avatar")
+    sessionStorage.removeItem("token")
+    sessionStorage.removeItem("refreshToken")
+    sessionStorage.removeItem("name")
+    sessionStorage.removeItem("avatar")
     router.push("/login")
   }
 

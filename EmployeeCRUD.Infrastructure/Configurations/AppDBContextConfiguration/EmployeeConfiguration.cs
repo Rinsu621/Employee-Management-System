@@ -45,6 +45,11 @@ namespace EmployeeCRUD.Infrastructure.Configurations.AppDBContextConfiguration
                  .WithMany(p => p.TeamMember)
                  .UsingEntity(j => j.ToTable("EmployeeProjects"));
 
+            entity.HasOne(e => e.User)
+            .WithOne(au => au.Employee)
+            .HasForeignKey<ApplicationUser>(au => au.EmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

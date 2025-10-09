@@ -1,11 +1,13 @@
 import axios from 'axios';
+const baseUrl = 'https://localhost:7070/api'
 
 const api = axios.create({
   baseURL: 'https://localhost:7070/api',
 });
 
+//Run before every request, check if JWT access token stored in sessionStorage and if there is then auto adds to request header
 api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -18,10 +20,10 @@ let failedQueue = [];
 const processQueue = (error, token = null) => {
   failedQueue.forEach(prom => {
     if (error) {
-      prom.reject(error);
+      prom.reject(error);// if the refresh failed , all queued request should fail
     }
     else {
-      prom.resolve(token);
+      prom.resolve(token); // if the refresh succeeded, all queued requests can now retry using this new token
     }
   });
   failedQueue = [];
@@ -34,45 +36,37 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        }).then(token => {
-          originalRequest.headers['Authorization'] = 'Bearer ' + token;
-          return api(originalRequest);
-        }).catch(err => Promise.reject(err));
+      const refreshToken = sessionStorage.getItem('refreshToken');
+
+      if (!refreshToken) return Promise.reject(error);
+
+      try {
+        const response = await axios.post(`${baseUrl}/auth/refresh-token`, {
+          accessToken: sessionStorage.getItem('token'),
+          refreshToken: refreshToken
+        });
+        console.log(response);
+
+        const newToken = response.data.token;
+        const newRefreshToken = response.data.refreshToken;
+
+        sessionStorage.setItem('token', newToken);
+        sessionStorage.setItem('refreshToken', newRefreshToken);
+
+        originalRequest.headers['Authorization'] = 'Bearer ' + newToken;
+
+        return api(originalRequest);
+      } catch (err) {
+        // Refresh token invalid → logout
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('refreshToken');
+        return Promise.reject(err);
       }
-      isRefreshing = true;
-      const refreshToken = localStorage.getItem('refreshToken');
-      return new Promise(async (resolve, reject) => {
-        try {
-          const response = await api.post('/auth/refresh-token', {
-            accessToken: localStorage.getItem('token'),
-            refreshToken: refreshToken
-          });
-
-          const newToken = response.data.token;
-          const newRefreshToken = response.data.refreshToken;
-
-          localStorage.setItem('token', newToken);
-          localStorage.setItem('refreshToken', newRefreshToken);
-
-          api.defaults.headers['Authorization'] = 'Bearer ' + newToken;
-          originalRequest.headers['Authorization'] = 'Bearer ' + newToken;
-
-          processQueue(null, newToken);
-          resolve(api(originalRequest));
-        } catch (err) {
-          processQueue(err, null);
-          reject(err);
-        } finally {
-          isRefreshing = false;
-        }
-      });
     }
 
     return Promise.reject(error);
   }
 );
+
 
 export default api;
