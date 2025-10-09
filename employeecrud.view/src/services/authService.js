@@ -7,9 +7,9 @@ export const login = async (email, password) => {
   try {
     const response = await api.post('/auth/login', { email, password })
     if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-      localStorage.setItem('name', response.data.name);
+      sessionStorage.setItem('token', response.data.token);
+      sessionStorage.setItem('refreshToken', response.data.refreshToken);
+      sessionStorage.setItem('name', response.data.name);
     }
     return response.data;
   } catch (error) {
@@ -18,13 +18,13 @@ export const login = async (email, password) => {
 };
 
 export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('name');
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('refreshToken');
+  sessionStorage.removeItem('name');
   window.location.href = '/login'; 
 };
 
-export const getToken = () => localStorage.getItem("token");
+export const getToken = () => sessionStorage.getItem("token");
 
 export const isTokenValid = () => {
   const token = getToken();

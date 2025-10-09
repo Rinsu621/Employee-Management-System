@@ -3,14 +3,9 @@ using EmployeeCRUD.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Services
 {
@@ -22,15 +17,17 @@ namespace EmployeeCRUD.Application.Services
         public JwtService(IConfiguration _configuration, UserManager<ApplicationUser> _userManager)
         {
            configuration = _configuration;
-            userManager = _userManager;
+           userManager = _userManager;
         }
         public async Task<string> GenerateAccessToken(ApplicationUser user)
         {
             var claims = new List<Claim>
             {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),// subject which is user id
+             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.UserName)
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("SecurityStamp", user.SecurityStamp)
             };
             var roles= await userManager.GetRolesAsync(user);
             foreach (var role in roles)
@@ -44,7 +41,7 @@ namespace EmployeeCRUD.Application.Services
                 issuer: configuration["JwtSettings:Issuer"],
                 audience: configuration["JwtSettings:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddSeconds(30),
                 signingCredentials: creds
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -61,6 +58,7 @@ namespace EmployeeCRUD.Application.Services
             }
         }
 
+        //Manual vlaidation was add as middleware would reject expired token automatically and for refresh we need to extract claims from an expired token
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters
@@ -73,10 +71,11 @@ namespace EmployeeCRUD.Application.Services
             };
             var tokenHandler = new JwtSecurityTokenHandler(); //to validate the token and extract claims
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-            var jwtSecurityToken = securityToken as JwtSecurityToken;
-            //ensure token is a JWT and uses the correct signing algorithm
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            if (securityToken is not JwtSecurityToken jwtToken ||
+                !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
                 throw new SecurityTokenException("Invalid token");
+            }
             return principal;
         }
 

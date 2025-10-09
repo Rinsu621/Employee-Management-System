@@ -32,12 +32,12 @@
   const userRole = ref("")
 
   onMounted(() => {
-    const token = localStorage.getItem("token")
+    const token = sessionStorage.getItem("token")
     if (token) {
       try {
         const decoded = jwt_decode.default(token)
-        userName.value = localStorage.getItem("name") || decoded["name"] || "User"
-        userAvatar.value = localStorage.getItem("avatar") || ""
+        userName.value = sessionStorage.getItem("name") || decoded["name"] || "User"
+        userAvatar.value = sessionStorage.getItem("avatar") || ""
         userRole.value = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || ""
       } catch (err) {
         console.error("Invalid token", err)
@@ -48,10 +48,10 @@
   })
 
   function logout() {
-    localStorage.removeItem("token")
-    localStorage.removeItem("refreshToken")
-    localStorage.removeItem("name")
-    localStorage.removeItem("avatar")
+    sessionStorage.removeItem("token")
+    sessionStorage.removeItem("refreshToken")
+    sessionStorage.removeItem("name")
+    sessionStorage.removeItem("avatar")
     router.push("/login")
   }
 

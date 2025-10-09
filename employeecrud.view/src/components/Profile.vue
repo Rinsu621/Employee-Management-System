@@ -82,7 +82,7 @@
   import { getDepartments, getEmployeeByEmail, updateEmployee } from "../services/employeeService";
   import jwtDecode from "jwt-decode";
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
 
   console.log("Decoded token:", decoded); // Debug: Check token fields

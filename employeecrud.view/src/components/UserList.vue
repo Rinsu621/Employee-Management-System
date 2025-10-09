@@ -273,7 +273,7 @@
   const roles = ref([]);
   const errors = ref({});
   let decode=null;;
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   if(!token)
 
   {logout();

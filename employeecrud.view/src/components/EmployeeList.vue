@@ -224,7 +224,7 @@
   const sortAsc = ref(true)
   const roles = ref([])
   const errors = ref({})
-  const token = localStorage.getItem("token")
+  const token = sessionStorage.getItem("token")
   if (!token) {
     logout();
   }

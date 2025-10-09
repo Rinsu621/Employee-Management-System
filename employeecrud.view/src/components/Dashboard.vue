@@ -85,11 +85,11 @@
 
   const router = useRouter()
   const userRole = ref("")
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   
 onMounted(() => {
-  const token = localStorage.getItem("token")
+  const token = sessionStorage.getItem("token")
   
   // Step 1: If token does not exist, logout
   if (!token) {

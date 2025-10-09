@@ -35,7 +35,6 @@ builder.Services.AddScoped<ProjectTeamMemberFilter>();
 //Identity Configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    options.Password.RequiredLength = 6; //Minimum length
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.User.RequireUniqueEmail = true;
@@ -52,7 +51,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 //here we can make changes, using this as usefuln for early testing
 
 
-builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication
+(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -84,15 +84,16 @@ builder.Services.AddSwaggerGen(c =>
 
     var securityScheme = new OpenApiSecurityScheme
     {
-        Name = "Authorization",
+        Name = "Authorization", //Header name of Jwt
         Description = "Enter 'Bearer' [space] and then your token",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
+        In = ParameterLocation.Header, //Location of the token
+        Type = SecuritySchemeType.Http, //Http for bearer token
         Scheme = "Bearer",
         BearerFormat = "JWT"
     };
     c.AddSecurityDefinition("Bearer", securityScheme);
 
+    //link the secut
     var securityRequirement = new OpenApiSecurityRequirement
     {
         {

@@ -33,7 +33,7 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
         [HttpPost("change-password")]
-        [Authorize]
+     
         public async Task<IActionResult> ChangePassword(ChangePasswordCommand command)
         {
 
@@ -49,7 +49,7 @@ namespace EmployeeCRUD.Api.Controllers
             var result= await mediator.Send(command);
             return Ok(result);
         }
-        [Authorize]
+
         [HttpGet("roles")]
        public async Task<IActionResult> GetRoles()
         {
