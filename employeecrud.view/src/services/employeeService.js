@@ -46,7 +46,7 @@ export const getEmployeeByEmail = (email) => {
 export const exportEmployeesToExcel = (filters) => {
   return api.get('/employee/export', {
     params: filters,
-    responseType: 'blob' // very important for Excel download
+    responseType: 'blob' 
   });
 };
 

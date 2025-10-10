@@ -475,14 +475,14 @@
 
       const response = await exportEmployeesToExcel(filters);
 
-      //Blob is a binary large object, way to handle file like raw data in js
-      //convert response data to blob and create a temporary URL for Blob
+      //Blob is a binary large object, way to handle file like raw data in js to blob as browser can handle it as file
+      //convert response data to blob and create a temporary URL for Blob so browser can download it
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
+      const link = document.createElement('a'); //create a new anchor tag dynamically using js, can be used to trigger  download
+      link.href = url;// <a href="blob:http://localhost:5173/1234-5678-blob"></a> it will look like this
       link.download = 'Employees.xlsx';
       document.body.appendChild(link);
-      link.click();
+      link.click();  //<a href="blob:http://localhost:5173/1234-5678-blob" download="Employees.xlsx"></a>
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {

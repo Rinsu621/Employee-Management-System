@@ -12,11 +12,15 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @UserEmails TABLE (Email NVARCHAR(256));
+   IF OBJECT_ID('tempdb..#UserEmails')IS NOT NULL DROP TABLE #UserEmails;
+
+    CREATE TABLE #UserEmails (
+        Email NVARCHAR(256) PRIMARY KEY
+    );
 
     IF @Role IS NOT NULL
     BEGIN
-        INSERT INTO @UserEmails (Email)
+        INSERT INTO #UserEmails (Email)
         SELECT u.Email
         FROM AspNetUsers u
         INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
@@ -25,7 +29,7 @@ BEGIN
     END
     ELSE IF @SearchTerm IS NOT NULL
     BEGIN
-        INSERT INTO @UserEmails (Email)
+        INSERT INTO #UserEmails (Email)
         SELECT u.Email
         FROM AspNetUsers u
         INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
@@ -55,12 +59,15 @@ BEGIN
             OR LOWER(e.Email) LIKE '%' + LOWER(@SearchTerm) + '%'
             OR LOWER(d.DeptName) LIKE '%' + LOWER(@SearchTerm) + '%'
             OR CAST(e.Id AS NVARCHAR(50)) LIKE '%' + LOWER(@SearchTerm) + '%'
-            OR EXISTS (SELECT 1 FROM @UserEmails ue WHERE ue.Email = e.Email)
+            OR EXISTS (SELECT 1 FROM #UserEmails ue WHERE ue.Email = e.Email)
         )
         AND (
             @Role IS NULL 
-            OR EXISTS (SELECT 1 FROM @UserEmails ue WHERE ue.Email = e.Email)
+            OR EXISTS (SELECT 1 FROM #UserEmails ue WHERE ue.Email = e.Email)
         );
+
+        CREATE INDEX IX_FilteredEmployees_Email ON #FilteredEmployees (Email);
+
 
    DECLARE @sql NVARCHAR(MAX) = N'
         SELECT 
@@ -86,4 +93,5 @@ BEGIN
     FROM #FilteredEmployees;
 
 	DROP TABLE #FilteredEmployees;
+     DROP TABLE #UserEmails;
 END

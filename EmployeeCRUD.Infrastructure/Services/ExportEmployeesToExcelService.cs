@@ -72,7 +72,7 @@ namespace EmployeeCRUD.Infrastructure.Services
 
             using var stream = new MemoryStream();
             wb.SaveAs(stream);
-            return stream.ToArray();
+            return stream.ToArray(); //convert to byte[]
 
         }
     }

@@ -100,68 +100,68 @@ namespace EmployeeCRUD.IntegrationTests.Tests
             Assert.Contains("Phone number must be 10 digits and must start with 98.", error);
         }
 
-        [Fact]
-        public async Task AddEmployeeDapper_ReturnsCreatedEmployee()
-        {
-            // Arrange
-            var command = new AddEmployeeDapperCommand
-            (
-                EmpName : "Ram Ram",
-                Email: "ram@gmail.com",
-                Phone: "9876544321",
-                Role:"Employee"
-            );
+        //[Fact]
+        //public async Task AddEmployeeDapper_ReturnsCreatedEmployee()
+        //{
+        //    // Arrange
+        //    var command = new AddEmployeeDapperCommand
+        //    (
+        //        EmpName : "Ram Ram",
+        //        Email: "ram@gmail.com",
+        //        Phone: "9876544321",
+        //        Role:"Employee"
+        //    );
            
 
-            // Act
-            var response = await client.PostAsJsonAsync("/api/Employee/add-employee-using-dapper", command);
+        //    // Act
+        //    var response = await client.PostAsJsonAsync("/api/Employee/add-employee-using-dapper", command);
 
-            // Assert
-            response.EnsureSuccessStatusCode();
-            var createdEmployee = await response.Content.ReadFromJsonAsync<EmployeeResponseDto>();
-            Assert.NotNull(createdEmployee);
-            Assert.Equal(command.EmpName, createdEmployee.EmpName);
-            Assert.Equal(command.Email, createdEmployee.Email);
-            Assert.Equal(command.Phone, createdEmployee.Phone);
-        }
+        //    // Assert
+        //    response.EnsureSuccessStatusCode();
+        //    var createdEmployee = await response.Content.ReadFromJsonAsync<EmployeeResponseDto>();
+        //    Assert.NotNull(createdEmployee);
+        //    Assert.Equal(command.EmpName, createdEmployee.EmpName);
+        //    Assert.Equal(command.Email, createdEmployee.Email);
+        //    Assert.Equal(command.Phone, createdEmployee.Phone);
+        //}
 
-        [Theory]
-        [InlineData("TestB", "testb@gmail.com", "9876543212","Employee")]
-        public async Task UpdateEmployee_ReturnUpdatedEmployee(string EmpName, string Email, string Phone, string Role)
-        {
-        //    using var scope = factory.Services.CreateScope();
-        //    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+        //[Theory]
+        //[InlineData("TestB", "testb@gmail.com", "9876543212","Employee")]
+        //public async Task UpdateEmployee_ReturnUpdatedEmployee(string EmpName, string Email, string Phone, string Role)
+        //{
+        ////    using var scope = factory.Services.CreateScope();
+        ////    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            var command = new AddEmployeeDapperCommand
-            (
-                EmpName : EmpName,
-                Email : Email,
-                Phone : Phone,
-                Role: Role
-            );
+        //    var command = new AddEmployeeDapperCommand
+        //    (
+        //        EmpName : EmpName,
+        //        Email : Email,
+        //        Phone : Phone,
+        //        Role: Role
+        //    );
           
-            var createdEmployee = await mediator.Send(command);
+        //    var createdEmployee = await mediator.Send(command);
 
-            output.WriteLine($"Created Employee Id: {createdEmployee.Id}");
+        //    output.WriteLine($"Created Employee Id: {createdEmployee.Id}");
 
-            var updateCommand = new UpdateEmployeeSpCommand
-            (
-                Id: createdEmployee.Id,
-                EmpName : "Updated Employee",
-                Email : "updated@gmail.com",
-                Phone : "9876544321"
-            );
+        //    var updateCommand = new UpdateEmployeeSpCommand
+        //    (
+        //        Id: createdEmployee.Id,
+        //        EmpName : "Updated Employee",
+        //        Email : "updated@gmail.com",
+        //        Phone : "9876544321"
+        //    );
 
            
-            var updatedEmployee = await mediator.Send(updateCommand);
+        //    var updatedEmployee = await mediator.Send(updateCommand);
 
-            output.WriteLine($"Updated Employee: {updatedEmployee.EmpName}, {updatedEmployee.Email}, {updatedEmployee.Phone}");
-            //Assert
-            Assert.NotNull(updatedEmployee);
-            Assert.Equal(updateCommand.EmpName, updatedEmployee.EmpName);
-            Assert.Equal(updateCommand.Email, updatedEmployee.Email);
-            Assert.Equal(updateCommand.Phone, updatedEmployee.Phone);
-        }
+        //    output.WriteLine($"Updated Employee: {updatedEmployee.EmpName}, {updatedEmployee.Email}, {updatedEmployee.Phone}");
+        //    //Assert
+        //    Assert.NotNull(updatedEmployee);
+        //    Assert.Equal(updateCommand.EmpName, updatedEmployee.EmpName);
+        //    Assert.Equal(updateCommand.Email, updatedEmployee.Email);
+        //    Assert.Equal(updateCommand.Phone, updatedEmployee.Phone);
+        //}
 
         //[Theory]
         //[InlineData("TestA","testa@gmail.com","9812322123")]

@@ -27,10 +27,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
         }
         public async Task<EmployeePagedResponseDto> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var employeeQuery = dbContext.Employees
-                .Include(e => e.Department)
-                .Include(e=>e.User)
-                .AsQueryable();
+            var employeeQuery = dbContext.Employees.Include(e => e.Department).Include(e=>e.User).AsQueryable();
             if (request.DepartmentId.HasValue)
                 employeeQuery = employeeQuery.Where(e => e.DepartmentId == request.DepartmentId.Value);
             if (request.FromDate.HasValue)
