@@ -49,7 +49,7 @@
                 <i class="bi bi-person-badge-fill fs-1 mb-3"></i>
                 <h5 class="card-title">Employee List</h5>
                 <!--<p class="card-text mb-4">
-                See all employees, manage their information, and monitor their roles and departments.
+                
               </p>-->
                 <p class="card-text mb-4">
                   {{
@@ -125,8 +125,8 @@ onMounted(() => {
   .dashboard {
     min-height: 100vh;
     background: linear-gradient(135deg, #e0f0ff, #ffffff);
-    overflow: visible; /* add this */
-    position: relative; /* ensure relative for absolute children */
+    overflow: visible; 
+    position: relative; 
   }
 
   .dashboard-card {
@@ -168,7 +168,6 @@ onMounted(() => {
     color: white;
   }
 
-  /* Floating background circles */
   .background-circle {
     position: absolute;
     border-radius: 50%;
@@ -177,7 +176,7 @@ onMounted(() => {
     animation: float 20s infinite linear;
   }
 
-    /* Different sizes and positions */
+
     .background-circle.one {
       width: 200px;
       height: 200px;

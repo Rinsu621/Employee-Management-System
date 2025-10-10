@@ -150,5 +150,13 @@ namespace EmployeeCRUD.Api.Controllers
             return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "employees.xlsx");
         }
 
+        [HttpGet("{employeeId}/export-profile-pdf")]
+        public async Task<IActionResult> ExportProfilePdf(Guid employeeId)
+        {
+            var pdfBytes = await sender.Send(new ExportEmployeeProfileQuery(employeeId));
+            return File(pdfBytes, "application/pdf", $"Employee_{employeeId}.pdf");
+        }
+
+
     }
 }

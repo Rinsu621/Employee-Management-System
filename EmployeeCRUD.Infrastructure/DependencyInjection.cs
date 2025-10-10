@@ -1,4 +1,6 @@
-﻿using EmployeeCRUD.Application.Interface;
+﻿using DinkToPdf;
+using DinkToPdf.Contracts;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Services;
@@ -13,6 +15,7 @@ namespace EmployeeCRUD.Infrastructure
 {
     public static class DependencyInjection
     {
+        private static CustomAssemblyLoadContext? _loadContext;
         public interface IEmployeeDbConnection : IDbConnection { }
         public interface ISalaryDbConnection : IDbConnection { }
 
@@ -40,7 +43,33 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IExcelExpoter, ExportEmployeesToExcelService>();
+
+            if (_loadContext == null)
+            {
+                _loadContext = new CustomAssemblyLoadContext();
+                var dllPath = Path.Combine(AppContext.BaseDirectory, "lib", "libwkhtmltox.dll");
+                _loadContext.LoadUnmanagedLibrary(dllPath);
+            }
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+            services.AddScoped<IPdfService, PdfService>();
             return services;
+        }
+    }
+    public class CustomAssemblyLoadContext : System.Runtime.Loader.AssemblyLoadContext
+    {
+        public IntPtr LoadUnmanagedLibrary(string absolutePath)
+        {
+            return LoadUnmanagedDll(absolutePath);
+        }
+
+        protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+        {
+            return LoadUnmanagedDllFromPath(unmanagedDllName);
+        }
+
+        protected override System.Reflection.Assembly Load(System.Reflection.AssemblyName assemblyName)
+        {
+            return null;
         }
     }
 }

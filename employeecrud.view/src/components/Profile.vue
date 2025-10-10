@@ -50,7 +50,7 @@
             </div>
 
             <!-- Right side: Profile Card -->
-            <div class="col-md-6 d-flex justify-content-center">
+            <div class="col-md-6 d-flex flex-column align-items-center">
               <div class="card text-center p-4 shadow-lg" style="width: 20rem; border-radius: 1rem; position: relative;">
                 <div class="avatar-wrapper mb-3">
                   <div class="avatar-circle"></div>
@@ -64,9 +64,16 @@
                 <p class="text-primary fw-bold">{{ user.role }}</p>
                 <p class="card-text text-muted">
                   Department: {{ user.departmentName || 'N/A' }}<br />
+                  Phone: {{user.phone}}<br />
+                  Email: {{user.email}}<br />
                   Joined: {{ new Date(user.createdAt).toLocaleDateString() }}
                 </p>
               </div>
+              <button @click="exportToPdf"
+                      class="btn-export mt-3 px-4 py-2 fw-semibold"
+                      style="border-radius: 0.5rem;">
+                <i class="bi bi-file-earmark-pdf me-2"></i> Export as PDF
+              </button>
             </div>
           </div>
         </div>
@@ -79,7 +86,7 @@
   import Navbar from "../components/Navbar.vue";
   import Layout from "../components/Layout.vue";
   import { ref, reactive, onMounted, watch } from "vue"
-  import { getDepartments, getEmployeeByEmail, updateEmployee } from "../services/employeeService";
+  import { getDepartments, getEmployeeByEmail, updateEmployee, exportProfileToPdf } from "../services/employeeService";
   import jwtDecode from "jwt-decode";
 
   const token = sessionStorage.getItem("token");
@@ -194,6 +201,22 @@
       }, 5000);
     }
   }
+
+  const exportToPdf = async () => {
+    try {
+      const response = await exportProfileToPdf(user.value.id, { responseType: 'blob' }); 
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${user.value.empName}_Profile.pdf`;
+      document.body.appendChild(link); 
+      link.click();
+      link.remove(); // remove safely
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error exporting profile", error);
+    }
+  };
 
   watch(
     () => user.value.departmentId,
@@ -369,6 +392,13 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
+  .btn-export {
+    background-color: white;
+    transition: background 0.2s;
+  }
+  .btn-export:hover {
+    background-color: #f1f1f1;
+  }
 
   /* Floating animation for pulse avatar */
   @keyframes pulse {

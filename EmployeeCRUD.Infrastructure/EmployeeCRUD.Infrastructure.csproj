@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
@@ -54,5 +55,11 @@
     <ProjectReference Include="..\EmployeeCRUD.Application\EmployeeCRUD.Application.csproj" />
     <ProjectReference Include="..\EmployeeCRUD.Domain\EmployeeCRUD.Domain.csproj" />
   </ItemGroup>
+	
+	<ItemGroup>
+		<None Update="lib\libwkhtmltox.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>
