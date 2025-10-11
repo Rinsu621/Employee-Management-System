@@ -9,6 +9,5 @@ namespace EmployeeCRUD.Application.Interface
 {
     public interface IPdfService
     {
-        Task<byte[]> ExportAsPdf(EmployeeProfilePdfModelDto model);
     }
 }

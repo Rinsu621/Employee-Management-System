@@ -92,7 +92,7 @@
   const token = sessionStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
 
-  console.log("Decoded token:", decoded); // Debug: Check token fields
+  console.log("Decoded token:", decoded); 
 
   const userEmail = decoded?.email;
   console.log("User email from token:", userEmail);
@@ -170,9 +170,9 @@
       const updatedUser = {
         id: user.value.id,
         empName: user.value.empName,
-        email: user.value.email, // Send unchanged email
+        email: user.value.email, 
         phone: user.value.phone,
-        role: user.value.role, // Send unchanged role
+        role: user.value.role, 
         departmentId: selectedDept ? selectedDept.id : user.value.departmentId,
       };
       await updateEmployee(updatedUser);
@@ -202,21 +202,7 @@
     }
   }
 
-  const exportToPdf = async () => {
-    try {
-      const response = await exportProfileToPdf(user.value.id, { responseType: 'blob' }); 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${user.value.empName}_Profile.pdf`;
-      document.body.appendChild(link); 
-      link.click();
-      link.remove(); // remove safely
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting profile", error);
-    }
-  };
+  
 
   watch(
     () => user.value.departmentId,

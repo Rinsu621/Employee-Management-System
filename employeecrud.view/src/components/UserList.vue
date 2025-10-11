@@ -85,12 +85,6 @@
 
           <!-- Table -->
           <div class="table-responsive shadow-sm rounded">
-            <!-- Skeleton Table -->
-            <b-skeleton-table v-if="loading"
-                              :rows="5"
-                              :columns="8"
-                              :table-props="{ bordered: true, striped: true }">
-            </b-skeleton-table>
             <table class="table table-hover align-middle">
               <thead class="table-dark">
                 <tr>
@@ -227,7 +221,6 @@
           <h5 class="modal-title">Edit Employee</h5>
           <button type="button" class="btn-close" @click="editModalInstance.hide()"></button>
         </div>
-        <b-overlay :show="showOverlay" rounded="sm">
           <div class="modal-body">
             <form @submit.prevent="editEmployeeHandler">
               <div class="mb-3">
@@ -261,7 +254,6 @@
               <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
             </form>
           </div>
-        </b-overlay>
       </div>
     </div>
   </div>
