@@ -1,5 +1,6 @@
 ﻿
 using EmployeeCRUD.Application.EmployeeModule.Commands;
+using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.EmployeeModule.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -150,12 +151,15 @@ namespace EmployeeCRUD.Api.Controllers
             return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "employees.xlsx");
         }
 
-        [HttpGet("{employeeId}/export-profile-pdf")]
-        public async Task<IActionResult> ExportProfilePdf(Guid employeeId)
+        [HttpPost("export/profile-pdf")]
+
+        public async Task<IActionResult> ExportEmployeeProfileToPdf(EmployeeProfilePdfModelDto request)
         {
-            var pdfBytes = await sender.Send(new ExportEmployeeProfileQuery(employeeId));
-            return File(pdfBytes, "application/pdf", $"Employee_{employeeId}.pdf");
+            var result = await sender.Send(new ExportEmployeeProfileQuery(request.ProfileCardHtml));
+            return File(result, "application/pdf", "employee_profile.pdf");
         }
+
+
 
 
     }

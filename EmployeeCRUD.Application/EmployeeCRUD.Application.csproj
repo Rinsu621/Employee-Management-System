@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="PuppeteerSharp" Version="20.2.4" />
   </ItemGroup>
 
   <ItemGroup>

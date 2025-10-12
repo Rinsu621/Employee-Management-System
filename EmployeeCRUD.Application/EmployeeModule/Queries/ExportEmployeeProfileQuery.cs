@@ -12,6 +12,23 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Queries
 {
-    public record ExportEmployeeProfileQuery(Guid EmployeeId):IRequest<byte[]>;
-    
+    public record ExportEmployeeProfileQuery(string ProfileCardHtml) : IRequest<byte[]>;
+
+    public class ExportEmployeeProfileHandler : IRequestHandler<ExportEmployeeProfileQuery, byte[]>
+    {
+        private readonly IPdfService pdfService;
+
+        public ExportEmployeeProfileHandler(IPdfService _pdfService)
+        {
+            pdfService = _pdfService;
+        }
+        public async Task<byte[]> Handle(ExportEmployeeProfileQuery request, CancellationToken cancellationToken)
+        {
+            string profileHtml = request.ProfileCardHtml;
+            var pdfBytes = await pdfService.GenerateProfilePdfAsync(profileHtml);
+            return pdfBytes;
+
+        }
+    }
 }
+       

@@ -40,6 +40,7 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IExcelExpoter, ExportEmployeesToExcelService>();
+            services.AddScoped<IPdfService, PdfService>();
 
             return services;
         }

@@ -50,11 +50,12 @@
             </div>
 
             <!-- Right side: Profile Card -->
-            <div class="col-md-6 d-flex flex-column align-items-center">
-              <div class="card text-center p-4 shadow-lg" style="width: 20rem; border-radius: 1rem; position: relative;">
+            <!--Adding refrence helps to rendered DOM node for the card-->
+            <div  class="col-md-6 d-flex flex-column align-items-center" v-if="user.empName">
+              <div ref="cardRef" class="card text-center p-4 shadow-lg" style="width: 20rem; border-radius: 1rem; position: relative;">
                 <div class="avatar-wrapper mb-3">
                   <div class="avatar-circle"></div>
-                  <img :src="userAvatar ? userAvatar : '/OIP.jpeg'"
+                  <img :src="userAvatar "
                        alt="Profile"
                        class="rounded-circle position-absolute top-50 start-50 translate-middle"
                        style="width: 120px; height: 120px; object-fit: cover; border: 4px solid white;" />
@@ -83,6 +84,7 @@
 </template>
 
 <script setup>
+  import defaultAvatar from '/OIP.jpeg';
   import Navbar from "../components/Navbar.vue";
   import Layout from "../components/Layout.vue";
   import { ref, reactive, onMounted, watch } from "vue"
@@ -92,7 +94,7 @@
   const token = sessionStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
 
-  console.log("Decoded token:", decoded); 
+  console.log("Decoded token:", decoded);
 
   const userEmail = decoded?.email;
   console.log("User email from token:", userEmail);
@@ -113,6 +115,8 @@
   const departments = ref([]);
   const errorMessage = ref("");
   const successMessage = ref("");
+  const cardRef = ref(null);
+
 
 
   const getDepartmentName = (departmentId) => {
@@ -135,6 +139,25 @@
     }
   }
 
+  async function getBase64Image(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Image not found');
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (err) {
+      console.warn("Failed to load image:", url, err);
+      return defaultAvatar; // fallback Base64 or import
+    }
+  }
+
+
+
   async function fetchUser() {
     if (!userEmail) {
       errorMessage.value = "Authentication token is missing or invalid. Please log in.";
@@ -153,7 +176,11 @@
       user.value.createdAt = data.createdAt || new Date().toISOString();
       user.value.avatar = data.avatar || "";
 
-      userAvatar.value = data.avatar || "";
+      if (user.value.avatar) {
+        userAvatar.value = await getBase64Image(user.value.avatar);
+      } else {
+        userAvatar.value = await getBase64Image(defaultAvatar);
+      }
     } catch (err) {
       console.error("Error fetching user:", err);
       errorMessage.value = `Failed to fetch user profile: ${err.response?.data?.message || err.message}`;
@@ -170,9 +197,9 @@
       const updatedUser = {
         id: user.value.id,
         empName: user.value.empName,
-        email: user.value.email, 
+        email: user.value.email,
         phone: user.value.phone,
-        role: user.value.role, 
+        role: user.value.role,
         departmentId: selectedDept ? selectedDept.id : user.value.departmentId,
       };
       await updateEmployee(updatedUser);
@@ -202,7 +229,44 @@
     }
   }
 
-  
+  async function exportToPdf() {
+    try {
+      if (!cardRef.value) {
+        errorMessage.value = "Profile card not ready for export.";
+        return;
+      }
+      const cardStyles = `
+    <style>
+    .card { background: #fff; border-radius: 1rem; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 20rem; text-align: center; }
+    .avatar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto; }
+    .avatar-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; border-radius: 50%; background: rgba(13, 110, 253, 0.2); }
+    .card-title { margin-top: 3px; font-weight: bold; }
+    .card-text { color: #6c757d; }
+    .text-primary { color: #0d6efd; font-weight: bold; }
+    </style>
+    `;
+
+
+      const profileCardHtml = cardStyles+cardRef.value.outerHTML;
+      console.log("Export HTML:", profileCardHtml); // debug
+
+      const response = await exportProfileToPdf({ profileCardHtml });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'profile.pdf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      errorMessage.value = `Failed to export profile as PDF: ${err.response?.data?.message || err.message}`;
+    }
+  }
+
+
+
 
   watch(
     () => user.value.departmentId,
@@ -237,6 +301,10 @@
     await fetchDepartments();
     await fetchUser();
   }
+
+
+
+
 
   onMounted(() => {
     loadProfile();
@@ -405,4 +473,3 @@
   }
 
 </style>
-```

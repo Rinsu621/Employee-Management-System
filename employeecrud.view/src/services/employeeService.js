@@ -44,9 +44,10 @@ export const exportEmployeesToExcel = (filters) => {
     responseType: 'blob'
   });
 };
-
-export const exportProfileToPdf = (employeeId) => {
-  return api.get(`/employee/${employeeId}/export-profile-pdf`, {
+export const exportProfileToPdf = (payload) => {
+  return api.post('/employee/export/profile-pdf', payload, {
     responseType: 'blob'
-  });
+  })
 };
+
+
