@@ -235,20 +235,40 @@
         errorMessage.value = "Profile card not ready for export.";
         return;
       }
-      const cardStyles = `
-    <style>
-    .card { background: #fff; border-radius: 1rem; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 20rem; text-align: center; }
-    .avatar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto; }
-    .avatar-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; border-radius: 50%; background: rgba(13, 110, 253, 0.2); }
-    .card-title { margin-top: 3px; font-weight: bold; }
-    .card-text { color: #6c757d; }
-    .text-primary { color: #0d6efd; font-weight: bold; }
-    </style>
+
+      const bootstrapCss = `
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     `;
 
+      const customStyles = `
+      <style>
+        .card { background: #fff; border-radius: 1rem; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 20rem; text-align: center; margin: 0 auto; }
+        .avatar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto; }
+        .avatar-circle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; border-radius: 50%; background: rgba(13, 110, 253, 0.2); }
+        .avatar-image { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid white; display: block; margin: 0 auto; position: relative; z-index: 1; }
+        .card-title { margin-top: 3px; font-weight: bold; }
+        .card-text { color: #6c757d; }
+        .text-primary { color: #0d6efd; font-weight: bold; }
+      </style>
+    `;
 
-      const profileCardHtml = cardStyles+cardRef.value.outerHTML;
-      console.log("Export HTML:", profileCardHtml); // debug
+      // Clone the card and replace avatar src with Base64
+      const cardClone = cardRef.value.cloneNode(true);
+      const img = cardClone.querySelector('img');
+      if (img) img.src = userAvatar.value;
+      img.classList.add("avatar-image"); // ensure circular
+
+      const profileCardHtml = `
+      <html>
+        <head>
+          ${bootstrapCss}
+          ${customStyles}
+        </head>
+        <body>
+          ${cardClone.outerHTML}
+        </body>
+      </html>
+    `;
 
       const response = await exportProfileToPdf({ profileCardHtml });
       const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -260,6 +280,7 @@
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
     } catch (err) {
       errorMessage.value = `Failed to export profile as PDF: ${err.response?.data?.message || err.message}`;
     }

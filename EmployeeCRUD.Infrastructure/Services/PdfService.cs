@@ -13,12 +13,17 @@ namespace EmployeeCRUD.Infrastructure.Services
 {
     public class PdfService:IPdfService
     {
+        //Here download chromium if needed
+        //    then launches a headless browwser
+        //    then opens a page and set the html content
+        //    convert the page to pdf with bg and margins
+        //    return Pdf bytes
      public async Task<byte[]> GenerateProfilePdfAsync(string htmlContent)
         {
             //Download Chromium if not already done
             await new BrowserFetcher().DownloadAsync();
 
-            //Launch a headless browser
+            //Launch a headless browser means run without showing GUI
             await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
                 Headless = true
