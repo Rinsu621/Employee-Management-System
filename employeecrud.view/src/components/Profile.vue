@@ -92,7 +92,7 @@
   const token = sessionStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
 
-  console.log("Decoded token:", decoded); 
+  console.log("Decoded token:", decoded);
 
   const userEmail = decoded?.email;
   console.log("User email from token:", userEmail);
@@ -170,9 +170,9 @@
       const updatedUser = {
         id: user.value.id,
         empName: user.value.empName,
-        email: user.value.email, 
+        email: user.value.email,
         phone: user.value.phone,
-        role: user.value.role, 
+        role: user.value.role,
         departmentId: selectedDept ? selectedDept.id : user.value.departmentId,
       };
       await updateEmployee(updatedUser);
@@ -202,7 +202,26 @@
     }
   }
 
-  
+  async function exportToPdf() {
+    try {
+      const response = await exportProfileToPdf(user.value.id, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${user.value.empName}_Profile.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (err) {
+      console.error("Error exporting profile to PDF:", err);
+      errorMessage.value = `Failed to export profile: ${err.response?.data?.message || err.message}`;
+      setTimeout(() => {
+        errorMessage.value = "";
+      }, 5000);
+    }
+  }
+
+
 
   watch(
     () => user.value.departmentId,

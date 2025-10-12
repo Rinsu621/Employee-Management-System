@@ -1,4 +1,5 @@
 ﻿using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using MigraDoc.DocumentObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,6 @@ namespace EmployeeCRUD.Application.Interface
 {
     public interface IPdfService
     {
+        byte[] GeneratePdf<T>(T data, Action<Document, T> renderAction);
     }
 }

@@ -14,6 +14,6 @@ namespace EmployeeCRUD.Application.EmployeeModule.Dtos
         public string Role { get; set; }
         public string? Department { get; set; }
         public DateTime JoinedDate { get; set; }
-        public string AvatarBase64 { get; set; }
+        public string Avatar { get; set; }
     }
 }
