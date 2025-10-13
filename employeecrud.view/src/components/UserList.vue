@@ -70,6 +70,11 @@
         
           <div class="d-flex justify-content-end mb-3 gap-2 ">
 
+            <button class="btn-export-pdf shadow-sm d-flex align-items-center px-3 py-1" @click="exportToPdf">
+              <i class="bi bi-file-earmark-pdf me-2 fs-5" ></i>
+              <span class="fw-semibold">Export As Pdf</span>
+            </button>
+
             <button class="btn-export shadow-sm d-flex align-items-center px-3 py-1" @click="exportToExcel">
               <i class="bi bi-file-earmark-spreadsheet-fill me-2 fs-5" style="color:#217346;"></i>
               <span class="fw-semibold">Export</span>
@@ -264,7 +269,7 @@
   import Layout from "../components/Layout.vue"
   import { ref, computed, onMounted, watch, watchEffect } from "vue"
   import { logout } from "../services/authService.js"
-  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel } from "../services/employeeService"
+  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel, exportTableToPdf } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
   import jwtDecode from "jwt-decode";
 
@@ -595,6 +600,17 @@
   font-size: 0.9rem;     /* slightly smaller text */
   transition: background 0.2s;
 }
+
+  .btn-export-pdf {
+    background-color: white;
+    transition: background 0.2s;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+  }
+
+    .btn-export-pdf:hover {
+      background-color: #f1f1f1;
+    }
 
 .btn-export:hover {
   background-color: #f1f1f1;
