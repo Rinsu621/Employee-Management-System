@@ -41,6 +41,7 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IExcelExpoter, ExportEmployeesToExcelService>();
             services.AddScoped<IPdfService, PdfService>();
+            services.AddScoped<IGeminiService, GeminiService>();
 
             return services;
         }
