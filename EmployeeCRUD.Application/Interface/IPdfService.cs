@@ -9,6 +9,6 @@ namespace EmployeeCRUD.Application.Interface
 {
     public interface IPdfService
     {
-        Task<byte[]> GenerateProfilePdfAsync(string htmlContent);
+        Task<byte[]> GeneratePdfAsync(string htmlContent);
     }
 }

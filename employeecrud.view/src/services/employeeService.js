@@ -50,9 +50,9 @@ export const exportProfileToPdf = (payload) => {
   })
 };
 
-export const exportTableToPdf = async (filters) => {
-  return api.post('/employee/export/table-pdf', filters, {
-    responseType: 'arraybuffer'
-  });
+export const exportUserTableToPdf = (payload) => {
+  return api.post('/employee/export/table-pdf', payload, {
+    responseType: 'blob'
+  })
 };
 

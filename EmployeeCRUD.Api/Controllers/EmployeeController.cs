@@ -160,6 +160,16 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
 
+        [HttpPost("export/table-pdf")]
+        public async Task<IActionResult> ExportEmployeeTableToPdf(EmployeeTablePdfModelDto request)
+        {
+            var result = await sender.Send(new ExportEmployeeTableQuery(request.UserTableHtml));
+            return File(result, "application/pdf", "employees.pdf");
+        }
+
+
+
+
 
 
     }

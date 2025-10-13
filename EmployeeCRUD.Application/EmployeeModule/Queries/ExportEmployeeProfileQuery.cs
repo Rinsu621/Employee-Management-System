@@ -25,7 +25,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
         public async Task<byte[]> Handle(ExportEmployeeProfileQuery request, CancellationToken cancellationToken)
         {
             string profileHtml = request.ProfileCardHtml;
-            var pdfBytes = await pdfService.GenerateProfilePdfAsync(profileHtml);
+            var pdfBytes = await pdfService.GeneratePdfAsync(profileHtml);
             return pdfBytes;
 
         }

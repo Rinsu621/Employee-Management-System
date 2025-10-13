@@ -72,7 +72,7 @@
 
             <button class="btn-export-pdf shadow-sm d-flex align-items-center px-3 py-1" @click="exportToPdf">
               <i class="bi bi-file-earmark-pdf me-2 fs-5" ></i>
-              <span class="fw-semibold">Export As Pdf</span>
+              <span class="fw-semibold">Export Pdf</span>
             </button>
 
             <button class="btn-export shadow-sm d-flex align-items-center px-3 py-1" @click="exportToExcel">
@@ -269,12 +269,12 @@
   import Layout from "../components/Layout.vue"
   import { ref, computed, onMounted, watch, watchEffect } from "vue"
   import { logout } from "../services/authService.js"
-  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel, exportTableToPdf } from "../services/employeeService"
+  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel, exportUserTableToPdf } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
   import jwtDecode from "jwt-decode";
 
   const employees = ref([]);
-  const sortKey = ref("id");
+  const sortKey = ref("createdAt");
   const sortAsc = ref(true);
   const roles = ref([]);
   const errors = ref({});
@@ -306,6 +306,7 @@
   const searchTerm = ref("")
   const loading = ref(true);
   const showOverlay = ref(false);
+  const tableRef = ref(null);
 
 
 
@@ -487,6 +488,81 @@
     }
   };
 
+  async function exportToPdf() {
+    try {
+      const res = await getAllEmployees(1, 1000, selectedRole.value || null,
+        selectedDepartment.value || null, fromDate.value || null,
+        toDate.value || null, searchTerm.value || null, sortKey.value || "createdAt", sortAsc.value, true);
+
+      const employees = res.data.employees;
+      if (!employees || employees.length === 0) {
+        errorMessage.value = "No employees to export.";
+        return;
+      }
+      const bootstrapCss = `
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    `;
+
+      const tableRows = employees
+        .map(
+          (emp, i) => `
+       <tr class="${emp.email === currentAdminEmail ? 'table-info' : ''}">
+  <td>${i + 1}</td>
+  <td>${emp.empName}</td>
+  <td>${emp.email}</td>
+  <td>${emp.phone}</td>
+  <td>${emp.departmentName || 'N/A'}</td>
+  <td>${emp.role}</td>
+  <td>${new Date(emp.createdAt).toLocaleDateString()}</td>
+</tr>`).join("");
+
+      const html = `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Employee List</title>
+          ${bootstrapCss}
+        </head>
+        <body>
+            <h3 class="mb-3">Employee List</h3>
+            <div class="table-responsive shadow-sm rounded">
+              <table class="table table-bordered table-hover ">
+                <thead class="table-dark">
+                  <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Department</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${tableRows}
+                </tbody>
+              </table>
+          </div>
+        </body>
+      </html>
+    `;
+
+      const response = await exportUserTableToPdf({ userTableHtml: html });
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "employees.pdf");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
 
   watch([currentPage, pageSize, sortKey, sortAsc], () => {
     fetchEmployees();
@@ -605,6 +681,7 @@
     background-color: white;
     transition: background 0.2s;
     border-radius: 0.5rem;
+    font-size: 0.9rem;
     border: 1px solid #ccc;
   }
 

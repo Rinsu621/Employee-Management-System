@@ -14,11 +14,11 @@ namespace EmployeeCRUD.Infrastructure.Services
     public class PdfService:IPdfService
     {
         //Here download chromium if needed
-        //    then launches a headless browwser
+        //    then launches a headless browser
         //    then opens a page and set the html content
         //    convert the page to pdf with bg and margins
         //    return Pdf bytes
-     public async Task<byte[]> GenerateProfilePdfAsync(string htmlContent)
+     public async Task<byte[]> GeneratePdfAsync(string htmlContent)
         {
             //Download Chromium if not already done
             await new BrowserFetcher().DownloadAsync();
@@ -42,7 +42,9 @@ namespace EmployeeCRUD.Infrastructure.Services
                     Bottom = "20px",
                     Left = "20px",
                     Right = "20px"
-                }
+                },
+                Scale = 1,                  
+                PreferCSSPageSize = true
             });
             return pdfData;
         }
