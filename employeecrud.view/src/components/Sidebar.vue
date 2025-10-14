@@ -36,6 +36,7 @@
           { name: "User List", link: "/userlist", icon: "fa fa-users" },
           { name: "Role List", link: "/role-list", icon: "fa fa-shield" },
           { name: "Employee List", link: "/employee-list", icon: "fa fa-id-badge" },
+          { name: "Add Salary", link: "/salary/add", icon: "fa fa-money-bill" }
         ],
       };
     },

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using EmployeeCRUD.Application.EmployeeModule.Document;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
 using MediatR;
@@ -61,8 +62,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
                 Role = emp.Role,
                 CreatedAt = emp.CreatedAt
             }).ToList();
-
-            var pdfBytes = pdfService.GenerateEmployeeTablePdf(employeePdfModels);
+            var employeeDocument = new EmployeeTablePdf(employeePdfModels);
+            var pdfBytes = pdfService.GeneratePdf(employeeDocument);
             return pdfBytes;
         }
 

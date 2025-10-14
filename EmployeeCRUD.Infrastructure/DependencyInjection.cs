@@ -38,6 +38,7 @@ namespace EmployeeCRUD.Infrastructure
 
             services.AddScoped<IJobTestServices, JobTestService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<ISalaryEmailService, SalaryEmailService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IExcelExpoter, ExportEmployeesToExcelService>();
             services.AddScoped<IPdfService, PdfService>();

@@ -19,11 +19,9 @@ namespace EmployeeCRUD.Infrastructure.Services
             // Set the license type to Community for free use
             QuestPDF.Settings.License = LicenseType.Community;
         }
-        public byte[] GenerateEmployeeTablePdf(List<EmployeePdfModel> employees)
+        public byte[] GeneratePdf<TDocument>(TDocument document) where TDocument : IDocument
         {
-            var document = new EmployeeTablePdf(employees);
             return document.GeneratePdf();
-
         }
     }
 }

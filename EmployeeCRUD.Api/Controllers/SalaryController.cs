@@ -19,8 +19,8 @@ namespace EmployeeCRUD.Api.Controllers
         [HttpPost("add-salary")]
         public async Task<IActionResult> AddSalary(AddSalaryCommand command)
         {
-            var result= await mediator.Send(command);
-            return Ok(result);
+            var salaryPdfBytes = await mediator.Send(command);
+            return File(salaryPdfBytes, "application/pdf", "Salary.pdf");
         }
         [HttpGet("payment-mode")]
         public IActionResult GetPaymentMethods()
