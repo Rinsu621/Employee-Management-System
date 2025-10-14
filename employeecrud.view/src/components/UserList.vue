@@ -70,6 +70,11 @@
         
           <div class="d-flex justify-content-end mb-3 gap-2 ">
 
+            <button class="btn-export-pdf shadow-sm d-flex align-items-center px-3 py-1" @click="exportToPdf">
+              <i class="bi bi-file-earmark-pdf me-2 fs-5"></i>
+              <span class="fw-semibold">Export Pdf</span>
+            </button>
+
             <button class="btn-export shadow-sm d-flex align-items-center px-3 py-1" @click="exportToExcel">
               <i class="bi bi-file-earmark-spreadsheet-fill me-2 fs-5" style="color:#217346;"></i>
               <span class="fw-semibold">Export</span>
@@ -264,7 +269,7 @@
   import Layout from "../components/Layout.vue"
   import { ref, computed, onMounted, watch, watchEffect } from "vue"
   import { logout } from "../services/authService.js"
-  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel } from "../services/employeeService"
+  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel, exportEmployeesToPdf } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
   import jwtDecode from "jwt-decode";
 
@@ -482,6 +487,30 @@
     }
   };
 
+  const exportToPdf = async () => {
+    try {
+      const filters = {
+        Role: selectedRole.value || null,
+        DepartmentId: selectedDepartment.value || null,
+        FromDate: fromDate.value || null,
+        ToDate: toDate.value || null,
+        SearchTerm: searchTerm.value || null,
+        SortKey: sortKey.value,
+        SortAsc: sortAsc.value
+      };
+      const response = await exportEmployeesToPdf(filters);
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Employees.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting employees to PDF:', error);
+    }
+  };
 
   watch([currentPage, pageSize, sortKey, sortAsc], () => {
     fetchEmployees();
@@ -599,6 +628,19 @@
 .btn-export:hover {
   background-color: #f1f1f1;
 }
+
+
+  .btn-export-pdf {
+    background-color: white;
+    transition: background 0.2s;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+  }
+
+    .btn-export-pdf:hover {
+      background-color: #f1f1f1;
+    }
   @keyframes float {
     0% {
       transform: translateY(0) translateX(0);

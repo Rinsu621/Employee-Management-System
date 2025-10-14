@@ -2,7 +2,6 @@
 using EmployeeCRUD.Application.Department.Queries;
 using EmployeeCRUD.Application.DepartmentModule.Command;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeCRUD.Api.Controllers
@@ -47,6 +46,14 @@ namespace EmployeeCRUD.Api.Controllers
 
         [HttpPost("add-employee")]
         public async Task<IActionResult> AddEmployeeToDepartmentAsync(AddEmployeeToDepartmentCommand command)
+        {
+            var result = await sender.Send(command);
+            return Ok(result);
+        }
+
+
+        [HttpPost("add-department-dapper")]
+        public async Task<IActionResult> AddEmployeeToDepartmentAsync(AddDepartmentDapperCommand command)
         {
             var result = await sender.Send(command);
             return Ok(result);

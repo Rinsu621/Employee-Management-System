@@ -1,15 +1,8 @@
 ﻿using EmployeeCRUD.Application.AuthModel.Commands;
 using EmployeeCRUD.Application.AuthModel.Queries;
-using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
-using System.Security.Claims;
+
 
 namespace EmployeeCRUD.Api.Controllers
 {

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\AddDepartment.sql" />
     <None Remove="Scripts\AddEmployee.sql" />
     <None Remove="Scripts\AddProject.sql" />
     <None Remove="Scripts\AssignDepartment.sql" />
@@ -20,16 +21,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\AddEmployee.sql" />
-    <EmbeddedResource Include="Scripts\AddProject.sql" />
-    <EmbeddedResource Include="Scripts\AssignDepartment.sql" />
-    <EmbeddedResource Include="Scripts\AssignTeamMember.sql" />
-    <EmbeddedResource Include="Scripts\DeleteEmployee.sql" />
-    <EmbeddedResource Include="Scripts\GetAllEmployees.sql" />
-    <EmbeddedResource Include="Scripts\GetEmployeeById.sql" />
-    <EmbeddedResource Include="Scripts\PatchEmployee.sql" />
-    <EmbeddedResource Include="Scripts\PatchProject.sql" />
-    <EmbeddedResource Include="Scripts\UpdateEmployee.sql" />
+    <EmbeddedResource Include="Scripts\AddDepartment.sql" />
+    <EmbeddedResource Include="Scripts\AddEmployee.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\AddProject.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\AssignDepartment.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\AssignTeamMember.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\DeleteEmployee.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\GetAllEmployees.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\GetEmployeeById.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\PatchEmployee.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\PatchProject.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\UpdateEmployee.sql" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>

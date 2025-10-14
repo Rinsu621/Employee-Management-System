@@ -38,25 +38,19 @@ namespace EmployeeCRUD.IntegrationTests.Tests
         public async Task AddDepartment_ReturnsCreatedDepartment(string deptName)
         {
             //Assign
-            var department= new DepartmentCreateDto
-            {
-                DeptName = deptName
-            };
-            var command = new AddDepartmentCommand(department);
-
+            var department= new AddDepartmentDapperCommand
+            (
+                DeptName : deptName
+            );
+          
             //Act
-            var addedDepartment = await mediator.Send(command);
+            var addedDepartment = await mediator.Send(department);
 
             var result= await mediator.Send(new GetDepartmentQuery());
 
             //Assert
             result.Should().NotBeNull();
             result.Should().ContainSingle(d => d.Name == deptName);
-
-            foreach(var dept in result)
-            {
-                output.WriteLine($"Department ID: {dept.Id}, Name: {dept.Name}");
-            }
 
         }
 
@@ -66,12 +60,12 @@ namespace EmployeeCRUD.IntegrationTests.Tests
         public async Task DeleteDepartment_ReturnSucess(string deptName)
         {
             //Assign
-            var department = new DepartmentCreateDto
-            {
-                DeptName = deptName
-            };
-            var command = new AddDepartmentCommand(department);
-            var addedDepartment = await mediator.Send(command);
+            var department = new AddDepartmentCommand
+            (
+                DeptName :deptName
+            );
+            var addedDepartment = await mediator.Send(department);
+            var Id= addedDepartment;
 
             //Act
 

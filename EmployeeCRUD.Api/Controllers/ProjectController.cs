@@ -1,10 +1,6 @@
-﻿
-using EmployeeCRUD.Api.Filter;
-using EmployeeCRUD.Application.Exceptions;
-using EmployeeCRUD.Application.ProjectModule.Commands;
+﻿using EmployeeCRUD.Application.ProjectModule.Commands;
 using EmployeeCRUD.Application.ProjectModule.Query;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeCRUD.Api.Controllers

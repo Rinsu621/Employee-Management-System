@@ -86,7 +86,7 @@
   import Navbar from "../components/Navbar.vue";
   import Layout from "../components/Layout.vue";
   import { ref, reactive, onMounted, watch } from "vue"
-  import { getDepartments, getEmployeeByEmail, updateEmployee, exportProfileToPdf } from "../services/employeeService";
+  import { getDepartments, getEmployeeByEmail, updateEmployee,  } from "../services/employeeService";
   import jwtDecode from "jwt-decode";
 
   const token = sessionStorage.getItem("token");
