@@ -63,7 +63,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 //Add in AspNetUserRoles table i.e user id and role id
                 await userManager.AddToRoleAsync(user, request.Role);
                 await transaction.CommitAsync(cancellationToken);
-                BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(user.Email, defaultPassword));
+                //BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(user.Email, defaultPassword));
 
                 var departmentName = await dbContext.Departments
                    .Where(d => d.Id == request.DepartmentId)

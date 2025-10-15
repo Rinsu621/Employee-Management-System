@@ -9,6 +9,11 @@ namespace EmployeeCRUD.Application.SalaryModule.DTO
     public class SalaryPdfModel
     {
         public string EmployeeName { get; set; } = ""; // Add this
+        public string Department { get; set; }
+
+        public string Joined { get; set; }
+
+        public string Role { get; set; }
         public decimal BasicSalary { get; set; }
         public decimal Conveyance { get; set; }
         public decimal Tax { get; set; }
@@ -18,6 +23,8 @@ namespace EmployeeCRUD.Application.SalaryModule.DTO
         public string Status { get; set; } = "";
         public decimal GrossSalary { get; set; }
         public decimal NetSalary { get; set; }
+        public string SalaryMonth { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 }

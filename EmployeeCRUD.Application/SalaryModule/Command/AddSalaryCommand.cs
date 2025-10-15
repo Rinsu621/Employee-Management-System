@@ -5,6 +5,7 @@ using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Domain.Enums;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.SalaryModule.Command
 {
-    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status) : IRequest<byte[]>;
+    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status, DateTime SalaryDate) : IRequest<byte[]>;
 
     public class AddSalaryCommandHandler : IRequestHandler<AddSalaryCommand, byte[]>
     {
@@ -22,13 +23,14 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
         private readonly ISalaryDbContext salaryDbContext;
         private readonly IPdfService pdfService;
         private readonly ISalaryEmailService salaryEmailService;
-
-        public AddSalaryCommandHandler(ISalaryDbContext _salaryDbContext, IPdfService _pdfService, IAppDbContext _appDbContext, ISalaryEmailService _salaryEmailService)
+        private readonly UserManager<ApplicationUser> userManager;
+        public AddSalaryCommandHandler(ISalaryDbContext _salaryDbContext, IPdfService _pdfService, IAppDbContext _appDbContext, ISalaryEmailService _salaryEmailService, UserManager<ApplicationUser> _userManager)
         {
             salaryDbContext = _salaryDbContext;
             pdfService = _pdfService;
             appDbContext= _appDbContext;
             salaryEmailService = _salaryEmailService;
+            userManager = _userManager;
         }
 
         public async Task<byte[]> Handle(AddSalaryCommand request, CancellationToken cancellationToken)
@@ -54,6 +56,7 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
                 ESI = request.ESI,
                 PaymentMode = paymentEnum,
                 Status = statusEnum,
+                SalaryDate= request.SalaryDate,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = null
             };
@@ -61,14 +64,23 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
             salaryDbContext.Salaries.Add(salary);
             await salaryDbContext.SaveChangesAsync(cancellationToken);
 
-            var employeeName = await appDbContext.Employees
-                 .Where(e => e.Id == request.EmployeeId)
-                     .Select(e => e.EmpName)
-         .FirstOrDefaultAsync(cancellationToken);
+            var employee = await appDbContext.Employees
+                .Where(e => e.Id == request.EmployeeId)
+                .Include(e => e.Department) // Include department
+               .FirstOrDefaultAsync(cancellationToken);
+            var user = await userManager.FindByEmailAsync(employee.Email);
+            var roles = await userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
+
 
             var salaryPdf = new SalaryPdfModel
             {
-                EmployeeName = employeeName ?? "",
+                EmployeeName = employee.EmpName ?? "-",
+                Department= employee.Department.DeptName?? "-",
+                Role= role,
+                Joined = employee.CreatedAt.ToString("dd MMM yyyy"),
+        
                 BasicSalary = salary.BasicSalary,
                 Conveyance = salary.Conveyance,
                 Tax = salary.Tax,
@@ -78,6 +90,7 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
                 Status = salary.Status.ToString(),
                 GrossSalary = salary.GrossSalary,
                 NetSalary = salary.NetSalary,
+                SalaryMonth = salary.SalaryDate.ToString("MMMM yyyy"),
                 CreatedAt = salary.CreatedAt
             };
 
@@ -88,7 +101,7 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
              .Select(e => e.Email)
              .FirstOrDefaultAsync(cancellationToken);
             BackgroundJob.Enqueue<ISalaryEmailService>(x =>
-    x.SendSalarySlipAsync(employeeEmail, pdfBytes, "SalarySlip.pdf")
+    x.SendSalarySlipAsync(employeeEmail, pdfBytes, "SalarySlip.pdf", salaryPdf)
 );
             return pdfBytes;
         }

@@ -27,6 +27,7 @@
 
 <script>
   import { useRouter } from "vue-router"
+  import jwtDecode  from "jwt-decode"
   export default {
     name: "Sidebar",
     data() {

@@ -2,6 +2,7 @@
 using EmployeeCRUD.Application.EmployeeModule.Document;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
+using QuestPDF.Companion;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 using System;
@@ -21,6 +22,7 @@ namespace EmployeeCRUD.Infrastructure.Services
         }
         public byte[] GeneratePdf<TDocument>(TDocument document) where TDocument : IDocument
         {
+            //document.ShowInCompanion();
             return document.GeneratePdf();
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EmployeeCRUD.Application.SalaryModule.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace EmployeeCRUD.Application.Interface
 {
     public interface ISalaryEmailService
     {
-        Task SendSalarySlipAsync(string toEmail, byte[] pdf, string attachmentName);
+        Task SendSalarySlipAsync(string toEmail, byte[] pdf, string attachmentName, SalaryPdfModel salary);
 
     }
 }

@@ -23,7 +23,9 @@ namespace EmployeeCRUD.Domain.Entities
 
         public decimal GrossSalary => BasicSalary+Conveyance;
 
-        public decimal NetSalary => BasicSalary - (Tax + PF+ ESI);
+        public decimal NetSalary => GrossSalary - (Tax + PF+ ESI);
+        public DateTime SalaryDate { get; set; }
+
 
     }
 }

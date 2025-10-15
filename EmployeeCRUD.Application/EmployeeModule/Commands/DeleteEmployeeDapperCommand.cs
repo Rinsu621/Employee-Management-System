@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using MediatR;
 using System.Data;
 
@@ -8,14 +9,15 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public record DeleteEmployeeDapperCommand(Guid Id) : IRequest<DeleteEmployeeResponse>;
     public class  DeleteEmployeeDapperHandler: IRequestHandler<DeleteEmployeeDapperCommand, DeleteEmployeeResponse>
     {
-        private readonly IDbConnection connection;
-        public DeleteEmployeeDapperHandler(IDbConnection _connection)
+        private readonly IEmployeeDbConnection connection;
+        public DeleteEmployeeDapperHandler(IEmployeeDbConnection _connection)
         {
             connection = _connection;
         }
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeDapperCommand request, CancellationToken cancellationToken)
         {
-          var result= await connection.ExecuteAsync("DeleteEmployee",
+            using var db= connection.CreateConnection()
+          var result= await db.ExecuteAsync("DeleteEmployee",
                 new { Id = request.Id },
                 commandType: CommandType.StoredProcedure);
          

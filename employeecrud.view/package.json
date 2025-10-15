@@ -13,6 +13,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@vue/server-renderer": "^3.5.22",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "bootstrap-vue-next": "^0.40.6",

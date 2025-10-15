@@ -13,8 +13,7 @@ namespace EmployeeCRUD.Infrastructure
 {
     public static class DependencyInjection
     {
-        public interface IEmployeeDbConnection : IDbConnection { }
-        public interface ISalaryDbConnection : IDbConnection { }
+       
 
         public static IServiceCollection AddInfrastructureDI(this IServiceCollection services, IConfiguration configuration)
         {
@@ -33,8 +32,11 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
             services.AddScoped<ISalaryDbContext>(provider => provider.GetRequiredService<SalaryDbContext>());
 
-            services.AddScoped<IDbConnection>(sp =>
-                new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
+            //services.AddScoped<IDbConnection>(sp =>
+            //    new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IEmployeeDbConnection>(sp =>
+                new EmployeeDbConnection(configuration.GetConnectionString("DefaultConnection")));
+
 
             services.AddScoped<IJobTestServices, JobTestService>();
             services.AddScoped<IEmailService, EmailService>();
