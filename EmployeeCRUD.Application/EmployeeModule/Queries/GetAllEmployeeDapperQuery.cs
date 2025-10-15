@@ -44,7 +44,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             parameters.Add("@SortAsc", request.SortAsc);
 
             using var db= connection.CreateConnection();
-            using var multi = await connection.QueryMultipleAsync(
+            using var multi = await db.QueryMultipleAsync(
              "GetAllEmployees",
              parameters,
                 commandType: CommandType.StoredProcedure

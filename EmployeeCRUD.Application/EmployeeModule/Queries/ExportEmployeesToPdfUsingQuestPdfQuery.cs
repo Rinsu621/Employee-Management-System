@@ -25,8 +25,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
     public class ExportEmployeesToPdfUsingQuestPdfHandler : IRequestHandler<ExportEmployeesToPdfUsingQuestPdfQuery, byte[]>
     {
         private readonly IPdfService pdfService;
-        private IDbConnection connection;
-        public ExportEmployeesToPdfUsingQuestPdfHandler(IPdfService _pdfService, IDbConnection _connection)
+        private IEmployeeDbConnection connection;
+        public ExportEmployeesToPdfUsingQuestPdfHandler(IPdfService _pdfService, IEmployeeDbConnection _connection)
         {
             pdfService= _pdfService;
             connection= _connection;
@@ -44,7 +44,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             parameters.Add("@SortKey", request.SortKey);
             parameters.Add("@SortAsc", request.SortAsc);
 
-            using var multi = await connection.QueryMultipleAsync(
+            using var db = connection.CreateConnection();
+            using var multi = await db.QueryMultipleAsync(
                 "GetAllEmployees",
                 parameters,
                 commandType: CommandType.StoredProcedure

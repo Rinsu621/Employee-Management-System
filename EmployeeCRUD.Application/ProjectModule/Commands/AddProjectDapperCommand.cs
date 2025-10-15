@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Application.ProjectModule.Dtos;
 using MediatR;
 using System;
@@ -14,14 +15,15 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
     
     public class AddProjectDapperHandler : IRequestHandler<AddProjectDapperCommand, ProjectDto>
     {
-        private readonly IDbConnection connection;
-        public AddProjectDapperHandler(IDbConnection _connection)
+        private readonly IEmployeeDbConnection connection;
+        public AddProjectDapperHandler(IEmployeeDbConnection _connection)
         {
             connection = _connection;
         }
         public async Task<ProjectDto> Handle(AddProjectDapperCommand request, CancellationToken cancellationToken)
         {
-            var result = await connection.QuerySingleAsync<ProjectDto>("AddProject",
+            using var db = connection.CreateConnection();
+            var result = await db.QuerySingleAsync<ProjectDto>("AddProject",
                 new { request.ProjectName, request.Description, request.StartDate, request.EndDate, request.Budget, request.Status, request.ClientName },
                 commandType: CommandType.StoredProcedure);
 

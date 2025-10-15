@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using EmployeeCRUD.Application.DepartmentModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
 using System;
@@ -15,8 +16,8 @@ namespace EmployeeCRUD.Application.DepartmentModule.Command
 
     public class AddDepartmentDapperHandler : IRequestHandler<AddDepartmentDapperCommand, DepartmentResponseDto>
     {
-        private readonly IDbConnection connection;
-        public AddDepartmentDapperHandler(IDbConnection _connection)
+        private readonly IEmployeeDbConnection connection;
+        public AddDepartmentDapperHandler(IEmployeeDbConnection _connection)
         {
             connection = _connection;
         }
@@ -27,7 +28,8 @@ namespace EmployeeCRUD.Application.DepartmentModule.Command
             parameters.Add("@DeptName", request.DeptName);
             parameters.Add("@Id", dbType: DbType.Guid, direction: ParameterDirection.Output);
 
-            var department = await connection.QuerySingleAsync<DepartmentResponseDto>(
+            using var db = connection.CreateConnection();
+            var department = await db.QuerySingleAsync<DepartmentResponseDto>(
                  "AddDepartment",
                  parameters,
                  commandType: CommandType.StoredProcedure

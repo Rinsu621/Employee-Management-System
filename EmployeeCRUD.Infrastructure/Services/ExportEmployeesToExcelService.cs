@@ -14,9 +14,9 @@ namespace EmployeeCRUD.Infrastructure.Services
 {
     public class ExportEmployeesToExcelService : IExcelExpoter
     {
-        private readonly IDbConnection connection;
+        private readonly IEmployeeDbConnection connection;
 
-        public ExportEmployeesToExcelService(IDbConnection _connection)
+        public ExportEmployeesToExcelService(IEmployeeDbConnection _connection)
         {
             connection = _connection;
         }
@@ -40,7 +40,8 @@ namespace EmployeeCRUD.Infrastructure.Services
             parameters.Add("@SortKey", sortKey);
             parameters.Add("@SortAsc", sortAsc);
 
-            var query = await connection.QueryMultipleAsync("GetAllEmployees",
+            using var db= connection.CreateConnection();
+            var query = await db.QueryMultipleAsync("GetAllEmployees",
                 parameters,
                 commandType: CommandType.StoredProcedure);
             var employees = query.Read<EmployeeResponseDto>().ToList();

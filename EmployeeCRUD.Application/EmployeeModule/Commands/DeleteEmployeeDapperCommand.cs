@@ -16,7 +16,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         }
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeDapperCommand request, CancellationToken cancellationToken)
         {
-            using var db= connection.CreateConnection()
+            using var db = connection.CreateConnection();
           var result= await db.ExecuteAsync("DeleteEmployee",
                 new { Id = request.Id },
                 commandType: CommandType.StoredProcedure);
