@@ -15,7 +15,7 @@ BEGIN
     WITH FilteredEmployees AS (
         SELECT 
             e.Id,
-            e.EmpName,s
+            e.EmpName,
             e.Email,
             e.Phone,
             d.DeptName AS DepartmentName,
