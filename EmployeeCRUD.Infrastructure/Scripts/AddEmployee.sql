@@ -1,4 +1,4 @@
-CREATE PROCEDURE AddEmployee
+CREATE OR ALTER PROCEDURE AddEmployee
 @EmpName NVARCHAR(100),
 @Email NVARCHAR(100),
 @Phone NVARCHAR(15),
@@ -11,20 +11,21 @@ BEGIN
 SET NOCOUNT ON;
 BEGIN TRY
 BEGIN TRANSACTION
-DECLARE @EmployeeId UNIQUEIDENTIFIER=NEWID();
-DECLARE @Now DATETIME=GETDATE();
+DECLARE @EmployeeId UNIQUEIDENTIFIER = NEWID();
+        DECLARE @UserId UNIQUEIDENTIFIER = NEWID();
+        DECLARE @Now DATETIME = GETDATE();
+        DECLARE @NormalizedEmail NVARCHAR(256) = UPPER(@Email);
+        DECLARE @NormalizedUserName NVARCHAR(256) = UPPER(@Email);
+        DECLARE @RoleId NVARCHAR(450);
+
+SELECT @RoleId = Id FROM AspNetRoles WHERE NormalizedName = UPPER(@RoleName);
+
 --Inserting into employees
 INSERT INTO Employees(Id, EmpName, Email, Phone, DepartmentId, CreatedAt, UpdatedAt) VALUES(@EmployeeId, @EmpName, @Email, @Phone, @DepartmentId, @Now, @Now);
 
-DECLARE @UserId UNIQUEIDENTIFIER=NEWID();
-DECLARE @NormalizedEmail NVARCHAR(256) = UPPER(@Email);
-DECLARE @NormalizedUserName NVARCHAR(256) = UPPER(@Email);
 --Inserting into AspNetUsers
 INSERT INTO AspNetUsers (Id, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp,PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnabled, AccessFailedCount, EmployeeId)
         VALUES (@UserId, @Email, @NormalizedUserName, @Email, @NormalizedEmail, 0, HASHBYTES('SHA2_256', @DefaultPassword), NEWID(), NEWID(),0,0,1,0, @EmployeeId);
---Assigning role to user
-DECLARE @RoleId NVARCHAR(450);
-SELECT @RoleId = Id FROM AspNetRoles WHERE NormalizedName = UPPER(@RoleName);
 
 INSERT INTO AspNetUserRoles (UserId, RoleId) VALUES (@UserId, @RoleId);
 
@@ -45,5 +46,6 @@ END TRY
 BEGIN CATCH
         IF @@TRANCOUNT > 0
             ROLLBACK TRANSACTION;
+            THROW;
     END CATCH
 END;

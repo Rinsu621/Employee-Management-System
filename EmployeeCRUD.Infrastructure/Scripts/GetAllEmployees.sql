@@ -12,86 +12,53 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-   IF OBJECT_ID('tempdb..#UserEmails')IS NOT NULL DROP TABLE #UserEmails;
-
-    CREATE TABLE #UserEmails (
-        Email NVARCHAR(256) PRIMARY KEY
-    );
-
-    IF @Role IS NOT NULL
-    BEGIN
-        INSERT INTO #UserEmails (Email)
-        SELECT u.Email
-        FROM AspNetUsers u
-        INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
-        INNER JOIN AspNetRoles r ON r.Id = ur.RoleId
-        WHERE r.Name = @Role;
-    END
-    ELSE IF @SearchTerm IS NOT NULL
-    BEGIN
-        INSERT INTO #UserEmails (Email)
-        SELECT u.Email
-        FROM AspNetUsers u
-        INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
-        INNER JOIN AspNetRoles r ON r.Id = ur.RoleId
-        WHERE LOWER(r.Name) LIKE '%' + LOWER(@SearchTerm) + '%';
-    END
-
-    IF OBJECT_ID('tempdb..#FilteredEmployees') IS NOT NULL DROP TABLE #FilteredEmployees;
-
-    SELECT 
-        e.Id,
-        e.EmpName,
-        e.Email,
-        e.Phone,
-        d.DeptName AS DepartmentName,
-        e.CreatedAt
-    INTO #FilteredEmployees
-    FROM Employees e
-    LEFT JOIN Departments d ON e.DepartmentId = d.Id
-    WHERE
-        (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
-        AND (@FromDate IS NULL OR e.CreatedAt >= @FromDate)
-        AND (@ToDate IS NULL OR e.CreatedAt <= @ToDate)
-        AND (
-            @SearchTerm IS NULL 
-            OR LOWER(e.EmpName) LIKE '%' + LOWER(@SearchTerm) + '%'
-            OR LOWER(e.Email) LIKE '%' + LOWER(@SearchTerm) + '%'
-            OR LOWER(d.DeptName) LIKE '%' + LOWER(@SearchTerm) + '%'
-            OR CAST(e.Id AS NVARCHAR(50)) LIKE '%' + LOWER(@SearchTerm) + '%'
-            OR EXISTS (SELECT 1 FROM #UserEmails ue WHERE ue.Email = e.Email)
-        )
-        AND (
-            @Role IS NULL 
-            OR EXISTS (SELECT 1 FROM #UserEmails ue WHERE ue.Email = e.Email)
-        );
-
-        CREATE INDEX IX_FilteredEmployees_Email ON #FilteredEmployees (Email);
-
-
-   DECLARE @sql NVARCHAR(MAX) = N'
+    WITH FilteredEmployees AS (
         SELECT 
-            f.Id,
-            f.EmpName,
-            f.Email,
-            f.Phone,
-            f.DepartmentName,
-            f.CreatedAt,
-            (SELECT TOP 1 r.Name
-             FROM AspNetUserRoles ur
-             INNER JOIN AspNetRoles r ON ur.RoleId = r.Id
-             INNER JOIN AspNetUsers u ON u.Id = ur.UserId
-             WHERE u.Email = f.Email) AS Role
-        FROM #FilteredEmployees f
+            e.Id,
+            e.EmpName,s
+            e.Email,
+            e.Phone,
+            d.DeptName AS DepartmentName,
+            e.CreatedAt,
+            r.Name AS Role
+        FROM Employees e
+        LEFT JOIN Departments d ON e.DepartmentId = d.Id
+        LEFT JOIN AspNetUsers u ON u.EmployeeId = e.Id
+		LEFT JOIN AspNetUserRoles ur ON ur.UserId = u.Id
+		LEFT JOIN AspNetRoles r ON r.Id = ur.RoleId
+ 
+        WHERE
+            (@DepartmentId IS NULL OR e.DepartmentId = @DepartmentId)
+            AND (@FromDate IS NULL OR e.CreatedAt >= @FromDate)
+            AND (@ToDate IS NULL OR e.CreatedAt <= @ToDate)
+            AND (
+                @SearchTerm IS NULL 
+                OR e.EmpName LIKE '%' + @SearchTerm + '%'
+                OR e.Email LIKE '%' + @SearchTerm + '%'
+				OR e.Phone LIKE '%' + @SearchTerm + '%'
+                OR d.DeptName LIKE '%' + @SearchTerm + '%'
+				OR r.Name LIKE '%' + @SearchTerm + '%'
+                OR CAST(e.Id AS NVARCHAR(50)) LIKE '%' + @SearchTerm + '%'
+            )
+            AND (@Role IS NULL OR r.Name = @Role)
+    )
+    SELECT *
+    INTO #PagedEmployees
+    FROM FilteredEmployees;
+
+    CREATE INDEX IX_PagedEmployees_CreatedAt ON #PagedEmployees (CreatedAt);
+
+    DECLARE @sql NVARCHAR(MAX) = N'
+        SELECT *
+        FROM #PagedEmployees
         ORDER BY ' + QUOTENAME(@SortKey) + CASE WHEN @SortAsc = 1 THEN ' ASC' ELSE ' DESC' END + '
         OFFSET ' + CAST((@Page - 1) * @PageSize AS NVARCHAR(10)) + ' ROWS
         FETCH NEXT ' + CAST(@PageSize AS NVARCHAR(10)) + ' ROWS ONLY;
     ';
+
     EXEC sp_executesql @sql;
 
-    SELECT COUNT(*) AS TotalCount
-    FROM #FilteredEmployees;
+    SELECT COUNT(*) AS TotalCount FROM #PagedEmployees;
 
-	DROP TABLE #FilteredEmployees;
-     DROP TABLE #UserEmails;
-END
+    DROP TABLE #PagedEmployees;
+END;

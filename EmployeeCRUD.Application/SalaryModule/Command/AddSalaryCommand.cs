@@ -15,25 +15,21 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.SalaryModule.Command
 {
-    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status, DateTime SalaryDate) : IRequest<byte[]>;
+    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status, DateTime SalaryDate) : IRequest<Guid>;
 
-    public class AddSalaryCommandHandler : IRequestHandler<AddSalaryCommand, byte[]>
+    public class AddSalaryCommandHandler : IRequestHandler<AddSalaryCommand, Guid>
     {
         private readonly IAppDbContext appDbContext;
         private readonly ISalaryDbContext salaryDbContext;
-        private readonly IPdfService pdfService;
-        private readonly ISalaryEmailService salaryEmailService;
-        private readonly UserManager<ApplicationUser> userManager;
-        public AddSalaryCommandHandler(ISalaryDbContext _salaryDbContext, IPdfService _pdfService, IAppDbContext _appDbContext, ISalaryEmailService _salaryEmailService, UserManager<ApplicationUser> _userManager)
+      
+        public AddSalaryCommandHandler(ISalaryDbContext _salaryDbContext, IAppDbContext _appDbContext)
         {
             salaryDbContext = _salaryDbContext;
-            pdfService = _pdfService;
             appDbContext= _appDbContext;
-            salaryEmailService = _salaryEmailService;
-            userManager = _userManager;
+         
         }
 
-        public async Task<byte[]> Handle(AddSalaryCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(AddSalaryCommand request, CancellationToken cancellationToken)
         {
             if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentEnum))
             {
@@ -63,47 +59,9 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
 
             salaryDbContext.Salaries.Add(salary);
             await salaryDbContext.SaveChangesAsync(cancellationToken);
+            //BackgroundJob.Enqueue<IMediator>(mediator=> mediator.Send(new GenerateSalaryPdfCommand(salary.Id), cancellationToken));
 
-            var employee = await appDbContext.Employees
-                .Where(e => e.Id == request.EmployeeId)
-                .Include(e => e.Department) // Include department
-               .FirstOrDefaultAsync(cancellationToken);
-            var user = await userManager.FindByEmailAsync(employee.Email);
-            var roles = await userManager.GetRolesAsync(user);
-            var role = roles.FirstOrDefault();
-
-
-
-            var salaryPdf = new SalaryPdfModel
-            {
-                EmployeeName = employee.EmpName ?? "-",
-                Department= employee.Department.DeptName?? "-",
-                Role= role,
-                Joined = employee.CreatedAt.ToString("dd MMM yyyy"),
-        
-                BasicSalary = salary.BasicSalary,
-                Conveyance = salary.Conveyance,
-                Tax = salary.Tax,
-                PF = salary.PF,
-                ESI = salary.ESI,
-                PaymentMode = salary.PaymentMode.ToString(),
-                Status = salary.Status.ToString(),
-                GrossSalary = salary.GrossSalary,
-                NetSalary = salary.NetSalary,
-                SalaryMonth = salary.SalaryDate.ToString("MMMM yyyy"),
-                CreatedAt = salary.CreatedAt
-            };
-
-            var salaryDoc = new SalaryTablePdf(salaryPdf);
-            var pdfBytes = pdfService.GeneratePdf(salaryDoc);
-            var employeeEmail = await appDbContext.Employees
-          .Where(e => e.Id == request.EmployeeId)
-             .Select(e => e.Email)
-             .FirstOrDefaultAsync(cancellationToken);
-            BackgroundJob.Enqueue<ISalaryEmailService>(x =>
-    x.SendSalarySlipAsync(employeeEmail, pdfBytes, "SalarySlip.pdf", salaryPdf)
-);
-            return pdfBytes;
+            return salary.Id;
         }
     }
     

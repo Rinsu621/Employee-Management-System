@@ -4,17 +4,19 @@ CREATE OR ALTER PROCEDURE AddDepartment
 AS
 BEGIN
     SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
 
     SET @Id = NEWID();
 
-    DECLARE @Now DATETIME = GETDATE();
-
     INSERT INTO Departments (Id, DeptName, CreatedAt, UpdatedAt)
-    VALUES (@Id, @DeptName, @Now, @Now);
+        OUTPUT inserted.Id, inserted.DeptName AS Name
+        VALUES (@Id, @DeptName, GETDATE(), GETDATE());
 
-     SELECT 
-        Id,
-        DeptName AS Name
-    FROM Departments
-    WHERE Id = @Id;
+    COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+    ROLLBACK TRANSACTION;
+    THROW;
+    END CATCH;
 END

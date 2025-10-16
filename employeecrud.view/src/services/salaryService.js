@@ -6,6 +6,11 @@ export const getPaymentModes = () => {
 };
 
 export const addSalary = (salaryData) => {
-  return api.post('/salary/add-salary', salaryData, { responseType: 'blob' });
+  return api.post('/salary/add-salary', salaryData);
+};
+
+// Generate Salary PDF & trigger email
+export const generateSalaryPdf = (salaryId) => {
+  return api.post(`/salary/generate-pdf/${salaryId}`, null, { responseType: 'blob' });
 };
 

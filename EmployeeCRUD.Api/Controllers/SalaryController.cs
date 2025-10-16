@@ -17,11 +17,19 @@ namespace EmployeeCRUD.Api.Controllers
         }
 
         [HttpPost("add-salary")]
-        public async Task<IActionResult> AddSalary(AddSalaryCommand command)
+        public async Task<IActionResult> AddSalary([FromBody] AddSalaryCommand command)
         {
-            var salaryPdfBytes = await mediator.Send(command);
-            return File(salaryPdfBytes, "application/pdf", "Salary.pdf");
+            var result = await mediator.Send(command);
+            return Ok(result);
         }
+
+        [HttpPost("generate-pdf/{salaryId:guid}")]
+        public async Task<IActionResult> GenerateSalaryPdf(Guid salaryId)
+        {
+            var pdfBytes = await mediator.Send(new GenerateSalaryPdfCommand(salaryId));
+            return File(pdfBytes, "application/pdf", "SalarySlip.pdf");
+        }
+
         [HttpGet("payment-mode")]
         public IActionResult GetPaymentMethods()
         {
