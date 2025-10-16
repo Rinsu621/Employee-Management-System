@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection; // Add this line
+using Microsoft.Extensions.DependencyInjection; 
 using System.Data;
 
 namespace EmployeeCRUD.Infrastructure
@@ -36,6 +36,9 @@ namespace EmployeeCRUD.Infrastructure
             //    new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IEmployeeDbConnection>(sp =>
                 new EmployeeDbConnection(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<ISalaryDbConnection>(sp =>
+                new SalaryDbConnection(configuration.GetConnectionString("SalaryConnection")));
 
 
             services.AddScoped<IJobTestServices, JobTestService>();

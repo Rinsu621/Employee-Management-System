@@ -37,8 +37,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 DefaultPassword = defaultPassword,
 
             };
-            using var db = connection.CreateConnection();
-            var result = await db.QuerySingleOrDefaultAsync<EmployeeResponseDto>(
+           
+            var result = await connection.CreateConnection().QuerySingleOrDefaultAsync<EmployeeResponseDto>(
                 "AddEmployee",
                 parameters,
                 commandType: CommandType.StoredProcedure
