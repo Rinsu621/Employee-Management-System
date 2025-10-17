@@ -9,6 +9,6 @@ namespace EmployeeCRUD.Application.Interface
 {
     public interface IDbConnectionService
     {
-        IDbConnection CreateConnection();
+        IDbConnection CreateConnection(string? connectionString = null);
     }
 }

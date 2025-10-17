@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Dapper;
+using EmployeeCRUD.Application.Configuration;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
 using Hangfire;
@@ -15,10 +16,11 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
 
     public class AddEmployeeDapperHandler : IRequestHandler<AddEmployeeDapperCommand, EmployeeResponseDto>
     {
-        private readonly IEmployeeDbConnection connection;
+        private readonly IDbConnectionService connection;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
-        public AddEmployeeDapperHandler(IEmployeeDbConnection _connection, IConfiguration _configuration, IEmailService _emailService)
+
+        public AddEmployeeDapperHandler(IDbConnectionService _connection, IConfiguration _configuration, IEmailService _emailService)
         {
             connection = _connection;
             configuration = _configuration;
@@ -37,8 +39,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 DefaultPassword = defaultPassword,
 
             };
+            using var conn= connection.CreateConnection();
            
-            var result = await connection.CreateConnection().QuerySingleOrDefaultAsync<EmployeeResponseDto>(
+            var result = await conn.QuerySingleOrDefaultAsync<EmployeeResponseDto>(
                 "AddEmployee",
                 parameters,
                 commandType: CommandType.StoredProcedure

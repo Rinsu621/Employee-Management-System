@@ -1,4 +1,7 @@
 ﻿using EmployeeCRUD.Application.SalaryModule.Command;
+using EmployeeCRUD.Application.SalaryModule.Command.AddSalary;
+using EmployeeCRUD.Application.SalaryModule.Command.AddSalaryDapper;
+using EmployeeCRUD.Application.SalaryModule.Queries.GetSalaryDapper;
 using EmployeeCRUD.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -49,6 +52,13 @@ namespace EmployeeCRUD.Api.Controllers
         {
             var salaryStatus = Enum.GetNames(typeof(SalaryStatus));
             return Ok(salaryStatus);
+        }
+
+        [HttpGet("salary-result")]
+        public async Task<IActionResult> GetSalaryResult()
+        {
+            var result = await mediator.Send(new GetSalaryDetailQuery());
+            return Ok(result);
         }
     }
 }

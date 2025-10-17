@@ -4,6 +4,7 @@ using System.Data;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using EmployeeCRUD.Application.Interface;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
@@ -19,16 +20,18 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public class UpdateEmployeeWithDapperHandler : IRequestHandler<UpdateEmployeeWithDapperCommand, EmployeeUpdateResponse>
     {
         private readonly IConfiguration _configuration;
+        private readonly IDbConnectionService connection;
 
-        public UpdateEmployeeWithDapperHandler(IConfiguration configuration)
+        public UpdateEmployeeWithDapperHandler(IConfiguration configuration, IDbConnectionService _connection)
         {
             _configuration = configuration;
+            connection= _connection;
         }
 
         public async Task<EmployeeUpdateResponse> Handle(UpdateEmployeeWithDapperCommand request, CancellationToken cancellationToken)
         {
-            using var db = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-            await db.OpenAsync(cancellationToken);
+            using var db = connection.CreateConnection();
+
 
             var parameters = new DynamicParameters();
             parameters.Add("@EmployeeId", request.Id, DbType.Guid);

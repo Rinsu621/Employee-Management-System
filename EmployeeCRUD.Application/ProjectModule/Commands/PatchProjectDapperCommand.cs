@@ -18,8 +18,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
     public class PatchProjectDapperHandler:IRequestHandler<PatchProjectDapperCommand, ProjectDto>
     {
-        private readonly IEmployeeDbConnection connection;
-        public PatchProjectDapperHandler(IEmployeeDbConnection _connection)
+        private readonly IDbConnectionService connection;
+        public PatchProjectDapperHandler(IDbConnectionService _connection)
         {
             connection = _connection;
         }
@@ -37,7 +37,7 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
             parameters.Add("@ProjectManagerId", request.ProjectManagerId);
             parameters.Add("@TeamMembersIds", request.TeamMembersIds != null ? string.Join(',', request.TeamMembersIds) : null);
 
-            using var db=connection.CreateConnection();
+            using var db=connection.CreateConnection("EmployeeDb");
             var result = await db.QueryFirstOrDefaultAsync<dynamic>(
                 "PatchProject",
                 parameters,

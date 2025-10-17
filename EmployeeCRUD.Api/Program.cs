@@ -1,9 +1,11 @@
 using EmployeeCRUD.Api;
 using EmployeeCRUD.Api.Filter;
 using EmployeeCRUD.Api.Middleware;
+using EmployeeCRUD.Application.Configuration;
 using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Application.Services;
 using EmployeeCRUD.Domain.Entities;
+using EmployeeCRUD.Infrastructure.Configurations;
 using EmployeeCRUD.Infrastructure.Data;
 using EmployeeCRUD.Infrastructure.Seeder;
 using Hangfire;
@@ -25,6 +27,9 @@ config.UseSimpleAssemblyNameTypeSerializer()
 .UseRecommendedSerializerSettings()
 .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection"));
 });
+builder.Services.Configure<DbSettings>(
+    builder.Configuration.GetSection("ConnectionStrings")
+);
 
 builder.Services.AddHangfireServer();
 builder.Services.AddControllers();

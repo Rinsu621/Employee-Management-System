@@ -1,6 +1,9 @@
 ﻿using Dapper;
+using DocumentFormat.OpenXml.Spreadsheet;
+using EmployeeCRUD.Application.Configuration;
 using EmployeeCRUD.Application.Interface;
 using MediatR;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,16 +11,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.SalaryModule.Command
+namespace EmployeeCRUD.Application.SalaryModule.Command.AddSalaryDapper
 {
-    public record AddSalaryDapperCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status, DateTime SalaryDate):IRequest<Guid>;
-    
-    public class AddSalaryDapperCommandHandler:IRequestHandler<AddSalaryDapperCommand, Guid>
+    public class AddSalaryDapperCommandHandler : IRequestHandler<AddSalaryDapperCommand, Guid>
     {
-        private readonly ISalaryDbConnection salaryDbConnection;
-        public AddSalaryDapperCommandHandler(ISalaryDbConnection _salaryDbConnection)
+        private readonly IDbConnectionService connection;
+        private readonly DbSettings _settings;
+        public AddSalaryDapperCommandHandler(IDbConnectionService _connection, IOptions<DbSettings> options)
         {
-            salaryDbConnection = _salaryDbConnection;
+            connection =_connection;
+            _settings = options.Value;
         }
 
         public async Task<Guid> Handle(AddSalaryDapperCommand request, CancellationToken cancellationToken)
@@ -33,8 +36,15 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
             parameter.Add("@Status", request.Status);
             parameter.Add("@SalaryDate", request.SalaryDate);
 
-            var response = salaryDbConnection.CreateConnection().QueryFirstAsync<Guid>("AddSalary", parameter, commandType: CommandType.StoredProcedure);
-            return await response;
+            using var conn = connection.CreateConnection(_settings.SalaryConnection);
+
+            var response = await conn.QueryFirstAsync<Guid>(
+                "AddSalary",
+                parameter,
+                commandType: CommandType.StoredProcedure
+            );
+            return response;
+
 
         }
     }

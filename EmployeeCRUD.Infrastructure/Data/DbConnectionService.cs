@@ -1,21 +1,26 @@
-﻿using EmployeeCRUD.Application.Interface;
+﻿using EmployeeCRUD.Application.Configuration;
+using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Infrastructure.Configurations;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 using System.Data;
 
 namespace EmployeeCRUD.Infrastructure.Data
 {
-    public class DbConnectionService : IDbConnectionService, IEmployeeDbConnection, ISalaryDbConnection
+    public class DbConnectionService : IDbConnectionService
     {
-        private readonly string _connectionString;
+        private readonly DbSettings _dbSettings;
 
-        public DbConnectionService(string connectionString)
+        public DbConnectionService(IOptions<DbSettings> options)
         {
-            _connectionString = connectionString;
+            _dbSettings = options.Value;
         }
 
-        public IDbConnection CreateConnection()
+        public IDbConnection CreateConnection(string? connectionString = null)
         {
-            return new SqlConnection(_connectionString);
+
+            var connStr = connectionString ?? _dbSettings.DefaultConnection;
+            return new SqlConnection(connStr);
         }
     }
 }

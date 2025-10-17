@@ -15,14 +15,14 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
     
     public class AddProjectDapperHandler : IRequestHandler<AddProjectDapperCommand, ProjectDto>
     {
-        private readonly IEmployeeDbConnection connection;
-        public AddProjectDapperHandler(IEmployeeDbConnection _connection)
+        private readonly IDbConnectionService connection;
+        public AddProjectDapperHandler( IDbConnectionService _connection)
         {
             connection = _connection;
         }
         public async Task<ProjectDto> Handle(AddProjectDapperCommand request, CancellationToken cancellationToken)
         {
-            using var db = connection.CreateConnection();
+            using var db = connection.CreateConnection("EmployeeDb");
             var result = await db.QuerySingleAsync<ProjectDto>("AddProject",
                 new { request.ProjectName, request.Description, request.StartDate, request.EndDate, request.Budget, request.Status, request.ClientName },
                 commandType: CommandType.StoredProcedure);

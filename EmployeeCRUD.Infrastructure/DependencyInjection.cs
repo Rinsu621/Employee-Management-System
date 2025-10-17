@@ -32,11 +32,13 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
             services.AddScoped<ISalaryDbContext>(provider => provider.GetRequiredService<SalaryDbContext>());
 
-            services.AddScoped<IEmployeeDbConnection>(sp =>
-                 (IEmployeeDbConnection)new DbConnectionService(configuration.GetConnectionString("DefaultConnection")));
+            //services.AddScoped<IEmployeeDbConnection>(sp =>
+            //     (IEmployeeDbConnection)new DbConnectionService(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<ISalaryDbConnection>(sp =>
-                (ISalaryDbConnection)new DbConnectionService(configuration.GetConnectionString("SalaryConnection")));
+            //services.AddScoped<ISalaryDbConnection>(sp =>
+            //    (ISalaryDbConnection)new DbConnectionService(configuration.GetConnectionString("SalaryConnection")));
+
+            services.AddScoped<IDbConnectionService, DbConnectionService>();
 
 
 

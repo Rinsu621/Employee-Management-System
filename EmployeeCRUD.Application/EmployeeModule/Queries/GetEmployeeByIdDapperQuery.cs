@@ -14,8 +14,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
     public record GetEmployeeByIdDapperQuery(Guid Id):IRequest<EmployeeResponseDto>;
         public class GetEmployeeByIdDapperHandler : IRequestHandler<GetEmployeeByIdDapperQuery, EmployeeResponseDto>
         {
-            private readonly IEmployeeDbConnection connection;
-            public GetEmployeeByIdDapperHandler(IEmployeeDbConnection _connection)
+            private readonly IDbConnectionService connection;
+            public GetEmployeeByIdDapperHandler(IDbConnectionService _connection)
             {
                 connection = _connection;
             }

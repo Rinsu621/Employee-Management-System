@@ -14,9 +14,9 @@ namespace EmployeeCRUD.Infrastructure.Services
 {
     public class ExportEmployeesToExcelService : IExcelExpoter
     {
-        private readonly IEmployeeDbConnection connection;
+        private readonly IDbConnectionService connection;
 
-        public ExportEmployeesToExcelService(IEmployeeDbConnection _connection)
+        public ExportEmployeesToExcelService(IDbConnectionService _connection)
         {
             connection = _connection;
         }

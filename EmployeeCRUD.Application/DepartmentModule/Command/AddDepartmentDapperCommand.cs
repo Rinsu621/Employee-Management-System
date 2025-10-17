@@ -16,8 +16,8 @@ namespace EmployeeCRUD.Application.DepartmentModule.Command
 
     public class AddDepartmentDapperHandler : IRequestHandler<AddDepartmentDapperCommand, DepartmentResponseDto>
     {
-        private readonly IEmployeeDbConnection connection;
-        public AddDepartmentDapperHandler(IEmployeeDbConnection _connection)
+        private readonly IDbConnectionService connection;
+        public AddDepartmentDapperHandler(IDbConnectionService _connection)
         {
             connection = _connection;
         }

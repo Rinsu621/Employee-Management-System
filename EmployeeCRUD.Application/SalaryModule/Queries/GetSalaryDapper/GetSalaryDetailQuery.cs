@@ -6,8 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmployeeCRUD.Application.SalaryModule.Queries
+namespace EmployeeCRUD.Application.SalaryModule.Queries.GetSalaryDapper
 {
-    public record GetSalaryDapperCommand(int year, int month) : IRequest<IEnumerable<SalaryResponseDto>>;
-
+    public record GetSalaryDetailQuery:IRequest<IEnumerable<SalaryResponseDto>>;
 }

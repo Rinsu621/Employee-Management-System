@@ -23,9 +23,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetAllEmployeeDapperHandler : IRequestHandler<GetAllEmployeeDapperQuery, EmployeePagedResponseDto>
     {
-        private readonly IEmployeeDbConnection connection;
+        private readonly IDbConnectionService connection;
 
-        public GetAllEmployeeDapperHandler(IEmployeeDbConnection _connection)
+        public GetAllEmployeeDapperHandler(IDbConnectionService _connection)
         {
             connection = _connection;
         }

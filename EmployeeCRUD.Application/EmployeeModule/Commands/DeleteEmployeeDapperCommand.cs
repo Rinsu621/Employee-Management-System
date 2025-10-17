@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using EmployeeCRUD.Application.Configuration;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
 using EmployeeCRUD.Application.Interface;
 using MediatR;
@@ -9,10 +10,12 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
     public record DeleteEmployeeDapperCommand(Guid Id) : IRequest<DeleteEmployeeResponse>;
     public class  DeleteEmployeeDapperHandler: IRequestHandler<DeleteEmployeeDapperCommand, DeleteEmployeeResponse>
     {
-        private readonly IEmployeeDbConnection connection;
-        public DeleteEmployeeDapperHandler(IEmployeeDbConnection _connection)
+        private readonly IDbConnectionService connection;
+ 
+        public DeleteEmployeeDapperHandler(IDbConnectionService _connection)
         {
             connection = _connection;
+
         }
         public async Task<DeleteEmployeeResponse> Handle(DeleteEmployeeDapperCommand request, CancellationToken cancellationToken)
         {
