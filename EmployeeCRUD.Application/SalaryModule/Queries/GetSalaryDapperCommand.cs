@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EmployeeCRUD.Application.SalaryModule.DTO;
+using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.SalaryModule.Queries
 {
-    internal class GetSalaryDapperCommand
-    {
-    }
+    public record GetSalaryDapperCommand(int year, int month) : IRequest<IEnumerable<SalaryResponseDto>>;
+
 }

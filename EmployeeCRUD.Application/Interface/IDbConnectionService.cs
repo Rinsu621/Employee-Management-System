@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Interface
 {
-    public interface ISalaryDbConnection:IDbConnectionService
+    public interface IDbConnectionService
     {
+        IDbConnection CreateConnection();
     }
 }

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.Interface
 {
-    public interface IEmployeeDbConnection
+    public interface IEmployeeDbConnection:IDbConnectionService
     {
-        IDbConnection CreateConnection();
+       
     }
 
 

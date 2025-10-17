@@ -23,6 +23,13 @@ namespace EmployeeCRUD.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPost("add-salary-dapper")]
+        public async Task<IActionResult> AddSalaryDapper([FromBody] AddSalaryDapperCommand command)
+        {
+            var result = await mediator.Send(command);
+            return Ok(result);
+        }
+
         [HttpPost("generate-pdf/{salaryId:guid}")]
         public async Task<IActionResult> GenerateSalaryPdf(Guid salaryId)
         {
