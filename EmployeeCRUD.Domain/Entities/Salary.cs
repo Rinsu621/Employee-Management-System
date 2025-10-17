@@ -21,9 +21,11 @@ namespace EmployeeCRUD.Domain.Entities
         public PaymentMethod PaymentMode { get; set; }
         public SalaryStatus Status { get; set; }= SalaryStatus.Unpaid;
 
-        public decimal GrossSalary => BasicSalary+Conveyance;
+        public decimal GrossSalary => BasicSalary+Conveyance ;
 
-        public decimal NetSalary => BasicSalary - (Tax + PF+ ESI);
+        public decimal NetSalary => GrossSalary - (Tax + PF+ ESI);
+        public DateTime SalaryDate { get; set; }
+
 
     }
 }

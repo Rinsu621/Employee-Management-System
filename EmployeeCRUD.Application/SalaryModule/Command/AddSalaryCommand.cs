@@ -1,8 +1,12 @@
 ﻿using EmployeeCRUD.Application.Interface;
+using EmployeeCRUD.Application.SalaryModule.Document;
 using EmployeeCRUD.Application.SalaryModule.DTO;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Domain.Enums;
+using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +15,21 @@ using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.SalaryModule.Command
 {
-    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status ):IRequest<SalaryResponseDto>;
+    public record AddSalaryCommand(Guid EmployeeId, decimal BasicSalary, decimal Conveyance, decimal Tax, decimal Pf, decimal ESI, string PaymentMethod, string Status, DateTime SalaryDate) : IRequest<Guid>;
 
-    public class AddSalaryCommandHandler : IRequestHandler<AddSalaryCommand, SalaryResponseDto>
+    public class AddSalaryCommandHandler : IRequestHandler<AddSalaryCommand, Guid>
     {
+        private readonly IAppDbContext appDbContext;
         private readonly ISalaryDbContext salaryDbContext;
-        public AddSalaryCommandHandler(ISalaryDbContext _salaryDbContext)
+      
+        public AddSalaryCommandHandler(ISalaryDbContext _salaryDbContext, IAppDbContext _appDbContext)
         {
             salaryDbContext = _salaryDbContext;
+            appDbContext= _appDbContext;
+         
         }
 
-        public async Task<SalaryResponseDto> Handle(AddSalaryCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(AddSalaryCommand request, CancellationToken cancellationToken)
         {
             if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentEnum))
             {
@@ -43,29 +51,17 @@ namespace EmployeeCRUD.Application.SalaryModule.Command
                 PF = request.Pf,
                 ESI = request.ESI,
                 PaymentMode = paymentEnum,
-                Status= statusEnum,
+                Status = statusEnum,
+                SalaryDate= request.SalaryDate,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = null
             };
 
             salaryDbContext.Salaries.Add(salary);
             await salaryDbContext.SaveChangesAsync(cancellationToken);
+            //BackgroundJob.Enqueue<IMediator>(mediator=> mediator.Send(new GenerateSalaryPdfCommand(salary.Id), cancellationToken));
 
-            return new SalaryResponseDto
-            {
-                Id = salary.Id,
-                EmployeeId = salary.EmployeeId,
-                BasicSalary = salary.BasicSalary,
-                Conveyance = salary.Conveyance,
-                Tax = salary.Tax,
-                PF = salary.PF,
-                ESI = salary.ESI,
-                PaymentMode = salary.PaymentMode.ToString(),
-                Status=salary.Status.ToString(),
-                CreatedAt = salary.CreatedAt,
-                GrossSalary = salary.GrossSalary,
-                NetSalary = salary.NetSalary
-            };
+            return salary.Id;
         }
     }
     

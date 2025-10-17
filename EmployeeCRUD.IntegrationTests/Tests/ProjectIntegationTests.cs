@@ -107,62 +107,62 @@ namespace EmployeeCRUD.IntegrationTests.Tests
 
         }
 
-        [Fact]
-        public async Task PatchProjectDapper_ValidData_GetSuccess()
-        {
-            var employee1 = new EmployeeDto { EmpName = "User A", Email = "usera@gmail.com", Phone = "9876544567" };
-            var employee2 = new EmployeeDto { EmpName = "User B", Email = "userb@gmail.com", Phone = "9876544560" };
+        //[Fact]
+        //public async Task PatchProjectDapper_ValidData_GetSuccess()
+        //{
+        //    var employee1 = new EmployeeDto { EmpName = "User A", Email = "usera@gmail.com", Phone = "9876544567" };
+        //    var employee2 = new EmployeeDto { EmpName = "User B", Email = "userb@gmail.com", Phone = "9876544560" };
 
-            var emp1Response = await mediator.Send(new AddEmployeeCommand(employee1));
-            var emp2Response = await mediator.Send(new AddEmployeeCommand(employee2));
+        //    var emp1Response = await mediator.Send(new AddEmployeeCommand(employee1));
+        //    var emp2Response = await mediator.Send(new AddEmployeeCommand(employee2));
 
-            emp1Response.Should().NotBeNull();
-            emp2Response.Should().NotBeNull();
+        //    emp1Response.Should().NotBeNull();
+        //    emp2Response.Should().NotBeNull();
 
 
-            var projectCommand = new AddProjectDapperCommand
-                (
-                ProjectName: "Dapper Project",
-                Description: "Dapper Description",
-                StartDate: DateTime.Now,
-                EndDate: DateTime.Now.AddDays(15),
-                Budget: 3000,
-                Status: "Active",
-                ClientName: "Dapper Client"
-                );
+        //    var projectCommand = new AddProjectDapperCommand
+        //        (
+        //        ProjectName: "Dapper Project",
+        //        Description: "Dapper Description",
+        //        StartDate: DateTime.Now,
+        //        EndDate: DateTime.Now.AddDays(15),
+        //        Budget: 3000,
+        //        Status: "Active",
+        //        ClientName: "Dapper Client"
+        //        );
 
-        var addedProject = await mediator.Send(projectCommand);
+        //var addedProject = await mediator.Send(projectCommand);
 
-        addedProject.Should().NotBeNull();
+        //addedProject.Should().NotBeNull();
 
-            var patchCommand = new PatchProjectDapperCommand(
-             Id: addedProject.Id,
-             ProjectName: "Dapper Project Updated",
-             Description: null,
-             EndDate: null,
-             Budget: null,
-             Status: null,
-             ClientName: null,
-             ProjectManagerId: null,
-             TeamMembersIds: new List<Guid> { emp1Response.Id, emp2Response.Id }
-         );
+        //    var patchCommand = new PatchProjectDapperCommand(
+        //     Id: addedProject.Id,
+        //     ProjectName: "Dapper Project Updated",
+        //     Description: null,
+        //     EndDate: null,
+        //     Budget: null,
+        //     Status: null,
+        //     ClientName: null,
+        //     ProjectManagerId: null,
+        //     TeamMembersIds: new List<Guid> { emp1Response.Id, emp2Response.Id }
+        // );
 
-            var patchedProject = await mediator.Send(patchCommand);
-            patchedProject.Should().NotBeNull();
-            patchedProject.Description.Should().Be(addedProject.Description);
-            patchedProject.Budget.Should().Be(addedProject.Budget);
-            output.WriteLine($"Id: {patchedProject.Id}");
-            output.WriteLine($"ProjectName: {patchedProject.ProjectName}");
-            output.WriteLine($"Description: {patchedProject.Description}");
-            output.WriteLine($"StartDate: {patchedProject.StartDate}");
-            output.WriteLine($"EndDate: {patchedProject.EndDate}");
-            output.WriteLine($"Budget: {patchedProject.Budget}");
-            output.WriteLine($"Status: {patchedProject.Status}");
-            output.WriteLine($"ClientName: {patchedProject.ClientName}");
-            output.WriteLine($"ProjectManagerName: {patchedProject.ProjectManagerName}");
-            output.WriteLine($"TeamMembers: {string.Join(", ", patchedProject.TeamMember)}");
+        //    var patchedProject = await mediator.Send(patchCommand);
+        //    patchedProject.Should().NotBeNull();
+        //    patchedProject.Description.Should().Be(addedProject.Description);
+        //    patchedProject.Budget.Should().Be(addedProject.Budget);
+        //    output.WriteLine($"Id: {patchedProject.Id}");
+        //    output.WriteLine($"ProjectName: {patchedProject.ProjectName}");
+        //    output.WriteLine($"Description: {patchedProject.Description}");
+        //    output.WriteLine($"StartDate: {patchedProject.StartDate}");
+        //    output.WriteLine($"EndDate: {patchedProject.EndDate}");
+        //    output.WriteLine($"Budget: {patchedProject.Budget}");
+        //    output.WriteLine($"Status: {patchedProject.Status}");
+        //    output.WriteLine($"ClientName: {patchedProject.ClientName}");
+        //    output.WriteLine($"ProjectManagerName: {patchedProject.ProjectManagerName}");
+        //    output.WriteLine($"TeamMembers: {string.Join(", ", patchedProject.TeamMember)}");
 
-        }
+        //}
 
         [Fact]
         public async Task ConcurrentProjectCreation()

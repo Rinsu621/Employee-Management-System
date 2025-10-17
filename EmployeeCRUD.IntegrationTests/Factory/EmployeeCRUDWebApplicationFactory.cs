@@ -3,10 +3,12 @@ using EmployeeCRUD.Infrastructure.Seeder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Data;
 
 namespace EmployeeCRUD.IntegrationTests.Factory
 {
@@ -33,8 +35,13 @@ namespace EmployeeCRUD.IntegrationTests.Factory
                 // Register AppDbContext with SQL Server
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseSqlServer(testConnection);
+                    options.UseSqlServer(testConnection)
+                    .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information)  // Logs all SQL
+                    .EnableSensitiveDataLogging();
                 });
+
+                services.AddScoped<IDbConnection>(sp =>
+               new SqlConnection(configuration.GetConnectionString("TestConnection")));
 
                 // Seed roles & admin
                 using var scope = services.BuildServiceProvider().CreateScope();

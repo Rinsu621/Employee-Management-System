@@ -10,7 +10,7 @@ namespace EmployeeCRUD.Application.SalaryModule.DTO
     public class SalaryResponseDto
     {
         public Guid Id { get; set; }
-        public Guid EmployeeId { get; set; }
+        public string EmpName { get; set; }
 
         public decimal BasicSalary { get; set; }
         public decimal Conveyance { get; set; }

@@ -26,7 +26,7 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
         }
         public async Task<bool> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            //ClaimTypes.NameIdentifier maps to sub from wwhich we get user id
+            //ClaimTypes.NameIdentifier maps to sub from which we get user id
            var userId= httpContextAccessor.HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             Guard.Against.NullOrEmpty(userId, "User not found");
             var user = await userManager.FindByIdAsync(userId);

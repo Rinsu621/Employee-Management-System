@@ -7,7 +7,7 @@ using EmployeeCRUD.Application.Interface;
 
 namespace EmployeeCRUD.Application.DepartmentModule.Command
 {
-    public record AddDepartmentCommand(DepartmentCreateDto department):IRequest<DepartmentResultDto>;
+    public record AddDepartmentCommand(string DeptName) :IRequest<DepartmentResultDto>;
 
     public class  AddDepartmentHandler:IRequestHandler<AddDepartmentCommand , DepartmentResultDto>
     {
@@ -22,7 +22,7 @@ namespace EmployeeCRUD.Application.DepartmentModule.Command
            
             var entity = new Domain.Entities.Department
             {
-                DeptName = request.department.DeptName
+                DeptName = request.DeptName
             };
 
             dbContext.Departments.Add(entity);

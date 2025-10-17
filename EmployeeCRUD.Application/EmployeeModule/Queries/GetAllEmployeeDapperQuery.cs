@@ -5,6 +5,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using EmployeeCRUD.Application.Interface;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Queries
 {
@@ -22,9 +23,9 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
 
     public class GetAllEmployeeDapperHandler : IRequestHandler<GetAllEmployeeDapperQuery, EmployeePagedResponseDto>
     {
-        private readonly IDbConnection connection;
+        private readonly IEmployeeDbConnection connection;
 
-        public GetAllEmployeeDapperHandler(IDbConnection _connection)
+        public GetAllEmployeeDapperHandler(IEmployeeDbConnection _connection)
         {
             connection = _connection;
         }
@@ -42,7 +43,8 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
             parameters.Add("@SortKey", request.SortKey);
             parameters.Add("@SortAsc", request.SortAsc);
 
-            using var multi = await connection.QueryMultipleAsync(
+            using var db= connection.CreateConnection();
+            using var multi = await db.QueryMultipleAsync(
              "GetAllEmployees",
              parameters,
                 commandType: CommandType.StoredProcedure

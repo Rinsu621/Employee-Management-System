@@ -53,6 +53,9 @@ namespace EmployeeCRUD.Infrastructure.Migrations.SalaryDb
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime>("SalaryDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)

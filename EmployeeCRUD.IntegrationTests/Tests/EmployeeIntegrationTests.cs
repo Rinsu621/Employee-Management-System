@@ -1,8 +1,10 @@
-﻿using EmployeeCRUD.Application.EmployeeModule.Commands;
+﻿using EmployeeCRUD.Application.DepartmentModule.Command;
+using EmployeeCRUD.Application.EmployeeModule.Commands;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
-using EmployeeCRUD.Application.EmployeeModule.Queries;
+using EmployeeCRUD.Application.Exceptions;
 using EmployeeCRUD.IntegrationTests.Factory;
 using FluentAssertions;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,48 +38,48 @@ namespace EmployeeCRUD.IntegrationTests.Tests
             scope = factory.Services.CreateScope();
             mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
         }
-        //[Fact]
-        //public async Task AddEmployee_ReturnsCreatedEmployee()
-        //{
-        //    //Arrange
-        //    var employeeDto = new AddEmployeeCommand
-        //    {
-        //        EmpName = "John Doe",
-        //        Email = "johndoe@gmail.com",
-        //        Phone = "9877677890"
-        //    };
-        //    var command = new AddEmployeeCommand(employeeDto);
+        [Fact]
+        public async Task AddEmployee_ReturnsCreatedEmployee()
+        {
+            //Arrange
+            var employee = new AddEmployeeCommand
+            (
+                EmpName: "John Doe",
+                Email: "johndoe@gmail.com",
+                Phone: "9877677890",
+                DepartmentId: null,
+                Role: "Employee"
+            );
 
-        //    //Act
-        //    var response = await client.PostAsJsonAsync("/api/Employee", command);
-        //    response.EnsureSuccessStatusCode();
-        //    var createdEmployee = await response.Content.ReadFromJsonAsync<EmployeeResponseDto>();
-        //    //Assert
-        //    Assert.NotNull(createdEmployee);
-        //    Assert.Equal("John Doe", createdEmployee.EmpName);
-        //    Assert.Equal("johndoe@gmail.com", createdEmployee.Email);
-        //    Assert.Equal("9877677890", createdEmployee.Phone);
-        //}
+            //Act
+            var createdEmployee = await mediator.Send(employee);
 
-        //[Fact]
-        //public async Task AddEmployee_GetBadRequest_WhenEmployeeNameEmpty()
-        //{
-        //    //Arrange
-        //    var employeeDto = new EmployeeDto
-        //    {
-        //        EmpName = "",
-        //        Email = "test1@gmail.com",
-        //        Phone = "9876543210"
-        //    };
-        //    var command = new AddEmployeeCommand(employeeDto);
+            //Assert
+            Assert.NotNull(createdEmployee);
+            Assert.Equal("John Doe", createdEmployee.EmpName);
+            Assert.Equal("johndoe@gmail.com", createdEmployee.Email);
+            Assert.Equal("9877677890", createdEmployee.Phone);
+        }
 
-        //    //Act
-        //    var response = await client.PostAsJsonAsync("/api/Employee", command);
+        [Fact]
+        public async Task AddEmployee_GetBadRequest_WhenEmployeeNameEmpty()
+        {
+            //Arrange
+            var employee = new AddEmployeeCommand   
+            (
+                EmpName : "",
+                Email : "test1@gmail.com",
+                Phone : "9876543210",
+                DepartmentId: new Guid(),
+                Role: "Employee"
+            );
+            //Act
+            Func<Task> act = async () => await mediator.Send(employee);
 
-        //    //Assert
-        //    Assert.False(response.IsSuccessStatusCode);
-        //    Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
-        //}
+            //Assert
+            await act.Should().ThrowAsync<CustomValidationException>().WithMessage("Validation Failed");
+
+        }
         [Fact]
         public async Task AddEmployee_GetBadRequest_WhenInvalidNumber()
         {
@@ -103,89 +105,103 @@ namespace EmployeeCRUD.IntegrationTests.Tests
         [Fact]
         public async Task AddEmployeeDapper_ReturnsCreatedEmployee()
         {
+            var department = new AddDepartmentDapperCommand
+            (
+                DeptName : "ABC"
+            );
+            var deptResponse = await mediator.Send(department);
             // Arrange
             var command = new AddEmployeeDapperCommand
             (
-                EmpName : "Ram Ram",
+                EmpName: "Ram Ram",
                 Email: "ram@gmail.com",
                 Phone: "9876544321",
-                Role:"Employee"
+                DepartmentId: deptResponse.Id,
+                Role: "Employee"
             );
-           
+
 
             // Act
-            var response = await client.PostAsJsonAsync("/api/Employee/add-employee-using-dapper", command);
+           var employeeCreated= await mediator.Send(command);
 
             // Assert
-            response.EnsureSuccessStatusCode();
-            var createdEmployee = await response.Content.ReadFromJsonAsync<EmployeeResponseDto>();
-            Assert.NotNull(createdEmployee);
-            Assert.Equal(command.EmpName, createdEmployee.EmpName);
-            Assert.Equal(command.Email, createdEmployee.Email);
-            Assert.Equal(command.Phone, createdEmployee.Phone);
+          
+            Assert.NotNull(employeeCreated);
+            Assert.Equal(command.EmpName, employeeCreated.EmpName);
+            Assert.Equal(command.Email, employeeCreated.Email);
+            Assert.Equal(command.Phone, employeeCreated.Phone);
         }
 
         [Theory]
-        [InlineData("TestB", "testb@gmail.com", "9876543212","Employee")]
+        [InlineData("TestB", "testb@gmail.com", "9876543212", "Employee")]
         public async Task UpdateEmployee_ReturnUpdatedEmployee(string EmpName, string Email, string Phone, string Role)
         {
-        //    using var scope = factory.Services.CreateScope();
-        //    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            //    using var scope = factory.Services.CreateScope();
+            //    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            var department = new AddDepartmentDapperCommand
+           (
+               DeptName: "ABC"
+           );
+            var deptResponse = await mediator.Send(department);
 
             var command = new AddEmployeeDapperCommand
             (
-                EmpName : EmpName,
-                Email : Email,
-                Phone : Phone,
+                EmpName: EmpName,
+                Email: Email,
+                Phone: Phone,
+                DepartmentId: deptResponse.Id,
                 Role: Role
             );
-          
+
             var createdEmployee = await mediator.Send(command);
 
             output.WriteLine($"Created Employee Id: {createdEmployee.Id}");
 
-            var updateCommand = new UpdateEmployeeSpCommand
+            var updateCommand = new UpdateEmployeeWithDapperCommand
             (
                 Id: createdEmployee.Id,
-                EmpName : "Updated Employee",
-                Email : "updated@gmail.com",
-                Phone : "9876544321"
+                EmpName: "Updated Employee",
+                Email: "updated@gmail.com",
+                DepartmentId: createdEmployee.Id,
+                Role: "Manager",
+                Phone: "9876544321"
             );
 
-           
-            var updatedEmployee = await mediator.Send(updateCommand);
 
-            output.WriteLine($"Updated Employee: {updatedEmployee.EmpName}, {updatedEmployee.Email}, {updatedEmployee.Phone}");
-            //Assert
-            Assert.NotNull(updatedEmployee);
-            Assert.Equal(updateCommand.EmpName, updatedEmployee.EmpName);
-            Assert.Equal(updateCommand.Email, updatedEmployee.Email);
-            Assert.Equal(updateCommand.Phone, updatedEmployee.Phone);
-        }
+        var updatedEmployee = await mediator.Send(updateCommand);
 
-        //[Theory]
-        //[InlineData("TestA","testa@gmail.com","9812322123")]
-        //[InlineData("TestB", "testb@gmail.com", "9812322122")]
-        //public async Task GetAllEmployee_ReturnAllEmployee(string EmpName, string Email, string Phone)
-        //{
-        //    var employeeDto = new AddEmployeeDapperCommand
-        //    (
-        //        EmpName : EmpName,
-        //        Email: Email,
-        //        Phone: Phone
-        //    );
-           
-        //    var createdEmployee = await mediator.Send(employeeDto);
+        output.WriteLine($"Updated Employee: {updatedEmployee.Name}, {updatedEmployee.Email}, {updatedEmployee.Phone}");
+                //Assert
+                Assert.NotNull(updatedEmployee);
+                Assert.Equal(updateCommand.EmpName, updatedEmployee.Name);
+                Assert.Equal(updateCommand.Email, updatedEmployee.Email);
+                Assert.Equal(updateCommand.Phone, updatedEmployee.Phone);
+            }
 
-        //    var response= await mediator.Send(new GetAllEmployeesQuery());
-        //    response.Should().NotBeEmpty();
+    //[Theory]
+    //[InlineData("TestA","testa@gmail.com","9812322123")]
+    //[InlineData("TestB", "testb@gmail.com", "9812322122")]
+    //public async Task GetAllEmployee_ReturnAllEmployee(string EmpName, string Email, string Phone)
+    //{
+    //    var employeeDto = new AddEmployeeDapperCommand
+    //    (
+    //        EmpName : EmpName,
+    //        Email: Email,
+    //        Phone: Phone
+    //    );
 
-        //    foreach (var emp in response)
-        //    {
-        //        output.WriteLine($"Id: {emp.Id}, Name: {emp.EmpName}, Email: {emp.Email}, Phone: {emp.Phone}");
-        //    }
+    //    var createdEmployee = await mediator.Send(employeeDto);
 
-        //}
+    //    var response= await mediator.Send(new GetAllEmployeesQuery());
+    //    response.Should().NotBeEmpty();
 
-    }
+    //    foreach (var emp in response)
+    //    {
+    //        output.WriteLine($"Id: {emp.Id}, Name: {emp.EmpName}, Email: {emp.Email}, Phone: {emp.Phone}");
+    //    }
+
+    //}
+
 }
+    }
+

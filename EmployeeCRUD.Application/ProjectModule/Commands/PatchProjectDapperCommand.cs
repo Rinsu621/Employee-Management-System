@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Dapper;
+using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Application.ProjectModule.Dtos;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
@@ -17,8 +18,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
 
     public class PatchProjectDapperHandler:IRequestHandler<PatchProjectDapperCommand, ProjectDto>
     {
-        private readonly IDbConnection connection;
-        public PatchProjectDapperHandler(IDbConnection _connection)
+        private readonly IEmployeeDbConnection connection;
+        public PatchProjectDapperHandler(IEmployeeDbConnection _connection)
         {
             connection = _connection;
         }
@@ -36,7 +37,8 @@ namespace EmployeeCRUD.Application.ProjectModule.Commands
             parameters.Add("@ProjectManagerId", request.ProjectManagerId);
             parameters.Add("@TeamMembersIds", request.TeamMembersIds != null ? string.Join(',', request.TeamMembersIds) : null);
 
-            var result = await connection.QueryFirstOrDefaultAsync<dynamic>(
+            using var db=connection.CreateConnection();
+            var result = await db.QueryFirstOrDefaultAsync<dynamic>(
                 "PatchProject",
                 parameters,
                 commandType: CommandType.StoredProcedure

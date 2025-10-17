@@ -1,20 +1,10 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeCRUD.Application.AuthModel.Dto;
 using EmployeeCRUD.Application.Interface;
-using EmployeeCRUD.Application.Services;
 using EmployeeCRUD.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EmployeeCRUD.Application.AuthModel.Commands
 {
@@ -39,7 +29,7 @@ namespace EmployeeCRUD.Application.AuthModel.Commands
             Guard.Against.Null(user, nameof(user), "Invalid Email or Password");
             var isPasswordValid = await userManager.CheckPasswordAsync(user, request.Password);
             if (!isPasswordValid)
-                throw new InvalidOperationException("Invalid Email or Password");
+                throw new UnauthorizedAccessException("Invalid Email or Password");
 
             var employee = await dbContext.Employees
                                .FirstOrDefaultAsync(e => e.Id == user.EmployeeId);

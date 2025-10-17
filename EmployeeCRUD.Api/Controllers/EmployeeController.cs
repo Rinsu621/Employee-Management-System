@@ -142,5 +142,24 @@ namespace EmployeeCRUD.Api.Controllers
             var result = await sender.Send(command);
             return Ok(result);
         }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportToExcel([FromQuery] ExportEmployeesToExcelQuery query)
+        {
+            var result = await sender.Send(query);
+            return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "employees.xlsx");
+        }
+
+        [HttpPost("quest-pdf")]
+
+        public async Task<IActionResult> ExportToPdfUsingQuestPdf( ExportEmployeesToPdfUsingQuestPdfQuery query)
+        {
+            var result = await sender.Send(query);
+            return File(result, "application/pdf", "employees.pdf");
+        }
+
+
+
+
     }
 }

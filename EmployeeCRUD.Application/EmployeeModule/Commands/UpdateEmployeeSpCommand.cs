@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record UpdateEmployeeSpCommand( Guid Id,  string EmpName, string Email, string Phone) : IRequest<EmployeeUpdateKeyless>;
+    public record UpdateEmployeeSpCommand( Guid Id,  string EmpName, string Email, string Phone, string Role) : IRequest<EmployeeUpdateKeyless>;
 
     public class UpdateEmployeeSpHandler : IRequestHandler<UpdateEmployeeSpCommand, EmployeeUpdateKeyless>
     {
@@ -21,7 +21,7 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
         {
 
             var updatedEmployee = dbContext.EmployeeUpdateKeyless
-                .FromSqlInterpolated($"EXEC UpdateEmployee {request.Id}, {request.EmpName}, {request.Email}, {request.Phone}")
+                .FromSqlInterpolated($"EXEC UpdateEmployee {request.Id}, {request.EmpName}, {request.Email}, {request.Phone}, {request.Role}")
                 .AsNoTracking()
                 .AsEnumerable()
                 .FirstOrDefault();

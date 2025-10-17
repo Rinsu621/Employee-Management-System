@@ -2,7 +2,6 @@
 using EmployeeCRUD.Application.EmployeeModule.Validator;
 using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Application.Pipeline;
-using EmployeeCRUD.Application.Services;
 using EmployeeCRUD.Domain.Common;
 
 using EmployeeCRUD.Infrastructure.Data;
@@ -36,8 +35,6 @@ namespace EmployeeCRUD.Application
             //services.AddTransient<IValidator<Guid>, EntityIdValidator<Employee>>();  // Register EntityIdValidator for Guid
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            services.AddScoped<IJobTestServices, JobTestService>();
-            services.AddScoped<IEmailService, EmailService>();
             // Register application services here  
             return services;
         }

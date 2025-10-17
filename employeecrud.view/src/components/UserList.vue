@@ -16,11 +16,11 @@
 
         <h2>User List</h2>
 
-        <div class="mb-3 d-flex align-items-center justify-content-between">
+        <div class="mb-3 d-flex align-items-center ">
           <!-- Left side: Sorting Dropdowns -->
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center justify-content-between">
             <label class="me-2">Sort by:</label>
-            <select v-model="sortKey" class="form-select w-auto me-2">
+            <select v-model="sortKey" class="form-select w-auto me-3">
               <option value="id">S.No</option>
               <option value="empName">Name</option>
               <option value="email">Email</option>
@@ -34,14 +34,14 @@
             </select>
 
             <!-- Role Filter -->
-            <label class="ms-2 me-1">Role:</label>
+            <label class="ms-4 me-2">Role:</label>
             <select v-model="selectedRole" class="form-select w-auto">
               <option value="">All</option>
               <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
             </select>
 
             <!-- Department Filter -->
-            <label class="ms-2 me-1">Department:</label>
+            <label class="ms-4 me-2">Department:</label>
             <select v-model="selectedDepartment" class="form-select w-auto">
               <option value="">All</option>
               <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
@@ -49,115 +49,123 @@
           </div>
 
           <!-- From Date Filter -->
-          <label class="ms-2 me-1">From:</label>
+          <label class="ms-4 me-2">From:</label>
           <input type="date" v-model="fromDate" class="form-control w-auto d-inline" />
 
           <!-- To Date Filter -->
-          <label class="ms-2 me-1">To:</label>
+          <label class="ms-4 me-2">To:</label>
           <input type="date" v-model="toDate" class="form-control w-auto d-inline" />
 
-          <!-- Right side: Create Button -->
-          <div>
-            <button class="btn btn-success shadow-sm px-4 py-2 d-flex align-items-center" @click="openCreateModal">
+        </div>
+        <!--Search Bar-->
+        <div class="mb-3 d-flex align-items-center justify-content-between">
+          <div class="mb-3 d-flex align-items-center">
+            <label class="me-2">Search:</label>
+            <input type="text"
+                   v-model="searchTerm"
+                   class="form-control w-auto"
+                   placeholder="Search" />
+          </div>
+
+        
+          <div class="d-flex justify-content-end mb-3 gap-2 ">
+
+            <button class="btn-export-pdf shadow-sm d-flex align-items-center px-3 py-1" @click="exportToPdf">
+              <i class="bi bi-file-earmark-pdf me-2 fs-5"></i>
+              <span class="fw-semibold">Export Pdf</span>
+            </button>
+
+            <button class="btn-export shadow-sm d-flex align-items-center px-3 py-1" @click="exportToExcel">
+              <i class="bi bi-file-earmark-spreadsheet-fill me-2 fs-5" style="color:#217346;"></i>
+              <span class="fw-semibold">Export</span>
+            </button>
+
+            <button class="btn-add  shadow-sm px-4 py-2 d-flex align-items-center" @click="openCreateModal">
               <i class="bi bi-person-plus-fill me-2 fs-5"></i>
               <span class="fw-semibold">Add User</span>
             </button>
           </div>
         </div>
-        <!--Search Bar-->
-        <div class="mb-3 d-flex align-items-center">
-          <label class="me-2">Search:</label>
-          <input type="text"
-                 v-model="searchTerm"
-                 class="form-control w-auto"
-                 placeholder="Search" />
-        </div>
 
 
-        <!-- Table -->
-        <div class="table-responsive shadow-sm rounded">
-          <!-- Skeleton Table -->
-          <b-skeleton-table v-if="loading"
-                            :rows="5"
-                            :columns="8"
-                            :table-props="{ bordered: true, striped: true }">
-          </b-skeleton-table>
-          <table class="table table-hover align-middle">
-            <thead class="table-dark">
-              <tr>
-                <th>S.No</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Department</th>
-                <th>Role</th>
-                <th>Created At</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(user, index) in employees"
-                  :key="user.id"
-                  :class="{ 'table-info': user.email === currentAdminEmail }">
-                <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
-                <td>{{ user.empName }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.phone }}</td>
-                <td>{{ user.departmentName || 'N/A' }}</td>
-                <td>{{ user.role }}</td>
-                <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
-                <td>
-                  <template v-if="user.email !== currentAdminEmail">
-                    <div class="btn-group" role="group">
-                      <button class="btn btn-outline-secondary" @click="openEditModal(user)" title="Edit">
-                        <i class="bi bi-pencil-square fs-5"></i>
-                      </button>
-                      <button class="btn btn-outline-danger" @click="deleteEmployee(user)" title="Delete">
-                        <i class="bi bi-trash fs-5"></i>
-                      </button>
-                    </div>
-                  </template>
-                </td>
-              </tr>
-              <tr v-if="employees.length === 0">
-                <td colspan="8" class="text-center">No employees found</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
-          <!-- Left side -->
-          <div>
-            Showing {{ (currentPage - 1) * pageSize + 1 }} -
-            {{ Math.min(currentPage * pageSize, totalEmployees) }}
-            out of {{ totalEmployees }}
+          <!-- Table -->
+          <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th>S.No</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Department</th>
+                  <th>Role</th>
+                  <th>Created At</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(user, index) in employees"
+                    :key="user.id"
+                    :class="{ 'table-info': user.email === currentAdminEmail }">
+                  <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+                  <td>{{ user.empName }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.phone }}</td>
+                  <td>{{ user.departmentName || 'N/A' }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
+                  <td>
+                    <template v-if="user.email !== currentAdminEmail">
+                      <div class="btn-group" role="group">
+                        <button class="btn btn-outline-secondary" @click="openEditModal(user)" title="Edit">
+                          <i class="bi bi-pencil-square fs-5"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" @click="deleteEmployee(user)" title="Delete">
+                          <i class="bi bi-trash fs-5"></i>
+                        </button>
+                      </div>
+                    </template>
+                  </td>
+                </tr>
+                <tr v-if="employees.length === 0">
+                  <td colspan="8" class="text-center">No employees found</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <!-- Middle: Pagination buttons -->
-          <div>
-            <button class="btn btn-sm btn-secondary me-1" @click="prevPage">Previous</button>
-            <button class="btn btn-sm me-1"
-                    v-for="page in totalPages"
-                    :key="page"
-                    @click="goToPage(page)"
-                    :class="currentPage=== page ? 'btn-secondary' : 'btn-outline-secondary'">
-              {{ page }}
-            </button>
-            <button class="btn btn-sm btn-secondary" @click="nextPage">Next</button>
+          <div class="d-flex align-items-center justify-content-between mb-2 mt-3">
+            <!-- Left side -->
+            <div>
+              Showing {{ (currentPage - 1) * pageSize + 1 }} -
+              {{ Math.min(currentPage * pageSize, totalEmployees) }}
+              out of {{ totalEmployees }}
+            </div>
+
+            <!-- Middle: Pagination buttons -->
+            <div>
+              <button class="btn btn-sm btn-secondary me-1" @click="prevPage">Previous</button>
+              <button class="btn btn-sm me-1"
+                      v-for="page in totalPages"
+                      :key="page"
+                      @click="goToPage(page)"
+                      :class="currentPage=== page ? 'btn-secondary' : 'btn-outline-secondary'">
+                {{ page }}
+              </button>
+              <button class="btn btn-sm btn-secondary" @click="nextPage">Next</button>
+            </div>
+
+            <!-- Right side: Rows per page -->
+            <div>
+              <label>Rows per page:</label>
+              <select v-model="pageSize" class="form-select d-inline w-auto ms-1">
+                <option v-for="size in [5,10,20,50]" :key="size" :value="size">{{ size }}</option>
+              </select>
+            </div>
           </div>
 
-          <!-- Right side: Rows per page -->
-          <div>
-            <label>Rows per page:</label>
-            <select v-model="pageSize" class="form-select d-inline w-auto ms-1">
-              <option v-for="size in [5,10,20,50]" :key="size" :value="size">{{ size }}</option>
-            </select>
-          </div>
         </div>
-
-      </div>
-      </Layout>
+</Layout>
   </div>
 
 
@@ -218,7 +226,6 @@
           <h5 class="modal-title">Edit Employee</h5>
           <button type="button" class="btn-close" @click="editModalInstance.hide()"></button>
         </div>
-        <b-overlay :show="showOverlay" rounded="sm">
           <div class="modal-body">
             <form @submit.prevent="editEmployeeHandler">
               <div class="mb-3">
@@ -252,7 +259,6 @@
               <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
             </form>
           </div>
-        </b-overlay>
       </div>
     </div>
   </div>
@@ -262,8 +268,8 @@
   import Navbar from "../components/Navbar.vue"
   import Layout from "../components/Layout.vue"
   import { ref, computed, onMounted, watch, watchEffect } from "vue"
-   import { logout } from "../services/authService.js"
-  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments } from "../services/employeeService"
+  import { logout } from "../services/authService.js"
+  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel, exportEmployeesToPdf } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
   import jwtDecode from "jwt-decode";
 
@@ -272,12 +278,11 @@
   const sortAsc = ref(true);
   const roles = ref([]);
   const errors = ref({});
-  let decode=null;;
+  let decode = null;;
   const token = sessionStorage.getItem("token");
-  if(!token)
-
-  {logout();
-    }
+  if (!token) {
+    logout();
+  }
   const decoded = jwtDecode(token);
   const currentAdminEmail = ref(decoded.email);
 
@@ -294,8 +299,8 @@
   const pageSize = ref(5);
   const totalPages = computed(() => Math.ceil(totalEmployees.value / pageSize.value));
 
-  const selectedRole = ref("");          
-  const selectedDepartment = ref("");    
+  const selectedRole = ref("");
+  const selectedDepartment = ref("");
   const fromDate = ref(null)
   const toDate = ref(null)
   const searchTerm = ref("")
@@ -403,7 +408,7 @@
       console.log("Fetching with:", currentPage.value, pageSize.value, selectedRole.value, selectedDepartment.value);
       const res = await getAllEmployees(currentPage.value, pageSize.value, selectedRole.value || null,
         selectedDepartment.value || null, fromDate.value || null,
-        toDate.value || null, searchTerm.value||null, sortKey.value|| "createdAt", sortAsc.value);
+        toDate.value || null, searchTerm.value || null, sortKey.value || "createdAt", sortAsc.value);
       console.log("Response:", res.data);
       employees.value = res.data.employees;
       totalEmployees.value = res.data.totalCount;
@@ -443,6 +448,7 @@
     currentPage.value = page;
   }
 
+
   onMounted(() => {
     fetchEmployees();
     fetchRoles();
@@ -452,14 +458,68 @@
   });
 
 
+  const exportToExcel = async () => {
+    try {
+      const filters = {
+        Role: selectedRole.value || null,
+        DepartmentId: selectedDepartment.value || null,
+        FromDate: fromDate.value || null,
+        ToDate: toDate.value || null,
+        SearchTerm: searchTerm.value || null,
+        SortKey: sortKey.value,
+        SortAsc: sortAsc.value
+      };
+
+      const response = await exportEmployeesToExcel(filters);
+
+      //Blob is a binary large object, way to handle file like raw data in js to blob as browser can handle it as file
+      //convert response data to blob and create a temporary URL for Blob so browser can download it
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a'); //create a new anchor tag dynamically using js, can be used to trigger  download
+      link.href = url;// <a href="blob:http://localhost:5173/1234-5678-blob"></a> it will look like this
+      link.download = 'Employees.xlsx';
+      document.body.appendChild(link);
+      link.click();  //<a href="blob:http://localhost:5173/1234-5678-blob" download="Employees.xlsx"></a>
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting employees:', error);
+    }
+  };
+
+  const exportToPdf = async () => {
+    try {
+      const filters = {
+        Role: selectedRole.value || null,
+        DepartmentId: selectedDepartment.value || null,
+        FromDate: fromDate.value || null,
+        ToDate: toDate.value || null,
+        SearchTerm: searchTerm.value || null,
+        SortKey: sortKey.value,
+        SortAsc: sortAsc.value
+      };
+      const response = await exportEmployeesToPdf(filters);
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Employees.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting employees to PDF:', error);
+    }
+  };
+
   watch([currentPage, pageSize, sortKey, sortAsc], () => {
     fetchEmployees();
   });
 
   watch([selectedRole, selectedDepartment, fromDate, toDate, searchTerm], () => {
-  currentPage.value = 1;
-  fetchEmployees();
-});
+    currentPage.value = 1;
+    fetchEmployees();
+  });
 
 </script>
 
@@ -544,7 +604,43 @@
     z-index: 0; /* Behind everything */
   }
 
+  .btn-add {
+    background: linear-gradient(135deg, #0d6efd, #6f42c1);
+    color: white;
+    border-radius: 1rem;
+    border: none; /* Removes the default border */
+    outline: none; /* Removes focus outline (optional) */
+  }
 
+    .btn-add:hover {
+      background: linear-gradient(135deg, #6f42c1, #0d6efd);
+    }
+
+    .btn-export {
+  background-color: white;
+  color: #217346; /* Excel green color */
+  border: 1px solid #ccc;
+  border-radius: 0.5rem; /* smaller radius */
+  font-size: 0.9rem;     /* slightly smaller text */
+  transition: background 0.2s;
+}
+
+.btn-export:hover {
+  background-color: #f1f1f1;
+}
+
+
+  .btn-export-pdf {
+    background-color: white;
+    transition: background 0.2s;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+  }
+
+    .btn-export-pdf:hover {
+      background-color: #f1f1f1;
+    }
   @keyframes float {
     0% {
       transform: translateY(0) translateX(0);

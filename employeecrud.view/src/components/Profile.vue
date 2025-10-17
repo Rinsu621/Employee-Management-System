@@ -50,7 +50,7 @@
             </div>
 
             <!-- Right side: Profile Card -->
-            <div class="col-md-6 d-flex justify-content-center">
+            <div class="col-md-6 d-flex flex-column align-items-center">
               <div class="card text-center p-4 shadow-lg" style="width: 20rem; border-radius: 1rem; position: relative;">
                 <div class="avatar-wrapper mb-3">
                   <div class="avatar-circle"></div>
@@ -64,9 +64,16 @@
                 <p class="text-primary fw-bold">{{ user.role }}</p>
                 <p class="card-text text-muted">
                   Department: {{ user.departmentName || 'N/A' }}<br />
+                  Phone: {{user.phone}}<br />
+                  Email: {{user.email}}<br />
                   Joined: {{ new Date(user.createdAt).toLocaleDateString() }}
                 </p>
               </div>
+              <button @click="exportToPdf"
+                      class="btn-export mt-3 px-4 py-2 fw-semibold"
+                      style="border-radius: 0.5rem;">
+                <i class="bi bi-file-earmark-pdf me-2"></i> Export as PDF
+              </button>
             </div>
           </div>
         </div>
@@ -79,13 +86,13 @@
   import Navbar from "../components/Navbar.vue";
   import Layout from "../components/Layout.vue";
   import { ref, reactive, onMounted, watch } from "vue"
-  import { getDepartments, getEmployeeByEmail, updateEmployee } from "../services/employeeService";
+  import { getDepartments, getEmployeeByEmail, updateEmployee,  } from "../services/employeeService";
   import jwtDecode from "jwt-decode";
 
   const token = sessionStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
 
-  console.log("Decoded token:", decoded); // Debug: Check token fields
+  console.log("Decoded token:", decoded); 
 
   const userEmail = decoded?.email;
   console.log("User email from token:", userEmail);
@@ -163,9 +170,9 @@
       const updatedUser = {
         id: user.value.id,
         empName: user.value.empName,
-        email: user.value.email, // Send unchanged email
+        email: user.value.email, 
         phone: user.value.phone,
-        role: user.value.role, // Send unchanged role
+        role: user.value.role, 
         departmentId: selectedDept ? selectedDept.id : user.value.departmentId,
       };
       await updateEmployee(updatedUser);
@@ -194,6 +201,8 @@
       }, 5000);
     }
   }
+
+  
 
   watch(
     () => user.value.departmentId,
@@ -369,6 +378,13 @@
       transform: translateY(-3px);
       box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
+  .btn-export {
+    background-color: white;
+    transition: background 0.2s;
+  }
+  .btn-export:hover {
+    background-color: #f1f1f1;
+  }
 
   /* Floating animation for pulse avatar */
   @keyframes pulse {

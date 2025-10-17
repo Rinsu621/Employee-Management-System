@@ -44,8 +44,8 @@ namespace EmployeeCRUD.Api.Middleware
 
                 var response = new
                 {
-                    error = userMessage,
-                    details = ex is CustomValidationException cvExDetails ? cvExDetails.Errors : null,
+                    errors = ex is CustomValidationException cvExDetails ? cvExDetails.Errors : null,
+                    message = userMessage,
                     statusCode
                 };
 

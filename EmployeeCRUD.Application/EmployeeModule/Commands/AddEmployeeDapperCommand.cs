@@ -11,14 +11,14 @@ using System.Data;
 
 namespace EmployeeCRUD.Application.EmployeeModule.Commands
 {
-    public record AddEmployeeDapperCommand(string EmpName, string Email, string Phone, string Role): IRequest<EmployeeResponseDto>;
+    public record AddEmployeeDapperCommand(string EmpName, string Email, string Phone, Guid DepartmentId,string Role): IRequest<EmployeeResponseDto>;
 
     public class AddEmployeeDapperHandler : IRequestHandler<AddEmployeeDapperCommand, EmployeeResponseDto>
     {
-        private readonly IDbConnection connection;
+        private readonly IEmployeeDbConnection connection;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
-        public AddEmployeeDapperHandler(IDbConnection _connection, IConfiguration _configuration, IEmailService _emailService)
+        public AddEmployeeDapperHandler(IEmployeeDbConnection _connection, IConfiguration _configuration, IEmailService _emailService)
         {
             connection = _connection;
             configuration = _configuration;
@@ -32,18 +32,19 @@ namespace EmployeeCRUD.Application.EmployeeModule.Commands
                 EmpName = request.EmpName,
                 Email = request.Email,
                 Phone = request.Phone,
+                DepartmentId= request.DepartmentId,
                 RoleName = request.Role,
                 DefaultPassword = defaultPassword,
 
             };
-
-            var result = await connection.QuerySingleOrDefaultAsync<EmployeeResponseDto>(
+           
+            var result = await connection.CreateConnection().QuerySingleOrDefaultAsync<EmployeeResponseDto>(
                 "AddEmployee",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
             Guard.Against.Null(result, nameof(result), "Failed to add employee");
-            BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(request.Email, defaultPassword));
+            //BackgroundJob.Enqueue(() => emailService.SendEmployeeCredentialsAsync(request.Email, defaultPassword));
             return result;
 
         }

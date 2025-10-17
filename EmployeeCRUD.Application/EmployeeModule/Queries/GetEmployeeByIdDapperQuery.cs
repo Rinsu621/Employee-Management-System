@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using EmployeeCRUD.Application.EmployeeModule.Dtos;
+using EmployeeCRUD.Application.Interface;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,15 @@ namespace EmployeeCRUD.Application.EmployeeModule.Queries
     public record GetEmployeeByIdDapperQuery(Guid Id):IRequest<EmployeeResponseDto>;
         public class GetEmployeeByIdDapperHandler : IRequestHandler<GetEmployeeByIdDapperQuery, EmployeeResponseDto>
         {
-            private readonly IDbConnection connection;
-            public GetEmployeeByIdDapperHandler(IDbConnection _connection)
+            private readonly IEmployeeDbConnection connection;
+            public GetEmployeeByIdDapperHandler(IEmployeeDbConnection _connection)
             {
                 connection = _connection;
             }
             public async Task<EmployeeResponseDto> Handle(GetEmployeeByIdDapperQuery request, CancellationToken cancellationToken)
             {
-                var result = await connection.QuerySingleOrDefaultAsync<EmployeeResponseDto>(
+            using var db= connection.CreateConnection();
+            var result = await db.QuerySingleOrDefaultAsync<EmployeeResponseDto>(
                      "GetAllEmployeeById",
                      new { Id = request.Id },
                      commandType: CommandType.StoredProcedure);

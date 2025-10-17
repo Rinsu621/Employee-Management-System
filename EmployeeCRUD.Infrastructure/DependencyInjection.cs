@@ -1,19 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection; // Add this line
-using System.Data;
-using Microsoft.Data.SqlClient;
-using EmployeeCRUD.Application.Interface;
+﻿using EmployeeCRUD.Application.Interface;
 using EmployeeCRUD.Domain.Entities;
 using EmployeeCRUD.Infrastructure.Data;
+using EmployeeCRUD.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection; 
+using System.Data;
 
 namespace EmployeeCRUD.Infrastructure
 {
     public static class DependencyInjection
     {
-        public interface IEmployeeDbConnection : IDbConnection { }
-        public interface ISalaryDbConnection : IDbConnection { }
+       
 
         public static IServiceCollection AddInfrastructureDI(this IServiceCollection services, IConfiguration configuration)
         {
@@ -32,10 +32,24 @@ namespace EmployeeCRUD.Infrastructure
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
             services.AddScoped<ISalaryDbContext>(provider => provider.GetRequiredService<SalaryDbContext>());
 
-            services.AddScoped<IDbConnection>(sp =>
-                new SqlConnection(configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IEmployeeDbConnection>(sp =>
+                 (IEmployeeDbConnection)new DbConnectionService(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<ISalaryDbConnection>(sp =>
+                (ISalaryDbConnection)new DbConnectionService(configuration.GetConnectionString("SalaryConnection")));
+
+
+
+
+            services.AddScoped<IJobTestServices, JobTestService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<ISalaryEmailService, SalaryEmailService>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IExcelExpoter, ExportEmployeesToExcelService>();
+            services.AddScoped<IPdfService, PdfService>();
 
             return services;
         }
     }
+  
 }
