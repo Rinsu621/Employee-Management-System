@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using EmployeeManagementSystem.Domain.Common;
+using EmployeeManagementSystem.Domain.Enums;
 using EmployeeManagementSystem.Domain.Guards;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace EmployeeManagementSystem.Domain.Entities
         public ICollection<Project> ManagedProjects { get;  set; } = new List<Project>();
 
         public ApplicationUser? User { get; set; }
-
+        public Position? Position { get; set; }
 
     }
 }

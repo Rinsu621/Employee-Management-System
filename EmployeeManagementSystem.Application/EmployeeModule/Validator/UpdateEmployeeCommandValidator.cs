@@ -25,10 +25,7 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Validator
 
             RuleFor(e => e.Email)
                 .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Invalid email format.")
-                .MustAsync(async (email, cancellation) =>
-                !await dbContext.Employees.AnyAsync(x => x.Email == email, cancellation))
-            .WithMessage("Email already exists.");
+                .EmailAddress().WithMessage("Invalid email format.");
 
             RuleFor(e => e.Phone)
                 .NotEmpty().WithMessage("Phone number is required.")

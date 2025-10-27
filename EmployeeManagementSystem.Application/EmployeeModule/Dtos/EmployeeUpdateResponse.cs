@@ -12,6 +12,7 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Dtos
         public Guid Id { get; set; }
         public required string Name { get; set; }
 
+
         public required string Email { get; set; }
         public required string Phone { get; set; }
         public string? DepartmentName { get; set; }
@@ -19,5 +20,6 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Dtos
         public DateTime CreatedAt { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time"));
         public DateTime? UpdatedAt { get; set; }=TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time"));
 
+        public string Position { get; set; }
     }
 }

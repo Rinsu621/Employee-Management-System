@@ -32,6 +32,10 @@ namespace EmployeeManagementSystem.Infrastructure.Configurations.AppDBContextCon
                 .IsRequired()
                 .HasMaxLength(10);
 
+            entity.Property(e => e.Position)
+       .HasConversion<string>()
+       .HasMaxLength(50);
+
             entity.HasOne(e => e.Department)
                   .WithMany(d => d.Employees)
                   .HasForeignKey(e => e.DepartmentId)

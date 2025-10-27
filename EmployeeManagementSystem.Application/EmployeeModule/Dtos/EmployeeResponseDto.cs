@@ -16,6 +16,7 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Dtos
         public string? DepartmentName { get; set; } // nullable
 
         public string Role { get; set; }
+        public string Position { get; set; }
         public DateTime CreatedAt { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(
         DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time"));
     }

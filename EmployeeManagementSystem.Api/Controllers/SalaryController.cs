@@ -54,7 +54,7 @@ namespace EmployeeManagementSystem.Api.Controllers
             return Ok(salaryStatus);
         }
 
-        [HttpGet("salary-result")]
+        [HttpPost("salary-result")]
         public async Task<IActionResult> GetSalaryResult()
         {
             var result = await mediator.Send(new GetSalaryDetailQuery());

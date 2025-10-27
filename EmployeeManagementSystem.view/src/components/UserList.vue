@@ -99,8 +99,11 @@
                   <th>Phone</th>
                   <th>Department</th>
                   <th>Role</th>
+                  <th>Position</th>
+
                   <th>Created At</th>
                   <th>Action</th>
+
                 </tr>
               </thead>
               <tbody>
@@ -113,6 +116,8 @@
                   <td>{{ user.phone }}</td>
                   <td>{{ user.departmentName || 'N/A' }}</td>
                   <td>{{ user.role }}</td>
+                  <td>{{ user.position || 'N/A' }}</td>
+
                   <td>{{ new Date(user.createdAt).toLocaleDateString() }}</td>
                   <td>
                     <template v-if="user.email !== currentAdminEmail">
@@ -128,7 +133,7 @@
                   </td>
                 </tr>
                 <tr v-if="employees.length === 0">
-                  <td colspan="8" class="text-center">No employees found</td>
+                  <td colspan="9" class="text-center">No employees found</td>
                 </tr>
               </tbody>
             </table>
@@ -211,6 +216,14 @@
               </select>
             </div>
 
+            <div class="mb-3">
+              <label class="form-label">Position</label>
+              <select v-model="newEmployee.position" class="form-select" required>
+                <option value="" disabled>Select position</option>
+                <option v-for="pos in positions" :key="pos" :value="pos">{{ pos }}</option>
+              </select>
+            </div>
+
             <button type="submit" class="btn btn-success">Create</button>
             <button type="button" class="btn btn-secondary ms-2" @click="closeCreateModal">Cancel</button>
           </form>
@@ -256,6 +269,13 @@
                   <option v-for="role in roles" :key="role" :value="role">{{ role }}</option>
                 </select>
               </div>
+
+              <div class="mb-3">
+                <label class="form-label">Position</label>
+                <select v-model="editingEmployee.position" class="form-select">
+                  <option v-for="pos in positions" :key="pos" :value="pos">{{ pos }}</option>
+                </select>
+              </div>
               <button type="submit" class="btn btn-primary">Update</button>
               <button type="button" class="btn btn-secondary ms-2" @click="editModalInstance.hide()">Cancel</button>
             </form>
@@ -270,7 +290,7 @@
   import Layout from "../components/Layout.vue"
   import { ref, computed, onMounted, watch, watchEffect } from "vue"
   import { logout } from "../services/authService.js"
-  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel, exportEmployeesToPdf } from "../services/employeeService"
+  import { getAllEmployees, createEmployee, getRoles, updateEmployee, deleteEmployeeById, getDepartments, exportEmployeesToExcel, exportEmployeesToPdf, getPosition } from "../services/employeeService"
   import * as bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
   import jwtDecode from "jwt-decode";
 
@@ -278,6 +298,8 @@
   const sortKey = ref("createdAt");
   const sortAsc = ref(true);
   const roles = ref([]);
+  const positions = ref([]);
+
   const errors = ref({});
   let decode = null;;
   const token = sessionStorage.getItem("token");
@@ -360,7 +382,7 @@
 
   function openEditModal(employee) {
     const dept = departments.value.find(d => d.name === employee.departmentName);
-    editingEmployee.value = { ...employee, departmentId: dept ? dept.id.toString() : "" };
+    editingEmployee.value = { ...employee, departmentId: dept ? dept.id.toString() : "", position: employee.position || null};
     editModalInstance.value?.show();
   }
 
@@ -417,6 +439,15 @@
     }
   }
 
+  async function loadPosition() {
+    try {
+      const res = await getPosition();
+      positions.value = res.data;
+    } catch (error) {
+      console.error('Error loading payment modes:', error);
+    }
+  }
+
   async function fetchEmployees() {
     loading.value = true;
     try {
@@ -468,6 +499,7 @@
     fetchEmployees();
     fetchRoles();
     fetchDepartments();
+    loadPosition();
     if (createModal.value) createModalInstance.value = new bootstrap.Modal(createModal.value);
     if (editModal.value) editModalInstance.value = new bootstrap.Modal(editModal.value);
   });

@@ -13,18 +13,20 @@ export const createEmployee = (employee) => {
     Email: employee.email,
     Phone: employee.phone,
     DepartmentId: employee.departmentId,
+    Position: employee.Position,
     Role: employee.role
   });
 };
 
 export const updateEmployee = (employee) =>
-  api.put('/employee/update-using-dapper', {
+  api.put('/employee/update', {
     Id: employee.id,
     EmpName: employee.empName,
     Email: employee.email,
     Phone: employee.phone,
     DepartmentId: employee.departmentId,
-    Role: employee.role
+    Role: employee.role,
+    Position: employee.position
   });
 
 export const getDepartments = () => api.get('/department');
@@ -49,4 +51,8 @@ export const exportEmployeesToPdf = (filters) => {
   return api.post('/employee/quest-pdf', filters, {
     responseType: 'blob'
   });
+};
+
+export const getPosition = () => {
+  return api.get('/employee/get-position');
 };

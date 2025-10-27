@@ -5,6 +5,7 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using EmployeeManagementSystem.Application.Interface;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
 {
@@ -14,7 +15,8 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
         string Email,
         string Phone,
         Guid? DepartmentId,
-        string Role
+        string Role, 
+        string Position
     ) : IRequest<EmployeeUpdateResponse>;
 
     public class UpdateEmployeeWithDapperHandler : IRequestHandler<UpdateEmployeeWithDapperCommand, EmployeeUpdateResponse>
@@ -40,7 +42,7 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
             parameters.Add("@Phone", request.Phone, DbType.String);
             parameters.Add("@DepartmentId", request.DepartmentId, DbType.Guid);
             parameters.Add("@Role", request.Role, DbType.String);
-
+            parameters.Add("@Position", request.Position);
 
 
 

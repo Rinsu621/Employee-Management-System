@@ -25,7 +25,7 @@ namespace EmployeeManagementSystem.Application.SalaryModule.Queries.GetSalaryDap
         public async Task<IEnumerable<SalaryResponseDto>> Handle(GetSalaryDetailQuery request, CancellationToken cancellationToken)
         {
             using var conn= salaryDbConnection.CreateConnection(dbSettings.SalaryConnection);
-            var response = conn.QueryAsync<SalaryResponseDto>("GetSalaries", commandType: System.Data.CommandType.StoredProcedure);
+            var response = conn.QueryAsync<SalaryResponseDto>("GetSalaries", new { Year = request.year, Month = request.month }, commandType: System.Data.CommandType.StoredProcedure);
             return await response;
         }
     }

@@ -5,6 +5,72 @@
       <button class="btn btn-addSalary" @click="showModal = true">Add Salary</button>
     </div>
 
+    <div class="row mb-3 g-3">
+      <div class="col-md-3">
+        <label class="form-label">Select Year</label>
+        <select v-model="selectedYear" class="form-select" @change="loadSalaries(selectedYear, selectedMonth)">
+          <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Select Month</label>
+        <select v-model="selectedMonth" class="form-select" @change="loadSalaries(selectedYear, selectedMonth)">
+          <option v-for="(monthName, index) in months" :key="index" :value="index + 1">{{ monthName }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="container mt-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Salary Details</h5>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Basic Salary</th>
+                <th>Conveyance</th>
+                <th>Gross Salary</th>
+                <th>Net Salary</th>
+                <th>Tax</th>
+                <th>PF</th>
+                <th>ESI</th>
+                <th>Payment Mode</th>
+                <th>Status</th>
+                <th>Salary Month</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="salary in salaries" :key="salary.id">
+                <td>{{ salary.empName || 'Unknown' }}</td>
+                <td>{{ salary.basicSalary.toFixed(2) }}</td>
+                <td>{{ salary.conveyance.toFixed(2) }}</td>
+                <td>{{ (salary.basicSalary + salary.conveyance).toFixed(2) }}</td>
+                <td>{{ (salary.basicSalary + salary.conveyance - (salary.tax + salary.pf + salary.esi)).toFixed(2) }}</td>
+                <td>{{ salary.tax.toFixed(2) }}</td>
+                <td>{{ salary.pf.toFixed(2) }}</td>
+                <td>{{ salary.esi.toFixed(2) }}</td>
+                <td>{{ salary.paymentMethod }}</td>
+                <td>{{ salary.status }}</td>
+                <td>{{ new Date(salary.salaryDate).toLocaleString('default', { month: 'long', year: 'numeric' }) }}</td>
+              </tr>
+              <tr v-if="salaries.length === 0">
+                <td colspan="11" class="text-center py-3">No salary records found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
         <button class="close-btn" @click="closeModal">×</button>
@@ -95,22 +161,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Send PDF Option Modal -->
-    <!--<div v-if="showSendPdfModal" class="modal-overlay" @click.self="showSendPdfModal=false">
-    <div class="modal-Option">
-      <button class="close-btn" @click="showSendPdfModal=false">×</button>
-      <div class="card shadow-sm text-center">
-        <div class="card-header text-white">
-          <h class="mb-0 text-center">Send Salary Slip via Email?</h>
-        </div>
-        <div class="card-body">
-          <button class="btn btn-sendPdf me-2" @click="sendPdfEmail">Yes, Send Email</button>
-          <button class="btn btn-secondary" @click="showSendPdfModal=false">No, Close</button>
-        </div>
-      </div>
-    </div>
-  </div>-->
     <!-- Send PDF Option Modal -->
     <div v-if="showSendPdfModal" class="send-pdf-modal-overlay" @click.self="showSendPdfModal = false">
       <div class="send-pdf-modal-content">
@@ -145,11 +195,20 @@
 
   const employees = ref([])
   const paymentModes = ref([])
+  const salaries = ref([]);
+  const selectedYear = ref(new Date().getFullYear());
+  const selectedMonth = ref(new Date().getMonth() + 1);
   const loading = ref(false)
   const alert = ref({ message: '', type: '' })
   const showModal = ref(false)
   const showSendPdfModal = ref(false)
   let savedSalaryId = ref(null)
+  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i); // last 5 years
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
 
   const form = ref({
     employeeId: '',
@@ -224,9 +283,20 @@
     }
   }
 
+  async function loadSalaries(year = selectedYear.value, month = selectedMonth.value) {
+    try {
+      const res = await getAllSalaries(year, month); // Call your API with year/month params
+      salaries.value = res.data;
+    } catch (error) {
+      console.error("Error loading salaries:", error);
+    }
+  }
+
+
   onMounted(() => {
-    loadEmployees()
-    loadPaymentModes()
+    loadEmployees();
+    loadPaymentModes();
+    loadSalaries();
   })
 </script>
 
