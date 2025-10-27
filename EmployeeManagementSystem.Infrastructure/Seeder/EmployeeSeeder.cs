@@ -16,8 +16,8 @@ namespace EmployeeManagementSystem.Infrastructure.Seeder
             if (!context.Departments.Any())
                 throw new InvalidOperationException("Please seed departments first.");
 
-            //if (context.Employees.Any())
-            //    return;
+            if (context.Employees.Any())
+                return;
 
             var departmentIds = context.Departments.Select(d => d.Id).ToList();
 
