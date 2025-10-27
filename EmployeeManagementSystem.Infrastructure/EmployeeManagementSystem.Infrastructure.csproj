@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\AddDepartment.sql" />
+    <None Remove="Scripts\AddEmployee.sql" />
+    <None Remove="Scripts\AddProject.sql" />
+    <None Remove="Scripts\AddSalary.sql" />
+    <None Remove="Scripts\AssignDepartment.sql" />
+    <None Remove="Scripts\AssignTeamMember.sql" />
+    <None Remove="Scripts\DeleteEmployee.sql" />
+    <None Remove="Scripts\GetAllEmployees.sql" />
+    <None Remove="Scripts\GetEmployeeById.sql" />
+    <None Remove="Scripts\GetSalaryDetails.sql" />
+    <None Remove="Scripts\PatchEmployee.sql" />
+    <None Remove="Scripts\PatchProject.sql" />
+    <None Remove="Scripts\UpdateEmployee.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\AddDepartment.sql" />
+    <EmbeddedResource Include="Scripts\AddEmployee.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\AddProject.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\AddSalary.sql" />
+    <EmbeddedResource Include="Scripts\AssignDepartment.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\AssignTeamMember.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\DeleteEmployee.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\GetAllEmployees.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\GetEmployeeById.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\GetSalaryDetails.sql" />
+    <EmbeddedResource Include="Scripts\PatchEmployee.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\PatchProject.sql" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Include="Scripts\UpdateEmployee.sql" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.6.5" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EmployeeManagementSystem.Application\EmployeeManagementSystem.Application.csproj" />
+    <ProjectReference Include="..\EmployeeManagementSystem.Domain\EmployeeManagementSystem.Domain.csproj" />
+  </ItemGroup>
+	
+	<ItemGroup>
+		<None Update="lib\libwkhtmltox.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

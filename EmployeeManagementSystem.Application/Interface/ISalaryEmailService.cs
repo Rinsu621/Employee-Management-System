@@ -1,0 +1,15 @@
+﻿using EmployeeManagementSystem.Application.SalaryModule.DTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EmployeeManagementSystem.Application.Interface
+{
+    public interface ISalaryEmailService
+    {
+        Task SendSalarySlipAsync(string toEmail, byte[] pdf, string attachmentName, SalaryPdfModel salary);
+
+    }
+}
