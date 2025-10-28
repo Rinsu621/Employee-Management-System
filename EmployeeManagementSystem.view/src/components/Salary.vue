@@ -33,14 +33,16 @@
                 <th>Employee</th>
                 <th>Basic Salary</th>
                 <th>Conveyance</th>
-                <th>Gross Salary</th>
-                <th>Net Salary</th>
+
                 <th>Tax</th>
                 <th>PF</th>
                 <th>ESI</th>
+                <th>Gross Salary</th>
+                <th>Net Salary</th>
                 <th>Payment Mode</th>
                 <th>Status</th>
-                <th>Salary Month</th>
+                <th>Created By</th>
+                <th>Action By</th>
               </tr>
             </thead>
             <tbody>
@@ -48,14 +50,26 @@
                 <td>{{ salary.empName || 'Unknown' }}</td>
                 <td>{{ salary.basicSalary.toFixed(2) }}</td>
                 <td>{{ salary.conveyance.toFixed(2) }}</td>
-                <td>{{ (salary.basicSalary + salary.conveyance).toFixed(2) }}</td>
-                <td>{{ (salary.basicSalary + salary.conveyance - (salary.tax + salary.pf + salary.esi)).toFixed(2) }}</td>
+
                 <td>{{ salary.tax.toFixed(2) }}</td>
                 <td>{{ salary.pf.toFixed(2) }}</td>
                 <td>{{ salary.esi.toFixed(2) }}</td>
-                <td>{{ salary.paymentMethod }}</td>
-                <td>{{ salary.status }}</td>
-                <td>{{ new Date(salary.salaryDate).toLocaleString('default', { month: 'long', year: 'numeric' }) }}</td>
+                <td>{{ (salary.basicSalary + salary.conveyance).toFixed(2) }}</td>
+                <td>{{ (salary.basicSalary + salary.conveyance - (salary.tax + salary.pf + salary.esi)).toFixed(2) }}</td>
+                <td>{{ salary.paymentMode }}</td>
+                <td>
+                  <select v-model="salary.status"
+                          class="form-select form-select-sm"
+                          @change="updateStatus(salary)">
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </td>
+                <td>{{ salary.createdByName || '-' }}</td>
+                <td>{{ salary.actionByName || '-' }}</td>
+
+
               </tr>
               <tr v-if="salaries.length === 0">
                 <td colspan="11" class="text-center py-3">No salary records found.</td>
@@ -117,13 +131,7 @@
                   <label class="form-label">Conveyance</label>
                   <input v-model.number="form.conveyance" type="number" class="form-control" required />
                 </div>
-                <div class="col-md-4">
-                  <label class="form-label">Salary Status</label>
-                  <select v-model="form.status" class="form-select">
-                    <option value="Unpaid">Unpaid</option>
-                    <option value="Paid">Paid</option>
-                  </select>
-                </div>
+              
               </div>
 
               <div class="row g-3 mb-3">
@@ -191,7 +199,8 @@
   import { ref, computed, onMounted } from 'vue'
   import Layout from "../components/Layout.vue"
   import { getAllEmployees } from "../services/employeeService"
-  import { getPaymentModes, addSalary, generateSalaryPdf } from "../services/salaryService.js";
+  import { getPaymentModes, addSalary, generateSalaryPdf, getAllSalaries, updateSalaryStatus } from "../services/salaryService.js";
+  import { watch } from 'vue'
 
   const employees = ref([])
   const paymentModes = ref([])
@@ -218,7 +227,7 @@
     pf: 0,
     esi: 0,
     paymentMethod: '',
-    status: 'Unpaid',
+    status: 'Pending',
     salaryDate: ''
   })
 
@@ -227,7 +236,7 @@
 
   async function loadEmployees() {
     try {
-      const res = await getAllEmployees(1, 100, null, null, null, null, null, "CreatedAt", true)
+      const res = await getAllEmployees(1, 100000, null, null, null, null, null, "CreatedAt", true)
       employees.value = res.data.employees
     } catch (error) {
       console.error('Error loading employees:', error)
@@ -256,6 +265,7 @@
       savedSalaryId.value = res.data // store salary Id returned from API
       showModal.value = false
       showSendPdfModal.value = true
+      await loadSalaries(selectedYear.value, selectedMonth.value)
     } catch (error) {
       alert.value = { message: 'Error adding salary: ' + error.message, type: 'danger' }
     } finally {
@@ -287,16 +297,35 @@
     try {
       const res = await getAllSalaries(year, month); // Call your API with year/month params
       salaries.value = res.data;
+      console.log(salaries.value);
     } catch (error) {
       console.error("Error loading salaries:", error);
     }
   }
+
+  const updateStatus = async (salary) => {
+    try {
+      await updateSalaryStatus(salary.id, salary.status)
+      await loadSalaries(selectedYear.value, selectedMonth.value) // reload salaries
+    } catch (error) {
+      console.error('Error updating salary status:', error)
+    }
+  }
+
+
 
 
   onMounted(() => {
     loadEmployees();
     loadPaymentModes();
     loadSalaries();
+
+  })
+
+  watch([selectedYear, selectedMonth], () => {
+
+
+    loadSalaries(selectedYear.value, selectedMonth.value)
   })
 </script>
 

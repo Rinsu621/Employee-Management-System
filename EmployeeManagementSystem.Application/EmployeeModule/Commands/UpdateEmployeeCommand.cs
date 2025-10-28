@@ -66,7 +66,9 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
                 dbContext.Employees.Update(employee);
                 await dbContext.SaveChangesAsync(cancellationToken);
 
-                var user = await userManager.FindByIdAsync(employee.Id.ToString());
+                var user = await userManager.Users.FirstOrDefaultAsync(u => u.EmployeeId == employee.Id);
+
+
                 if (user != null)
                 {
                     user.UserName = request.Email;

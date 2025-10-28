@@ -6,7 +6,7 @@ export const getPaymentModes = () => {
 };
 
 export const addSalary = (salaryData) => {
-  return api.post('/salary/add-salary', salaryData);
+  return api.post('/salary/add-salary-dapper', salaryData);
 };
 
 // Generate Salary PDF & trigger email
@@ -16,7 +16,11 @@ export const generateSalaryPdf = (salaryId) => {
 
 // Fetch all salaries by sending year & month in body
 export const getAllSalaries = (year, month) => {
-  return api.post('/salary-result', { year, month });
+  return api.post('/salary/salary-result', { year, month });
 };
 
+
+export const updateSalaryStatus = (id, status) => {
+  return api.put(`/salary/update-status/${id}`, { id, status });
+};
 

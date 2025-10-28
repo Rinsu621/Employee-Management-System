@@ -1,6 +1,7 @@
 ﻿using EmployeeManagementSystem.Application.SalaryModule.Command;
 using EmployeeManagementSystem.Application.SalaryModule.Command.AddSalary;
 using EmployeeManagementSystem.Application.SalaryModule.Command.AddSalaryDapper;
+using EmployeeManagementSystem.Application.SalaryModule.Command.UpdateSalary;
 using EmployeeManagementSystem.Application.SalaryModule.Queries.GetSalaryDapper;
 using EmployeeManagementSystem.Domain.Enums;
 using MediatR;
@@ -55,10 +56,19 @@ namespace EmployeeManagementSystem.Api.Controllers
         }
 
         [HttpPost("salary-result")]
-        public async Task<IActionResult> GetSalaryResult()
+        public async Task<IActionResult> GetSalaryResult(GetSalaryDetailQuery query)
         {
-            var result = await mediator.Send(new GetSalaryDetailQuery());
+            var result = await mediator.Send(query);
             return Ok(result);
         }
+
+        [HttpPut("update-status/{id}")]
+        public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateSalaryStatusCommand command)
+        {
+         
+            var result = await mediator.Send(command);
+            return Ok(result);
+        }
+
     }
 }

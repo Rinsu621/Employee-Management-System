@@ -11,7 +11,5 @@ namespace EmployeeManagementSystem.Domain.Enums
         Pending,
         Approved,
         Rejected,
-        Unpaid,
-        Paid
     }
 }

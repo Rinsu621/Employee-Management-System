@@ -10,5 +10,6 @@ namespace EmployeeManagementSystem.Domain.Enums
     {
         JuniorAccountant,
         SeniorAccountant,
+        Assistant
     }
 }

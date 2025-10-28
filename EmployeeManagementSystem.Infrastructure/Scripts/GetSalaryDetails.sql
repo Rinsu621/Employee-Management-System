@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE GetSalaries
+CREATE OR ALTER   PROCEDURE [dbo].[GetSalaries]
     @Year INT = NULL,
     @Month INT = NULL
 AS
@@ -9,6 +9,7 @@ BEGIN
     IF @Month IS NULL SET @Month = MONTH(GETDATE());
 
    SELECT 
+   s.Id,
     e.EmpName,
     s.BasicSalary,
     s.Conveyance,
@@ -17,6 +18,11 @@ BEGIN
     s.ESI,
     s.PaymentMode,
     s.Status,
+	 s.CreatedBy,
+	 createdEmployee.EmpName AS CreatedByName,
+        s.ActionBy,
+		 actionEmployee.EmpName AS ActionByName,
+        s.ActionAt,
     (s.BasicSalary + s.Conveyance) AS GrossSalary,
     (s.BasicSalary + s.Conveyance - (s.Tax + s.PF + s.ESI)) AS NetSalary,
     r.Name AS Role,
@@ -24,6 +30,20 @@ BEGIN
 FROM Salaries s
 LEFT JOIN EmployeeManagementSystem.dbo.Employees e 
     ON s.EmployeeId = e.Id
+
+	 -- Join for CreatedBy name
+    LEFT JOIN EmployeeManagementSystem.dbo.AspNetUsers createdUser
+        ON s.CreatedBy = createdUser.Id
+    LEFT JOIN EmployeeManagementSystem.dbo.Employees createdEmployee
+        ON createdUser.EmployeeId = createdEmployee.Id
+
+
+		-- Join for ActionBy name
+    LEFT JOIN EmployeeManagementSystem.dbo.AspNetUsers actionUser
+        ON s.ActionBy = actionUser.Id
+    LEFT JOIN EmployeeManagementSystem.dbo.Employees actionEmployee
+        ON actionUser.EmployeeId = actionEmployee.Id
+
 LEFT JOIN EmployeeManagementSystem.dbo.AspNetUsers u
     ON e.Id = u.EmployeeId
 LEFT JOIN EmployeeManagementSystem.dbo.AspNetUserRoles ur
