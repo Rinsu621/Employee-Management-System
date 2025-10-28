@@ -28,23 +28,23 @@ BEGIN
     r.Name AS Role,
     s.SalaryDate
 FROM Salaries s
-LEFT JOIN EmployeeManagementSystem.dbo.Employees e 
+INNER JOIN EmployeeManagementSystem.dbo.Employees e 
     ON s.EmployeeId = e.Id
 
 	 -- Join for CreatedBy name
-    LEFT JOIN EmployeeManagementSystem.dbo.AspNetUsers createdUser
+    INNER JOIN EmployeeManagementSystem.dbo.AspNetUsers createdUser
         ON s.CreatedBy = createdUser.Id
     LEFT JOIN EmployeeManagementSystem.dbo.Employees createdEmployee
         ON createdUser.EmployeeId = createdEmployee.Id
 
 
 		-- Join for ActionBy name
-    LEFT JOIN EmployeeManagementSystem.dbo.AspNetUsers actionUser
+    INNER JOIN EmployeeManagementSystem.dbo.AspNetUsers actionUser
         ON s.ActionBy = actionUser.Id
     LEFT JOIN EmployeeManagementSystem.dbo.Employees actionEmployee
         ON actionUser.EmployeeId = actionEmployee.Id
 
-LEFT JOIN EmployeeManagementSystem.dbo.AspNetUsers u
+INNER JOIN EmployeeManagementSystem.dbo.AspNetUsers u
     ON e.Id = u.EmployeeId
 LEFT JOIN EmployeeManagementSystem.dbo.AspNetUserRoles ur
     ON u.Id = ur.UserId
