@@ -1,7 +1,9 @@
 ﻿using EmployeeManagementSystem.Application.Interface;
 using EmployeeManagementSystem.Domain.Entities;
+using EmployeeManagementSystem.Infrastructure.Authorization;
 using EmployeeManagementSystem.Infrastructure.Data;
 using EmployeeManagementSystem.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +51,9 @@ namespace EmployeeManagementSystem.Infrastructure
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IExcelExpoter, ExportEmployeesToExcelService>();
             services.AddScoped<IPdfService, PdfService>();
+
+            services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, DynamicSalaryHandler>();
 
             return services;
         }

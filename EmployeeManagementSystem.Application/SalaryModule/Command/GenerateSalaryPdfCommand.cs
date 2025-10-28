@@ -63,6 +63,7 @@ namespace EmployeeManagementSystem.Application.SalaryModule.Command
             var doc = new SalaryTablePdf(model);
             var pdfBytes = pdfService.GeneratePdf(doc);
 
+
             BackgroundJob.Enqueue<IMediator>(mediator =>
                      mediator.Send(new SalaryEmailCommand(employee.Email, pdfBytes, "SalarySlip.pdf", model), default(CancellationToken))
                  );

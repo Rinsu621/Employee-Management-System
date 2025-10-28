@@ -5,6 +5,7 @@ using EmployeeManagementSystem.Application.SalaryModule.Command.UpdateSalary;
 using EmployeeManagementSystem.Application.SalaryModule.Queries.GetSalaryDapper;
 using EmployeeManagementSystem.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +28,7 @@ namespace EmployeeManagementSystem.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Policy = "Salary:AddSalary")]
         [HttpPost("add-salary-dapper")]
         public async Task<IActionResult> AddSalaryDapper([FromBody] AddSalaryDapperCommand command)
         {
@@ -61,7 +63,7 @@ namespace EmployeeManagementSystem.Api.Controllers
             var result = await mediator.Send(query);
             return Ok(result);
         }
-
+        [Authorize(Policy = "Salary:ApproveSalary")]
         [HttpPut("update-status/{id}")]
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateSalaryStatusCommand command)
         {

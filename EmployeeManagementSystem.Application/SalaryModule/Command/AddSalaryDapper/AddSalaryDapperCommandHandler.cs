@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using EmployeeManagementSystem.Application.Configuration;
 using EmployeeManagementSystem.Application.Interface;
 using EmployeeManagementSystem.Domain.Entities;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -59,9 +60,9 @@ namespace EmployeeManagementSystem.Application.SalaryModule.Command.AddSalaryDap
             );
 
             var response = parameter.Get<Guid>("@Id");
+          
+            BackgroundJob.Enqueue<IMediator>(mediator=> mediator.Send(new GenerateSalaryPdfCommand(response), cancellationToken));
             return response;
-
-
 
         }
     }

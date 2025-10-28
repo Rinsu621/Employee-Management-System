@@ -1,5 +1,9 @@
 <template>
   <Layout>
+    <div v-if="alert.message" :class="`alert alert-${alert.type} alert-dismissible fade show`" role="alert">
+      {{ alert.message }}
+      <button type="button" class="btn-close" @click="alert.message = ''"></button>
+    </div>
 
     <div class="container mt-5 d-flex justify-content-end">
       <button class="btn btn-addSalary" @click="showModal = true">Add Salary</button>
@@ -131,7 +135,7 @@
                   <label class="form-label">Conveyance</label>
                   <input v-model.number="form.conveyance" type="number" class="form-control" required />
                 </div>
-              
+
               </div>
 
               <div class="row g-3 mb-3">
@@ -309,6 +313,10 @@
       await loadSalaries(selectedYear.value, selectedMonth.value) // reload salaries
     } catch (error) {
       console.error('Error updating salary status:', error)
+      alert.value = {
+        message: error.response?.data?.message || error.message || 'Error updating status.',
+        type: 'danger'
+      }
     }
   }
 

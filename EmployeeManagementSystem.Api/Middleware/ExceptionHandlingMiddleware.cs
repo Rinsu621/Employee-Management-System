@@ -30,11 +30,12 @@ namespace EmployeeManagementSystem.Api.Middleware
                 var (statusCode, userMessage) = ex switch
                 {
                     CustomValidationException cvEx => (StatusCodes.Status400BadRequest, "Validation failed. Please correct the input."),
+                    AuthorizationException => (StatusCodes.Status403Forbidden, ex.Message),
                     ArgumentException => (StatusCodes.Status400BadRequest, "Invalid argument provided."),
                     InvalidOperationException => (StatusCodes.Status400BadRequest, "Operation cannot be performed."),
                     KeyNotFoundException => (StatusCodes.Status404NotFound, "Requested resource not found."),
                     UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "You are not authorized to perform this action."),
-                    DbUpdateException dbEx when dbEx.InnerException is SqlException sqlEx && sqlEx.Number == 2627 => (StatusCodes.Status409Conflict, "Duplicate entry detected."),
+                   
                     _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred. Please try again later.")
                 };
 
