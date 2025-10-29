@@ -70,8 +70,6 @@ namespace EmployeeManagementSystem.Application.SalaryModule.Command
             BackgroundJob.Enqueue<IMediator>(mediator =>
                      mediator.Send(new SalaryEmailCommand(recipientEmail, pdfBytes, "SalarySlip.pdf", model), default(CancellationToken))
                  );
-
-
             return pdfBytes;
         }
 

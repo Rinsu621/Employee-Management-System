@@ -51,15 +51,14 @@
             </thead>
             <tbody>
               <tr v-for="salary in salaries" :key="salary.id">
-                <td>{{ salary.empName || 'Unknown' }}</td>
-                <td>{{ salary.basicSalary.toFixed(2) }}</td>
-                <td>{{ salary.conveyance.toFixed(2) }}</td>
+                <td>{{ (salary.basicSalary ?? 0).toFixed(2) }}</td>
+                <td>{{ (salary.conveyance ?? 0).toFixed(2) }}</td>
+                <td>{{ (salary.tax ?? 0).toFixed(2) }}</td>
+                <td>{{ (salary.pf ?? 0).toFixed(2) }}</td>
+                <td>{{ (salary.esi ?? 0).toFixed(2) }}</td>
+                <td>{{ ((salary.basicSalary ?? 0) + (salary.conveyance ?? 0)).toFixed(2) }}</td>
+                <td>{{ ((salary.basicSalary ?? 0) + (salary.conveyance ?? 0) - ((salary.tax ?? 0) + (salary.pf ?? 0) + (salary.esi ?? 0))).toFixed(2) }}</td>
 
-                <td>{{ salary.tax.toFixed(2) }}</td>
-                <td>{{ salary.pf.toFixed(2) }}</td>
-                <td>{{ salary.esi.toFixed(2) }}</td>
-                <td>{{ (salary.basicSalary + salary.conveyance).toFixed(2) }}</td>
-                <td>{{ (salary.basicSalary + salary.conveyance - (salary.tax + salary.pf + salary.esi)).toFixed(2) }}</td>
                 <td>{{ salary.paymentMode }}</td>
                 <td>
                   <select v-model="salary.status"
@@ -98,10 +97,10 @@
           </div>
           <div class="card-body">
 
-            <div v-if="alert.message" :class="`alert alert-${alert.type} alert-dismissible fade show`" role="alert">
-              {{ alert.message }}
-              <button type="button" class="btn-close" @click="alert.message = ''"></button>
-            </div>
+            <!--<div v-if="alert.message" :class="`alert alert-${alert.type} alert-dismissible fade show`" role="alert">-->
+              <!--{{ alert.message }}-->
+              <!--<button type="button" class="btn-close" @click="alert.message = ''"></button>
+            </div>-->
 
             <form @submit.prevent="submitSalary">
               <div class="row g-3 mb-3">
@@ -113,6 +112,7 @@
                       {{ emp.empName }}
                     </option>
                   </select>
+
                 </div>
 
                 <div class="col-md-6">
@@ -130,10 +130,12 @@
                 <div class="col-md-4">
                   <label class="form-label">Basic Salary</label>
                   <input v-model.number="form.basicSalary" type="number" class="form-control" required />
+                  <small v-if="errors.basicSalary" class="text-danger">{{ errors.basicSalary }}</small>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Conveyance</label>
                   <input v-model.number="form.conveyance" type="number" class="form-control" required />
+                  <small v-if="errors.conveyance" class="text-danger">{{ errors.conveyance }}</small>
                 </div>
 
               </div>
@@ -142,20 +144,24 @@
                 <div class="col-md-4">
                   <label class="form-label">Tax</label>
                   <input v-model.number="form.tax" type="number" class="form-control" />
+                  <small v-if="errors.tax" class="text-danger">{{ errors.tax }}</small>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">PF</label>
                   <input v-model.number="form.pf" type="number" class="form-control" />
+                  <small v-if="errors.pf" class="text-danger">{{ errors.pf }}</small>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">ESI</label>
                   <input v-model.number="form.esi" type="number" class="form-control" />
+                  <small v-if="errors.esi" class="text-danger">{{ errors.esi }}</small>
                 </div>
               </div>
               <div class="row g-3 mb-3">
                 <div class="col-md-6">
                   <label class="form-label">Salary Month</label>
                   <input v-model="form.salaryDate" type="month" class="form-control" required />
+                  <small v-if="errors.salaryDate" class="text-danger">{{ errors.salaryDate }}</small>
                 </div>
               </div>
 
@@ -215,6 +221,7 @@
   const alert = ref({ message: '', type: '' })
   const showModal = ref(false)
   const showSendPdfModal = ref(false)
+  const errors = ref({})
   let savedSalaryId = ref(null)
   const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i); // last 5 years
   const months = [
@@ -234,6 +241,8 @@
     status: 'Pending',
     salaryDate: ''
   })
+
+
 
   const grossSalary = computed(() => Number(form.value.basicSalary || 0) + Number(form.value.conveyance || 0))
   const netSalary = computed(() => (Number(form.value.basicSalary || 0) + Number(form.value.conveyance || 0)) - (Number(form.value.tax || 0) + Number(form.value.pf || 0) + Number( form.value.esi || 0)))
@@ -260,22 +269,61 @@
   showModal.value = false
 }
 
+  //async function submitSalary() {
+  //  alert.value = { message: '', type: '' }
+  //  loading.value = true
+  //  try {
+  //    const payload = { ...form.value, salaryDate: new Date(form.value.salaryDate + '-01') }
+  //    const res = await addSalary(payload)
+  //    savedSalaryId.value = res.data // store salary Id returned from API
+  //    showModal.value = false
+  //    showSendPdfModal.value = true
+  //    await loadSalaries(selectedYear.value, selectedMonth.value)
+  //  } catch (error) {
+
+  //    //alert.value = { message: 'Error adding salary: ' + error.message, type: 'danger' }
+
+  //    if (err.response?.data?.error) {
+  //      alert.value = err.response.data.error;
+  //    } else {
+  //      alert.value = 'Login failed';
+  //    }
+  //  } finally {
+  //    loading.value = false
+  //  }
+  //}
+
   async function submitSalary() {
-    alert.value = { message: '', type: '' }
+    // Clear previous errors
+    errors.value = {
+    }
     loading.value = true
     try {
       const payload = { ...form.value, salaryDate: new Date(form.value.salaryDate + '-01') }
       const res = await addSalary(payload)
-      savedSalaryId.value = res.data // store salary Id returned from API
+      savedSalaryId.value = res.data
       showModal.value = false
       showSendPdfModal.value = true
       await loadSalaries(selectedYear.value, selectedMonth.value)
-    } catch (error) {
-      alert.value = { message: 'Error adding salary: ' + error.message, type: 'danger' }
+    } catch (err) {
+      alert.value = { message: '', type: '' }
+      if (err.response?.status === 400 && err.response.data.errors) {
+        const backendErrors = err.response.data.errors
+        errors.value = {}
+
+        for (const key in backendErrors) {
+          const camelKey = key.charAt(0).toLowerCase() + key.slice(1)
+          errors.value[camelKey] = backendErrors[key][0]
+        }
+      } else {
+        alert.value = { message: 'Error adding salary: ' + err.message, type: 'danger' }
+      }
+
     } finally {
       loading.value = false
     }
   }
+
 
   // Send PDF Email & Download
   async function sendPdfEmail() {

@@ -41,9 +41,9 @@ namespace EmployeeManagementSystem.Infrastructure.Authorization
                     r.Name AS Role
                   FROM Employees e
                   LEFT JOIN Departments d ON e.DepartmentId = d.Id
-                  LEFT JOIN AspNetUsers u ON e.Id = u.EmployeeId
-                  LEFT JOIN AspNetUserRoles ur ON u.Id = ur.UserId
-                  LEFT JOIN AspNetRoles r ON ur.RoleId = r.Id
+                  INNER JOIN AspNetUsers u ON e.Id = u.EmployeeId
+                  INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
+                  INNER JOIN AspNetRoles r ON ur.RoleId = r.Id
                   WHERE u.Id = @UserId",
                  new { UserId = userId }
                         );

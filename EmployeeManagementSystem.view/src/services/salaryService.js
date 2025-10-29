@@ -5,9 +5,25 @@ export const getPaymentModes = () => {
   return api.get('/salary/payment-mode');
 };
 
-export const addSalary = (salaryData) => {
-  return api.post('/salary/add-salary-dapper', salaryData);
+//export const addSalary = (salaryData) => {
+//  return api.post('/salary/add-salary-dapper', salaryData);
+//};
+
+export const addSalary = async (salaryData) => {
+  try {
+    const response = await api.post('/salary/add-salary-dapper', salaryData);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.status === 400) {
+      // FluentValidation errors
+      console.log(error.response.data);
+      throw error.response.data; // send to frontend UI
+    } else {
+      throw { message: "Something went wrong!" };
+    }
+  }
 };
+
 
 // Generate Salary PDF & trigger email
 export const generateSalaryPdf = (salaryId) => {
