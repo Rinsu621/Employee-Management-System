@@ -240,7 +240,7 @@
 
   async function loadEmployees() {
     try {
-      const res = await getAllEmployees(1, 100000, null, null, null, null, null, "CreatedAt", true)
+      const res = await getAllEmployees(1, 100, "Manager", null, null, null, null, "CreatedAt", true)
       employees.value = res.data.employees
     } catch (error) {
       console.error('Error loading employees:', error)
@@ -310,7 +310,7 @@
   const updateStatus = async (salary) => {
     try {
       await updateSalaryStatus(salary.id, salary.status)
-      await loadSalaries(selectedYear.value, selectedMonth.value) // reload salaries
+      await loadSalaries(selectedYear.value, selectedMonth.value) 
     } catch (error) {
       console.error('Error updating salary status:', error)
       alert.value = {

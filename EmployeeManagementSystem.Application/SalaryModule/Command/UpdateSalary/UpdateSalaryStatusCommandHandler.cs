@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using EmployeeManagementSystem.Application.Configuration;
 using EmployeeManagementSystem.Application.Interface;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -47,6 +48,14 @@ namespace EmployeeManagementSystem.Application.SalaryModule.Command.UpdateSalary
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
+
+            if (result == 1 && request.Status == "Approved") // Only trigger after approval
+            {
+                // Enqueue PDF generation and email to the employee
+                BackgroundJob.Enqueue<IMediator>(mediator =>
+                    mediator.Send(new GenerateSalaryPdfCommand(request.Id, null), cancellationToken)
+                );
+            }
 
             return result == 1;
         }

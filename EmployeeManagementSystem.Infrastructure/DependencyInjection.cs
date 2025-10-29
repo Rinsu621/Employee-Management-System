@@ -17,7 +17,9 @@ namespace EmployeeManagementSystem.Infrastructure
     {
        
 
-        public static IServiceCollection AddInfrastructureDI(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddInfrastructureDI(this IServiceCollection services, IConfiguration configuration
+            
+            )
         {
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")),

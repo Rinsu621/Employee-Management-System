@@ -60,8 +60,15 @@ namespace EmployeeManagementSystem.Application.SalaryModule.Command.AddSalaryDap
             );
 
             var response = parameter.Get<Guid>("@Id");
-          
-            BackgroundJob.Enqueue<IMediator>(mediator=> mediator.Send(new GenerateSalaryPdfCommand(response), cancellationToken));
+
+            using var conn2 = connection.CreateConnection();
+            var seniorAccountantsEmail = await conn2.QueryAsync<string>("GetSeniorAccountantsEmails", commandType: CommandType.StoredProcedure);
+
+            foreach (var email in seniorAccountantsEmail)
+            {
+                BackgroundJob.Enqueue<IMediator>(mediator =>
+                 mediator.Send(new GenerateSalaryPdfCommand(response, email), cancellationToken));
+            }
             return response;
 
         }

@@ -1,10 +1,13 @@
 ﻿using Ardalis.GuardClauses;
 using Dapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using EmployeeManagementSystem.Application.Configuration;
 using EmployeeManagementSystem.Application.EmployeeModule.Dtos;
 using EmployeeManagementSystem.Application.Interface;
+using EmployeeManagementSystem.Domain.Entities;
 using Hangfire;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using System.Data;
@@ -29,6 +32,9 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
         public async Task<EmployeeResponseDto> Handle(AddEmployeeDapperCommand request, CancellationToken cancellationToken)
         {
             var defaultPassword = configuration["DefaultPassword:Password"];
+            var user = new ApplicationUser { UserName = request.Email, Email = request.Email };
+            var passwordHasher = new PasswordHasher<ApplicationUser>();
+            var hashedPassword = passwordHasher.HashPassword(user, defaultPassword);
             var parameters = new
             {
                 EmpName = request.EmpName,
@@ -36,7 +42,7 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
                 Phone = request.Phone,
                 DepartmentId= request.DepartmentId,
                 RoleName = request.Role,
-                DefaultPassword = defaultPassword,
+                PasswordHash = hashedPassword
 
             };
             using var conn= connection.CreateConnection();
