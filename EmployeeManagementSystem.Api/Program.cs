@@ -78,7 +78,12 @@ builder.Services.AddAuthentication
 // Authorization
 builder.Services.AddAuthorization();
 
-// Swagger configuration with JWT support, Add authorization header for entering Bearer token
+// Swagger
+//
+//
+//
+//
+// with JWT support, Add authorization header for entering Bearer token
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

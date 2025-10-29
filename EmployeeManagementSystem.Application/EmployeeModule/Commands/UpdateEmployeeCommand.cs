@@ -4,6 +4,7 @@ using EmployeeManagementSystem.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using EmployeeManagementSystem.Domain.Enums;
 
 namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
 {
@@ -13,7 +14,8 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
         string Email,
         string Phone,
         Guid? DepartmentId,
-        string Role
+        string Role,
+        string Position
     ) : IRequest<EmployeeUpdateResponse>;
 
     public class UpdateEmployeeHandler : IRequestHandler<UpdateEmployeeCommand, EmployeeUpdateResponse>
@@ -42,15 +44,31 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
                 if (employee == null)
                     throw new Exception($"Employee with Id {request.Id} not found.");
 
+               
+
                 employee.EmpName = request.EmpName;
                 employee.Email = request.Email;
                 employee.Phone = request.Phone;
                 employee.DepartmentId = request.DepartmentId;
 
+                Position? parsedPosition = null;
+                if (!string.IsNullOrEmpty(request.Position))
+                {
+                    if (!Enum.TryParse<Position>(request.Position, true, out var temp))
+                        throw new ArgumentException($"Invalid Position: {request.Position}");
+
+                    parsedPosition = temp;
+                }
+
+                employee.Position = parsedPosition;
+
+
                 dbContext.Employees.Update(employee);
                 await dbContext.SaveChangesAsync(cancellationToken);
 
-                var user = await userManager.FindByIdAsync(employee.Id.ToString());
+                var user = await userManager.Users.FirstOrDefaultAsync(u => u.EmployeeId == employee.Id);
+
+
                 if (user != null)
                 {
                     user.UserName = request.Email;
@@ -84,7 +102,8 @@ namespace EmployeeManagementSystem.Application.EmployeeModule.Commands
                     DepartmentName = employee.Department?.DeptName,
                     Role = request.Role,
                     CreatedAt = employee.CreatedAt,
-                    UpdatedAt = DateTime.UtcNow
+                    UpdatedAt = DateTime.UtcNow,
+                    Position = employee.Position.ToString(),
                 };
             }
             catch

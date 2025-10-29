@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagementSystem.Application.SalaryModule.Queries.GetSalaryDapper
 {
-    public record GetSalaryDetailQuery:IRequest<IEnumerable<SalaryResponseDto>>;
+    public record GetSalaryDetailQuery(int year, int month):IRequest<IEnumerable<SalaryResponseDto>>;
 }

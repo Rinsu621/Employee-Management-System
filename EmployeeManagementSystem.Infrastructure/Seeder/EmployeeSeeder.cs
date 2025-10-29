@@ -20,15 +20,29 @@ namespace EmployeeManagementSystem.Infrastructure.Seeder
                 return;
 
             var departmentIds = context.Departments.Select(d => d.Id).ToList();
+            var existingEmails = context.Employees
+                            .Select(e => e.Email.ToLower())
+                            .ToHashSet();
 
             var faker = new Faker<EmployeeManagementSystem.Domain.Entities.Employee>()
                 .RuleFor(e => e.Id, f => Guid.NewGuid())
                 .RuleFor(e => e.EmpName, f => f.Name.FullName())
-                .RuleFor(e => e.Email, (f, e) => f.Internet.Email())
+              
                 .RuleFor(e => e.Phone, f => "98" + f.Random.Number(10000000, 99999999).ToString())
-                .RuleFor(e => e.DepartmentId, f => f.PickRandom(departmentIds));
+                .RuleFor(e => e.DepartmentId, f => f.PickRandom(departmentIds))
+                 .RuleFor(e => e.Email, f =>
+                 {
+                     string email;
+                     do
+                     {
+                         email = f.Internet.Email().ToLower();
+                     } while (existingEmails.Contains(email));
 
-            var employees = faker.Generate(1000);
+                     existingEmails.Add(email); // mark it as used
+                     return email;
+                 });
+
+            var employees = faker.Generate(40000);
 
             context.Employees.AddRange(employees);
             await context.SaveChangesAsync();

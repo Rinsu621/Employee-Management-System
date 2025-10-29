@@ -1,6 +1,7 @@
 ﻿
 using EmployeeManagementSystem.Application.EmployeeModule.Commands;
 using EmployeeManagementSystem.Application.EmployeeModule.Queries;
+using EmployeeManagementSystem.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -156,6 +157,13 @@ namespace EmployeeManagementSystem.Api.Controllers
         {
             var result = await sender.Send(query);
             return File(result, "application/pdf", "employees.pdf");
+        }
+
+        [HttpGet("get-position")]
+        public IActionResult GetPosition()
+        {
+            var position = Enum.GetNames(typeof(Position));
+            return Ok(position);
         }
 
 

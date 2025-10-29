@@ -28,7 +28,8 @@ namespace EmployeeManagementSystem.IntegrationTests.Factory
                 // Remove existing DbContext registrations
                 services.RemoveAll(typeof(DbContextOptions<AppDbContext>));
 
-                // Get configuration
+                // Get
+                // 
                 var sp = services.BuildServiceProvider();
                 var configuration = sp.GetRequiredService<IConfiguration>();
                 var testConnection = configuration.GetConnectionString("TestConnection");

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagementSystem.Application.SalaryModule.Command
 {
-    public record GenerateSalaryPdfCommand(Guid SalaryId) : IRequest<byte[]>;
+    public record GenerateSalaryPdfCommand(Guid SalaryId, string? RecipientEmail = null) : IRequest<byte[]>;
 
     public class GenerateSalaryPdfHandler : IRequestHandler<GenerateSalaryPdfCommand, byte[]>
     {
@@ -63,11 +63,13 @@ namespace EmployeeManagementSystem.Application.SalaryModule.Command
             var doc = new SalaryTablePdf(model);
             var pdfBytes = pdfService.GeneratePdf(doc);
 
+            var recipientEmail = string.IsNullOrEmpty(request.RecipientEmail)
+                         ? employee.Email
+                         : request.RecipientEmail;
+
             BackgroundJob.Enqueue<IMediator>(mediator =>
-                     mediator.Send(new SalaryEmailCommand(employee.Email, pdfBytes, "SalarySlip.pdf", model), default(CancellationToken))
+                     mediator.Send(new SalaryEmailCommand(recipientEmail, pdfBytes, "SalarySlip.pdf", model), default(CancellationToken))
                  );
-
-
             return pdfBytes;
         }
 

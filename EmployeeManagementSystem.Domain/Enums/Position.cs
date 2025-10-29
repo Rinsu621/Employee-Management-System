@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagementSystem.Domain.Enums
 {
-    public enum SalaryStatus
+    public enum Position
     {
-        Pending,
-        Approved,
-        Rejected,
+        JuniorAccountant,
+        SeniorAccountant,
+        Assistant
     }
 }

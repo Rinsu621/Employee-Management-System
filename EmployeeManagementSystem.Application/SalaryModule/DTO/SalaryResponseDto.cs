@@ -21,6 +21,8 @@ namespace EmployeeManagementSystem.Application.SalaryModule.DTO
 
         public string Status {  get; set; }
         public DateTime CreatedAt { get; set; }
+        public string CreatedByName { get; set; }
+        public string ActionByName { get; set; }
 
 
         public decimal GrossSalary { get; set; }

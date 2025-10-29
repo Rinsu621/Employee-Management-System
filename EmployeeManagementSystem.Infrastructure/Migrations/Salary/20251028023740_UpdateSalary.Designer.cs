@@ -4,6 +4,7 @@ using EmployeeManagementSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeManagementSystem.Infrastructure.Migrations.Salary
 {
     [DbContext(typeof(SalaryDbContext))]
-    partial class SalaryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251028023740_UpdateSalary")]
+    partial class UpdateSalary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,12 +31,6 @@ namespace EmployeeManagementSystem.Infrastructure.Migrations.Salary
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ActionAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ActionBy")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<decimal>("BasicSalary")
                         .HasColumnType("decimal(18,2)");
 
@@ -44,9 +41,6 @@ namespace EmployeeManagementSystem.Infrastructure.Migrations.Salary
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ESI")
                         .HasColumnType("decimal(18,2)");
