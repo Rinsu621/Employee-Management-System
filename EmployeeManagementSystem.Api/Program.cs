@@ -165,7 +165,7 @@ using (var scope = app.Services.CreateScope())
     await appDbContext.Database.MigrateAsync();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     await IdentitySeeder.SeedRolesAndAdminAsync(services);
-    await EmployeeSeeder.Seed(appDbContext, userManager);
+    //await EmployeeSeeder.Seed(appDbContext, userManager);
 
 
 }

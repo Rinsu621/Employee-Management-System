@@ -42,7 +42,7 @@ namespace EmployeeManagementSystem.Infrastructure.Seeder
                      return email;
                  });
 
-            var employees = faker.Generate(40000);
+            var employees = faker.Generate(1000);
 
             context.Employees.AddRange(employees);
             await context.SaveChangesAsync();
