@@ -3,6 +3,7 @@ using EmployeeManagementSystem.Domain.Entities;
 using EmployeeManagementSystem.Infrastructure.Authorization;
 using EmployeeManagementSystem.Infrastructure.Data;
 using EmployeeManagementSystem.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
@@ -56,6 +57,7 @@ namespace EmployeeManagementSystem.Infrastructure
 
             services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, DynamicSalaryHandler>();
+           
 
             return services;
         }

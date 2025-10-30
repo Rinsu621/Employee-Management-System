@@ -21,6 +21,8 @@ namespace EmployeeManagementSystem.Application.Interface
         DbSet<TeamMemberAssignmentResponse> TeamMemberAssignmentResponses { get; set; }
         DbSet<TeamMemberAssignmentRow> TeamMemberAssignmentRows { get; set; }
         DbSet<ProjectDepartmentResponse> ProjectDepartmentResponses { get; set; }
+        DbSet<Permission> Permissions { get; set; }
+        DbSet<RolePermission> RolePermissions { get; set; }
 
         DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

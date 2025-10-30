@@ -24,12 +24,15 @@ namespace EmployeeManagementSystem.Infrastructure.Data
         public DbSet<TeamMemberAssignmentResponse> TeamMemberAssignmentResponses { get; set; }
         public DbSet<TeamMemberAssignmentRow> TeamMemberAssignmentRows { get; set; }
         public DbSet<ProjectDepartmentResponse>ProjectDepartmentResponses { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
             modelBuilder.ApplyConfiguration(new ProjectConfiguration());
+            modelBuilder.ApplyConfiguration(new RolePermissionConfiguration());
 
 
 

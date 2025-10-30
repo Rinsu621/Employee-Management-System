@@ -28,7 +28,7 @@ namespace EmployeeManagementSystem.Api.Controllers
             return Ok(result);
         }
 
-        [Authorize(Policy = "Salary:AddSalary")]
+        [Authorize(Policy = "SalaryAdd")]
         [HttpPost("add-salary-dapper")]
         public async Task<IActionResult> AddSalaryDapper([FromBody] AddSalaryDapperCommand command)
         {
@@ -63,7 +63,7 @@ namespace EmployeeManagementSystem.Api.Controllers
             var result = await mediator.Send(query);
             return Ok(result);
         }
-        [Authorize(Policy = "Salary:ApproveSalary")]
+        [Authorize(Policy = "SalaryApprove")]
         [HttpPut("update-status/{id}")]
         public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateSalaryStatusCommand command)
         {

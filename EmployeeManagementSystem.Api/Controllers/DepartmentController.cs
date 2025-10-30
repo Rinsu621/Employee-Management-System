@@ -2,6 +2,7 @@
 using EmployeeManagementSystem.Application.Department.Queries;
 using EmployeeManagementSystem.Application.DepartmentModule.Command;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagementSystem.Api.Controllers
@@ -10,6 +11,8 @@ namespace EmployeeManagementSystem.Api.Controllers
     [ApiController]
     public class DepartmentController(ISender sender) : ControllerBase
     {
+
+        [Authorize(Policy = "DepartmentAdd")]
         [HttpPost]
         public async Task<IActionResult> AddDepartmentAsync(AddDepartmentCommand command)
         {

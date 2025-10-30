@@ -1,6 +1,7 @@
 ﻿using EmployeeManagementSystem.Application.Interface;
 using EmployeeManagementSystem.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -17,26 +18,37 @@ namespace EmployeeManagementSystem.Infrastructure.Services
     {
         private readonly IConfiguration configuration;
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IAppDbContext dbContext;
 
-        public JwtService(IConfiguration _configuration, UserManager<ApplicationUser> _userManager)
+        public JwtService(IConfiguration _configuration, UserManager<ApplicationUser> _userManager, IAppDbContext dbContext, RoleManager<IdentityRole> _roleManager)
         {
             configuration = _configuration;
             userManager = _userManager;
+            roleManager = _roleManager;
+            this.dbContext = dbContext;
         }
         public async Task<string> GenerateAccessToken(ApplicationUser user)
         {
             var claims = new List<Claim>
             {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),// subject which is user id
-             new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim("SecurityStamp", user.SecurityStamp)
             };
             var roles = await userManager.GetRolesAsync(user);
-            foreach (var role in roles)
+            foreach (var roleName in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role)); // adds a claim for each role so that JWT can carry role-based authorization 
+                claims.Add(new Claim(ClaimTypes.Role, roleName)); // adds a claim for each role so that JWT can carry role-based authorization 
+                var role = await roleManager.FindByNameAsync(roleName);
+                var rolePermission = await dbContext.RolePermissions.Include(rp => rp.Permission).Where(rp => rp.RoleId == role.Id).ToListAsync();
+                foreach (var rp in rolePermission)
+                {
+                    claims.Add(new Claim("Permission", rp.Permission.Name));
+                }
+
             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -16,7 +16,7 @@ namespace EmployeeManagementSystem.Infrastructure.Factory
         {
             var config = new ConfigurationBuilder()
                  .SetBasePath(Directory.GetCurrentDirectory())
-                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                 .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
                  .Build();
 
             var connectionString = config.GetConnectionString("DefaultConnection");

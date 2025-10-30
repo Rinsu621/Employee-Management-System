@@ -3,6 +3,7 @@ using EmployeeManagementSystem.Api.Filter;
 using EmployeeManagementSystem.Api.Middleware;
 using EmployeeManagementSystem.Application.Configuration;
 using EmployeeManagementSystem.Domain.Entities;
+using EmployeeManagementSystem.Infrastructure.Authorization;
 using EmployeeManagementSystem.Infrastructure.Data;
 using EmployeeManagementSystem.Infrastructure.Seeder;
 using Hangfire;
@@ -76,7 +77,17 @@ builder.Services.AddAuthentication
 });
 
 // Authorization
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("SalaryAdd", policy => policy.RequireClaim("Permission", "salary:add"));
+
+    options.AddPolicy("SalaryApprove", policy =>policy.RequireClaim("Permission", "salary:approve"));
+
+    options.AddPolicy("EmployeeRead", policy =>policy.RequireClaim("Permission", "employee:read"));
+
+    options.AddPolicy("EmployeeUpdate", policy =>policy.RequireClaim("Permission", "employee:update"));
+    options.AddPolicy("DepartmentAdd", policy => policy.RequireClaim("Permission", "department:add"));
+});
 
 // Swagger
 //
@@ -166,6 +177,8 @@ using (var scope = app.Services.CreateScope())
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     await IdentitySeeder.SeedRolesAndAdminAsync(services);
     await EmployeeSeeder.Seed(appDbContext, userManager);
+    await PermissionSeeder.SeedAsync(appDbContext);
+    await RolePermissionSeeder.Seed(services, CancellationToken.None);
 
 
 }

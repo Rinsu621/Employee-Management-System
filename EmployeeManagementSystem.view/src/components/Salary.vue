@@ -51,6 +51,7 @@
             </thead>
             <tbody>
               <tr v-for="salary in salaries" :key="salary.id">
+                <td>{{salary.empName}}</td>
                 <td>{{ (salary.basicSalary ?? 0).toFixed(2) }}</td>
                 <td>{{ (salary.conveyance ?? 0).toFixed(2) }}</td>
                 <td>{{ (salary.tax ?? 0).toFixed(2) }}</td>
